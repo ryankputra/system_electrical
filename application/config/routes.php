@@ -62,4 +62,4 @@ $route['electric_type/(:any)'] = 'electric_type/$1';
 
 // legacy pneumatic routes removed; electric is primary. If backward compatibility needed, re-add aliases.
 $route['storage/low_stock_detail'] = 'LowStock/detail';
-$route['lowstock/export_excel'] = 'LowStock/export_excel';
+$route['lowstock/export_csv'] = 'LowStock/export_csv';

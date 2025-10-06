@@ -9,14 +9,17 @@ class LowStock extends CI_Controller {
         $this->load->view('storage/low_stock_detail', $data);
     }
 
-    public function export_excel() {
+    public function export_csv() {
         $this->load->model('Storage_model');
         $low_stock = $this->Storage_model->get_low_stock();
 
         // Set headers for CSV download
-        header('Content-Type: text/csv');
+        header('Content-Type: text/csv; charset=UTF-8');
         header('Content-Disposition: attachment;filename="Low_Stock_Report_' . date('Ymd') . '.csv"');
         header('Cache-Control: max-age=0');
+
+        // Output BOM for Excel compatibility with UTF-8
+        echo "\xEF\xBB\xBF";
 
         // Open output stream
         $output = fopen('php://output', 'w');

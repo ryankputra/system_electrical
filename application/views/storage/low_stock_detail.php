@@ -3,7 +3,6 @@
 ?>
 
 <?php $this->load->view('templates/header'); ?>
-<?php $this->load->view('templates/footer'); ?>
 
 <div class="container-fluid mt-5 pt-5">
     <div class="card mx-auto rounded-5 shadow border-0 mb-5">
@@ -14,7 +13,7 @@
                     <small class="text-muted">Ringkasan stok yang berada di bawah ambang batas.</small>
                 </div>
                 <div>
-                    <a href="<?= base_url('lowstock/export_excel'); ?>" class="btn btn-success me-2">Download Excel</a>
+                    <a href="<?= site_url('lowstock/export_csv'); ?>" class="btn btn-success me-2">Download CSV</a>
                     <button class="btn btn-outline-secondary" onclick="window.history.back();">Kembali</button>
                 </div>
             </div>
@@ -32,13 +31,11 @@
                     <tbody>
                         <?php if (!empty($low_stock)): ?>
                             <?php foreach ($low_stock as $item): ?>
-                                <?php if ($item['total_amount'] <= 5): ?>
                                     <tr>
                                         <td class="text-center fw-semibold"><?= htmlspecialchars($item['type_id']); ?></td>
                                         <td class="text-center text-muted"><?= htmlspecialchars($item['category']); ?></td>
                                         <td class="text-center text-danger fw-bold"><?= htmlspecialchars($item['total_amount']); ?></td>
                                     </tr>
-                                <?php endif; ?>
                             <?php endforeach; ?>
                         <?php else: ?>
                             <tr>

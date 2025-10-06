@@ -137,7 +137,7 @@
                                                     <?php endif; ?>
                                                 </td>
                                                 <td>
-                                                    <strong><?= number_format($item['total_amount'] ?? 0); ?></strong>
+                                                    <strong><span class="badge bg-success"><?= number_format($item['total_amount'] ?? 0); ?></span></strong>
                                                 </td>
                                                 <td>
                                                     <span class="badge bg-info"><?= $item['location_count']; ?> lokasi</span>

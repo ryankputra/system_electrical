@@ -16,8 +16,8 @@
     <!-- Load local Bootstrap bundle for offline use (actual files are in assets/img/js) -->
     <script src="<?= base_url('assets/img/js/bootstrap.bundle.min.js') ?>"></script>
     <script src="<?= base_url('assets/img/js/tooltip.js') ?>"></script>
-    <script src="<?= base_url('assets/img/js/popoverlogic.js') ?>"></script>
-    <script src="<?= base_url('assets/img/js/notificationlogic.js') ?>"></script>
+    <script src="<?= base_url('assets/img/js/popoverlogic.js') . '?v=' . @filemtime(FCPATH.'assets/img/js/popoverlogic.js') ?>"></script>
+    <script src="<?= base_url('assets/img/js/notificationlogic.js') . '?v=' . @filemtime(FCPATH.'assets/img/js/notificationlogic.js') ?>"></script>
     <script src="<?= base_url('assets/img/js/forminput.js') ?>"></script>
     <script src="<?= base_url('assets/img/js/resetfilter.js') ?>"></script>
     <script src="<?= base_url('assets/img/js/searchbar.js') ?>"></script>

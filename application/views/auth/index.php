@@ -65,6 +65,5 @@
 </script>
 
 <script src="<?= base_url('assets/img/js/forminput.js'); ?>"></script>
-<script src="<?= base_url('assets/img/js/notificationlogic.js'); ?>"></script>
 
 </html>
