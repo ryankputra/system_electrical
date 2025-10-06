@@ -1,0 +1,297 @@
+.navbar-logo-aoi {
+	height: 2.25rem;
+}
+
+.action-button {
+	width: 1.5rem;
+}
+
+.clear-button {
+	position: absolute;
+	top: 50%;
+	right: 1rem;
+	transform: translateY(-50%);
+	z-index: 40;
+	cursor: pointer;
+	display: none;
+	width: 1.25rem; /* slightly smaller to fit inside input */
+	height: auto;
+	opacity: 0.85;
+	transition: opacity .12s ease, transform .12s ease;
+}
+
+/* Ensure input-group positioned wrapper shrinks correctly in flex layout */
+.input-group .position-relative {
+    min-width: 0; /* allow flex children to shrink properly */
+}
+
+/* Make clear button appear above the submit button */
+.input-group .clear-button {
+	z-index: 70; /* above the input-group button */
+}
+
+/* Give the submit button a lower stacking context to avoid overlapping the clear icon */
+.input-group .btn {
+	z-index: 10;
+}
+
+/* Slightly nudge the clear icon left on narrow screens to avoid overlap */
+@media (max-width: 576px) {
+	.input-group .clear-button {
+		right: 2.25rem; /* move a bit left to stay within the input */
+		width: 1rem; /* reduce clear icon size on very small screens */
+	}
+}
+
+.cursor-pointer {
+	cursor: pointer;
+}
+
+.page-item:first-child .page-link {
+	border-top-left-radius: 999px;
+	border-bottom-left-radius: 999px;
+}
+
+.page-item:last-child .page-link {
+	border-top-right-radius: 999px;
+	border-bottom-right-radius: 999px;
+}
+
+.cust-notification {
+	 /* Use fixed positioning and a high z-index so notifications appear
+		 above the fixed header (Bootstrap's fixed-top uses z-index ~1030). */
+	 position: fixed;
+	 z-index: 1100;
+	 /* Default top offset chosen to sit below a typical fixed header.
+		 Adjust if your header is taller/shorter. */
+	 top: 4rem;
+	 left: 1rem;
+	 right: 1rem;
+	 border-radius: 20px;
+}
+
+.cust-fade-out {
+	-webkit-animation: cust-fade-out 250ms ease-out both;
+	animation: cust-fade-out 250ms ease-out both;
+}
+
+.alert {
+	border-radius: 20px;
+}
+
+@-webkit-keyframes cust-fade-out {
+	0% {
+		opacity: 1;
+	}
+	99% {
+		opacity: 0;
+	}
+	100% {
+		display: none;
+	}
+}
+@keyframes cust-fade-out {
+	0% {
+		opacity: 1;
+	}
+	99% {
+		opacity: 0;
+	}
+	100% {
+		display: none;
+	}
+}
+
+/* Electric thumbnail styles for consistent image display */
+.electric-thumb {
+	width: 100%;
+	height: 180px;
+	overflow: hidden;
+	background: #f8f9fa;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: 15px;
+	border-radius: 0.375rem 0.375rem 0 0;
+}
+
+.electric-thumb img {
+	max-width: 100%;
+	max-height: 100%;
+	object-fit: contain;
+	display: block;
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.electric-type-grid .card {
+	border: 1px solid #e9ecef;
+	transition: transform .12s ease, box-shadow .12s ease;
+}
+
+.electric-type-grid .card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 10px 24px rgba(0, 0, 0, 0.15);
+	border-color: #dee2e6;
+}
+
+.electric-type-grid .card-body {
+	background: #fff;
+	border-top: 1px solid #f1f3f4;
+}
+
+@media (max-width: 768px) {
+	.cust-action-card-container {
+		gap: 3rem;
+	}
+
+	/* On small screens the header is usually taller; reduce horizontal margins
+	   and top offset so the notification stays visible and not too large. */
+	.cust-notification {
+		left: 0.5rem;
+		right: 0.5rem;
+		top: 3.25rem;
+	}
+}
+
+.cust-action-card {
+	width: 80%;
+	height: 35vh;
+}
+
+@media (min-width: 768px) {
+	.cust-action-card {
+		width: 40%;
+		height: 80vh;
+	}
+}
+
+/* Styles for electric type view (moved from view file for consistency) */
+.electric-type-label {
+    font-weight: 600;
+    letter-spacing: .2px;
+    color: #495057;
+}
+
+.electric-type-grid a:focus .card {
+    outline: 3px solid rgba(0, 123, 255, 0.12);
+    border-color: #007bff;
+}
+
+.electric-type-grid a {
+    text-decoration: none !important;
+}
+
+/* small visual focus state for keyboard users */
+.electric-type-grid .card.focus {
+    box-shadow: 0 0 0 3px rgba(0,123,255,0.08);
+}
+
+/* Support both .thumb (used in view) and .electric-thumb (existing helper) */
+.thumb {
+    height: 160px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f8fafc;
+}
+
+/* Ensure top corners of the main card are rounded and content doesn't overflow */
+.card.mx-auto.rounded-5 {
+    border-radius: 2rem !important; /* increase rounding */
+    overflow: hidden; /* ensure children do not overflow corners */
+}
+
+.card.mx-auto.rounded-5 > .card-header {
+    border-top-left-radius: 2rem !important;
+    border-top-right-radius: 2rem !important;
+}
+
+.card.mx-auto.rounded-5 .card-body {
+    border-bottom-left-radius: 2rem;
+    border-bottom-right-radius: 2rem;
+}
+
+/* Stronger override in case other rules are more specific */
+div.card.mx-auto.rounded-5 {
+    border-radius: 2.5rem !important;
+    overflow: hidden !important;
+    background-clip: padding-box !important;
+}
+
+div.card.mx-auto.rounded-5 > .card-header,
+div.card.mx-auto.rounded-5 > .card-body {
+    border-top-left-radius: 2.5rem !important;
+    border-top-right-radius: 2.5rem !important;
+    border-bottom-left-radius: 2.5rem !important;
+    border-bottom-right-radius: 2.5rem !important;
+    background-clip: padding-box !important;
+}
+
+/* Strong selector for the utility class added to the view */
+.cust-rounded-card {
+    border-radius: 2.5rem !important;
+    overflow: hidden !important;
+    background-clip: padding-box !important;
+}
+
+.cust-rounded-card > .card-header {
+    border-top-left-radius: 2.5rem !important;
+    border-top-right-radius: 2.5rem !important;
+}
+
+.cust-rounded-card > .card-body {
+    border-bottom-left-radius: 2.5rem !important;
+    border-bottom-right-radius: 2.5rem !important;
+}
+
+/* Reduced chart-wrapper dimensions for better fit */
+.chart-wrapper {
+    height: 400px; /* Reduced height for better proportions */
+    min-height: 300px; /* Ensure visibility on smaller screens */
+    max-height: 500px; /* Avoid overly tall charts */
+    width: 100%;
+}
+
+/* When the chart is inside a flex column, prevent it from flexing to fill */
+.chart-wrapper { flex: 0 0 auto; }
+
+@media (max-width: 576px) {
+    .chart-wrapper {
+        height: 300px; /* Adjusted for smaller screens */
+        min-height: 250px;
+    }
+}
+
+/* Optional smaller variant */
+.chart-wrapper.chart-sm {
+    height: 250px; /* Adjusted smaller variant */
+}
+
+/* Simple styling for compact table */
+#transactionsTable {
+    width: 100%;
+}
+
+/* Ensure table takes full available width */
+.table-responsive {
+    overflow-x: auto;
+}
+
+/* Dashboard-specific styles */
+.dashboard-container { padding-bottom: 80px; }
+.border-highlight {
+    box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.15);
+    border: 2px solid #007bff !important;
+    transition: box-shadow 0.3s ease, border 0.3s ease;
+}
+@media (max-width: 768px) {
+    .dashboard-container { padding-bottom: 120px; }
+}
+.search-bar .input-group-text { background: #fff; border-right: 0; }
+.search-bar .form-control { border-left: 0; box-shadow: none; }
+.search-bar .btn { min-height: 38px; }
+@media (max-width: 767.98px) {
+    .search-bar .input-group-text { border-right: 1px solid #ced4da; }
+}
+
