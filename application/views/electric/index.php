@@ -46,10 +46,10 @@
                         </div>
                     </form>
                     <?php
-                    // Tentukan query param untuk tombol Add utama berdasarkan filter saat ini
+                    // Determine the query parameter for the main Add button based on the current filter
                     $topAddUrl = site_url('electric/add');
                     if (!empty($filterKeyword['type'])) {
-                        // Ambil type pertama dari filter (sudah dalam bentuk array)
+                        // Get the first type from the filter (already in array form)
                         $firstType = is_array($filterKeyword['type']) ? $filterKeyword['type'][0] : $filterKeyword['type'];
                         $topAddUrl .= '?type=' . urlencode($firstType);
                     } elseif (!empty($filterKeyword['nama'])) {
@@ -121,11 +121,7 @@
                                     <a href="<?= site_url('electric/edit/' . urlencode($electric['electric_id'])) ?>" class="btn <?= ($electric['total_stock'] ?? 0) > 0 ? 'btn-outline-secondary disabled' : 'btn-outline-primary' ?>">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
-                                    <?php // Tambah per-row: gunakan type_id jika ada numeric id, else gunakan nama sebagai identifier ?>
-                                    <?php $addParam = is_numeric($electric['type_id'] ?? null) ? 'type_id=' . urlencode($electric['type_id']) : 'type=' . urlencode($electric['nama']); ?>
-                                    <a href="<?= site_url('electric/add') . '?' . $addParam ?>" class="btn btn-outline-primary add-row-btn" data-add-url="<?= site_url('electric/add') . '?' . $addParam ?>">
-                                        <i class="fas fa-plus-circle"></i> Tambah
-                                    </a>
+                                    <?php  ?>
                                 </div>
                             </td>
                         </tr>
