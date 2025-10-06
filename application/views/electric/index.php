@@ -121,7 +121,7 @@
                                     <a href="<?= site_url('electric/edit/' . urlencode($electric['electric_id'])) ?>" class="btn <?= ($electric['total_stock'] ?? 0) > 0 ? 'btn-outline-secondary disabled' : 'btn-outline-primary' ?>">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
-                                    <?php  ?>
+                                    <?php // Add per-row: use type_id if numeric id exists, else use name as identifier ?>
                                 </div>
                             </td>
                         </tr>
