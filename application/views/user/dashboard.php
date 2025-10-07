@@ -25,11 +25,7 @@
                 <div class="col-md-9 col-12">
                     <label for="globalSearch" class="visually-hidden">Cari</label>
                     <div class="input-group search-bar">
-                        <span class="input-group-text bg-primary text-white"><i class="fas fa-search" aria-hidden="true"></i></span>
-                        <input type="search" class="form-control rounded-start" id="globalSearch" placeholder="Cari lokasi, tipe electrical, atau transaksi..." aria-label="Cari lokasi, tipe electrical, atau transaksi">
-                        <button type="button" id="clearInline" class="btn btn-outline-secondary d-none d-md-inline" onclick="clearSearch()" title="Reset pencarian">
-                            <i class="fas fa-times" aria-hidden="true"></i>
-                        </button>
+                        <input type="search" class="form-control" id="globalSearch" placeholder="Cari lokasi, tipe electrical, atau transaksi..." aria-label="Cari lokasi, tipe electrical, atau transaksi">
                     </div>
                 </div>
                 <div class="col-md-3 col-6 text-md-end">
