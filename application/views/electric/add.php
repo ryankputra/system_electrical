@@ -1,8 +1,12 @@
 <div class="card mx-auto rounded-5 shadow border-0 mb-5 w-75" style="margin-top: 5rem;">
     <div class="card-header bg-transparent border-0 px-4 pt-3 pb-1">
-        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center justify-content-between">
             <h4 class="m-0">Tambah Electrical</h4>
-            <a href="<?= site_url('electric'); ?>" class="btn btn-secondary rounded-pill">Kembali</a>
+            <?php if (isset($typeData) && !empty($typeData)): ?>
+                <a href="<?= site_url('electric') . '?type=' . urlencode($typeData['type']); ?>" class="btn btn-secondary rounded-pill">Kembali</a>
+            <?php else: ?>
+                <a href="<?= site_url('electric'); ?>" class="btn btn-secondary rounded-pill">Kembali</a>
+            <?php endif; ?>
         </div>
     </div>
 

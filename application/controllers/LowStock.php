@@ -11,7 +11,7 @@ class LowStock extends CI_Controller {
 
     public function export_csv() {
         $this->load->model('Storage_model');
-        $low_stock = $this->Storage_model->get_low_stock();
+        $data['low_stock'] = $this->Storage_model->get_low_stock();
 
         // Set headers for CSV download
         header('Content-Type: text/csv; charset=UTF-8');
@@ -28,7 +28,7 @@ class LowStock extends CI_Controller {
         fputcsv($output, ['Tipe Electrical', 'Kategori', 'Jumlah Stok']);
 
         // Add data rows
-        foreach ($low_stock as $item) {
+        foreach ($data['low_stock'] as $item) {
             $type_id = trim($item['type_id']);
             $category = trim($item['category']);
             $total_amount = trim($item['total_amount']);
