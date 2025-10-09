@@ -279,8 +279,8 @@ class Electric_type extends CI_Controller
     private function _generateImageFilename(string $typeName): string
     {
         $sanitized = preg_replace('/[^a-z0-9\-]/', '-', strtolower($typeName));
-        $sanitized = preg_replace('/-+/', '-', $sanitized); // Remove multiple dashes
-        $sanitized = trim($sanitized, '-'); // Remove leading/trailing dashes
+        $sanitized = preg_replace('/-+/', '-', $sanitized); 
+        $sanitized = trim($sanitized, '-'); 
         
         return $sanitized . '-' . time();
     }
@@ -305,6 +305,6 @@ class Electric_type extends CI_Controller
             return @unlink($filePath);
         }
         
-        return true; // File doesn't exist, consider it "deleted"
+        return true; 
     }
 }
