@@ -31,10 +31,13 @@
                     <tbody>
                         <?php if (!empty($low_stock)): ?>
                             <?php foreach ($low_stock as $item): ?>
+                                    <?php // Ensure numeric and cap display at 5 ?>
+                                    <?php $amount = isset($item['total_amount']) ? (int)$item['total_amount'] : 0; ?>
+                                    <?php $display_amount = min($amount, 5); ?>
                                     <tr>
                                         <td class="text-center fw-semibold"><?= htmlspecialchars($item['type_id']); ?></td>
                                         <td class="text-center text-muted"><?= htmlspecialchars($item['category']); ?></td>
-                                        <td class="text-center text-danger fw-bold"><?= htmlspecialchars($item['total_amount']); ?></td>
+                                        <td class="text-center text-danger fw-bold"><?= htmlspecialchars($display_amount); ?></td>
                                     </tr>
                             <?php endforeach; ?>
                         <?php else: ?>
