@@ -304,17 +304,6 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     };
 });
+
 </script>
 
-<style>
-    .card-hover {
-        transition: all 0.25s ease-in-out;
-    }
-    .card-hover:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
-    }
-    .table-hover tbody tr:hover {
-        background-color: rgba(0, 86, 166, 0.05);
-    }
-</style>

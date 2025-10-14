@@ -8,7 +8,7 @@
 
     <!-- Scripts: Bootstrap then app logic (ASRS canonical) -->
     <script>
-        // Global vars used by ASRS scripts; set reasonable defaults for air-system
+        // Global vars used by ASRS scripts; set reasonable defaults for Electrical-system
         window.notificationDuration = window.notificationDuration || 3000;
         window.popoverConfigs = window.popoverConfigs || [];
         window.inputConfigs = window.inputConfigs || [];

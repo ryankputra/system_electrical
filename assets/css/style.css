@@ -295,3 +295,15 @@ div.card.mx-auto.rounded-5 > .card-body {
     .search-bar .input-group-text { border-right: 1px solid #ced4da; }
 }
 
+/* Dashboard inline styles moved from view: keep interactive hover and table hover rules */
+.card-hover {
+	transition: all 0.25s ease-in-out;
+}
+.card-hover:hover {
+	transform: translateY(-5px);
+	box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1) !important;
+}
+.table-hover tbody tr:hover {
+	background-color: rgba(0, 86, 166, 0.05);
+}
+

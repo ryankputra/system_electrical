@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Air System</title>
+    <title>Electrical System</title>
     <link rel="icon" type="image/png" href="<?= base_url('assets/img/favicon.png'); ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/bootstrap.min.css'); ?>">
     <link rel="stylesheet" href="<?= base_url('assets/css/style.css'); ?>">
@@ -51,7 +51,7 @@
 
     <!-- Footer -->
     <footer class="fixed-bottom d-flex text-white px-2 py-1 justify-content-between" style="background-color: #004274; font-size: 10px;">
-        <span>AIR-SYSTEM V 1.0</span>
+        <span>ELECTRICAL-SYSTEM V 1.0</span>
         <span>Operation Excellence 2025</span>
     </footer>
 </body>

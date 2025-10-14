@@ -5,7 +5,7 @@
         <!-- Container -->
         <div class="d-flex align-items-center justify-content-between">
             <!-- Title -->
-            <h4 class="m-0">Edit Pengguna Air System</h4>
+            <h4 class="m-0">Edit Pengguna Electrical System</h4>
 
             <!-- Back Button-->
             <a href="<?= site_url('user'); ?>" class="btn btn-secondary rounded-pill">Kembali</a>
