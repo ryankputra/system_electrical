@@ -30,8 +30,9 @@ class Electric_type_model extends CI_Model {
         $this->db->select('t.*, COUNT(e.type_id) AS usage_count');
         $this->db->from($this->table . ' AS t');
         $this->db->join('as_electric AS e', 't.id = e.type_id', 'left');
-        $this->db->group_by('t.id');
-        $this->db->order_by('t.type', 'ASC');
+    $this->db->group_by('t.id');
+    // Order newest first: prefer created_at if available, fall back to id
+    $this->db->order_by('t.created_at DESC, t.id DESC');
         return $this->db->get()->result_array();
     }
 
