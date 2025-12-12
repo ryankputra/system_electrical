@@ -401,6 +401,61 @@ class Storage extends CI_Controller
         exit;
     }
 
+    public function export_transactions_csv()
+    {
+        $start_date = $this->input->get('start_date');
+        $end_date = $this->input->get('end_date');
+        $transactions = ($start_date && $end_date) ? $this->Report_model->get_transactions_by_date($start_date, $end_date, 1000) : $this->Report_model->get_all_transactions(1000);
+
+        // Set headers for CSV download
+        header('Content-Type: text/csv; charset=UTF-8');
+        header('Content-Disposition: attachment;filename="storage_transactions_' . date('Y-m-d') . '.csv"');
+        header('Cache-Control: max-age=0');
+
+        // Open output stream
+        $output = fopen('php://output', 'w');
+
+        // Output BOM and Excel separator hint
+        fwrite($output, "\xEF\xBB\xBF");
+        fwrite($output, "sep=,\r\n");
+
+        // Header row (match view order): Storing ID, DateTime, Action, Amount, Location, Category, Type ID, Project, Pengguna, Catatan
+        fputcsv($output, ['Storing ID', 'DateTime', 'Action', 'Amount', 'Location', 'Category', 'Type ID', 'Project', 'Pengguna', 'Catatan'], ',', '"', "\\");
+
+        foreach ($transactions as $transaction) {
+            $storing_id = isset($transaction['storing_id']) ? trim($transaction['storing_id']) : '';
+            $datetime = isset($transaction['datetime']) ? date('M d, Y H:i', strtotime($transaction['datetime'])) : '';
+            $action = isset($transaction['action']) ? trim($transaction['action']) : '';
+            $amount = isset($transaction['amount']) ? (int)$transaction['amount'] : '';
+            $location = isset($transaction['location_id']) ? trim($transaction['location_id']) : '';
+            $category = isset($transaction['category']) ? trim($transaction['category']) : '';
+            $type_id = isset($transaction['type_id']) ? trim($transaction['type_id']) : '';
+
+            // Project column: prefer project_name, fallback to Batch indicator or empty
+            $project = '';
+            if (!empty($transaction['project_name'])) {
+                $project = $transaction['project_name'];
+            } elseif (!empty($transaction['batch_id'])) {
+                $project = 'Batch';
+            }
+
+            // Pengguna: prefer user_name, fallback to nik
+            $pengguna = $transaction['user_name'] ?? $transaction['nik'] ?? '';
+
+            $note = $transaction['note'] ?? '';
+
+            // Remove CR/LF to avoid breaking CSV rows
+            $vals = array_map(function ($v) {
+                return str_replace(["\r", "\n"], ' ', (string)$v);
+            }, [$storing_id, $datetime, $action, $amount, $location, $category, $type_id, $project, $pengguna, $note]);
+
+            fputcsv($output, $vals, ',', '"', "\\");
+        }
+
+        fclose($output);
+        exit;
+    }
+
     public function get_all_locations_json()
     {
         $locations = $this->Storage_model->get_all_locations();

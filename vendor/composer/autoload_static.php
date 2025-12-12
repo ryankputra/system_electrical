@@ -4,104 +4,46 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit605d6eee2b06af3d336f6bac0dfd5a0c
+class ComposerStaticInit32ca2b57f51139adacd1c1d7d1ab44c1
 {
     public static $files = array (
-        'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
-        '2cffec82183ee1cea088009cef9a6fc3' => __DIR__ . '/..' . '/ezyang/htmlpurifier/library/HTMLPurifier.composer.php',
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
+        'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
-        'Z' => 
+        'P' =>
         array (
-            'ZipStream\\' => 10,
-        ),
-        'P' => 
-        array (
-            'Psr\\SimpleCache\\' => 16,
-            'Psr\\Http\\Message\\' => 17,
-            'Psr\\Http\\Client\\' => 16,
             'PhpParser\\' => 10,
-            'PhpOffice\\PhpSpreadsheet\\' => 25,
         ),
-        'M' => 
-        array (
-            'MyCLabs\\Enum\\' => 13,
-            'Matrix\\' => 7,
-        ),
-        'D' => 
+        'D' =>
         array (
             'Doctrine\\Instantiator\\' => 22,
             'DeepCopy\\' => 9,
         ),
-        'C' => 
-        array (
-            'Complex\\' => 8,
-        ),
     );
 
     public static $prefixDirsPsr4 = array (
-        'ZipStream\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/maennchen/zipstream-php/src',
-        ),
-        'Psr\\SimpleCache\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/simple-cache/src',
-        ),
-        'Psr\\Http\\Message\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/http-factory/src',
-            1 => __DIR__ . '/..' . '/psr/http-message/src',
-        ),
-        'Psr\\Http\\Client\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/psr/http-client/src',
-        ),
-        'PhpParser\\' => 
+        'PhpParser\\' =>
         array (
             0 => __DIR__ . '/..' . '/nikic/php-parser/lib/PhpParser',
         ),
-        'PhpOffice\\PhpSpreadsheet\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/phpoffice/phpspreadsheet/src/PhpSpreadsheet',
-        ),
-        'MyCLabs\\Enum\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/myclabs/php-enum/src',
-        ),
-        'Matrix\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/markbaker/matrix/classes/src',
-        ),
-        'Doctrine\\Instantiator\\' => 
+        'Doctrine\\Instantiator\\' =>
         array (
             0 => __DIR__ . '/..' . '/doctrine/instantiator/src/Doctrine/Instantiator',
         ),
-        'DeepCopy\\' => 
+        'DeepCopy\\' =>
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
-        ),
-        'Complex\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/markbaker/complex/classes/src',
         ),
     );
 
     public static $prefixesPsr0 = array (
-        'o' => 
+        'o' =>
         array (
-            'org\\bovigo\\vfs\\' => 
+            'org\\bovigo\\vfs\\' =>
             array (
                 0 => __DIR__ . '/..' . '/mikey179/vfsstream/src/main/php',
-            ),
-        ),
-        'H' => 
-        array (
-            'HTMLPurifier' => 
-            array (
-                0 => __DIR__ . '/..' . '/ezyang/htmlpurifier/library',
             ),
         ),
     );
@@ -729,7 +671,6 @@ class ComposerStaticInit605d6eee2b06af3d336f6bac0dfd5a0c
         'SebastianBergmann\\Type\\UnknownType' => __DIR__ . '/..' . '/sebastian/type/src/type/UnknownType.php',
         'SebastianBergmann\\Type\\VoidType' => __DIR__ . '/..' . '/sebastian/type/src/type/VoidType.php',
         'SebastianBergmann\\Version' => __DIR__ . '/..' . '/sebastian/version/src/Version.php',
-        'Stringable' => __DIR__ . '/..' . '/myclabs/php-enum/stubs/Stringable.php',
         'TheSeer\\Tokenizer\\Exception' => __DIR__ . '/..' . '/theseer/tokenizer/src/Exception.php',
         'TheSeer\\Tokenizer\\NamespaceUri' => __DIR__ . '/..' . '/theseer/tokenizer/src/NamespaceUri.php',
         'TheSeer\\Tokenizer\\NamespaceUriException' => __DIR__ . '/..' . '/theseer/tokenizer/src/NamespaceUriException.php',
@@ -743,10 +684,10 @@ class ComposerStaticInit605d6eee2b06af3d336f6bac0dfd5a0c
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit605d6eee2b06af3d336f6bac0dfd5a0c::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit605d6eee2b06af3d336f6bac0dfd5a0c::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit605d6eee2b06af3d336f6bac0dfd5a0c::$prefixesPsr0;
-            $loader->classMap = ComposerStaticInit605d6eee2b06af3d336f6bac0dfd5a0c::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit32ca2b57f51139adacd1c1d7d1ab44c1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit32ca2b57f51139adacd1c1d7d1ab44c1::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit32ca2b57f51139adacd1c1d7d1ab44c1::$prefixesPsr0;
+            $loader->classMap = ComposerStaticInit32ca2b57f51139adacd1c1d7d1ab44c1::$classMap;
 
         }, null, ClassLoader::class);
     }

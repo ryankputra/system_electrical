@@ -89,15 +89,15 @@
                             </select>
                         </div>
 
-                        <div class="col-12">
+                            <div class="col-12">
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-filter"></i> Terapkan Filter
                             </button>
                             <a href="<?= site_url('storage/reports'); ?>" class="btn btn-outline-secondary">
                                 <i class="fas fa-times"></i> Hapus Filter
                             </a>
-                            <button type="button" class="btn btn-success" onclick="exportToExcel()">
-                                <i class="fas fa-download"></i> Ekspor Excel
+                            <button type="button" class="btn btn-success" onclick="exportToCsv()">
+                                <i class="fas fa-download"></i> Ekspor CSV
                             </button>
                         </div>
                         <?= form_close(); ?>
@@ -322,13 +322,13 @@
 
 <link rel="stylesheet" href="<?= base_url('assets/css/style.css'); ?>">
 <script>
-    function exportToExcel() {
+    function exportToCsv() {
         // Get current filter parameters
         const startDate = document.querySelector('input[name="start_date"]')?.value || '';
         const endDate = document.querySelector('input[name="end_date"]')?.value || '';
 
         // Build URL with parameters
-        let url = '<?= site_url("storage/export_transactions_excel"); ?>';
+        let url = '<?= site_url("storage/export_transactions_csv"); ?>';
         let params = [];
 
         if (startDate) params.push('start_date=' + encodeURIComponent(startDate));
