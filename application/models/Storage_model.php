@@ -8,6 +8,10 @@ class Storage_model extends CI_Model
     {
         parent::__construct();
         $this->load->database();
+        // Load history model for automatic transaction logging (if available)
+        if (file_exists(APPPATH . 'models/History_model.php')) {
+            $this->load->model('History_model');
+        }
     }
 
     public function get_storage_by_location($location_id, $keyword = null)
@@ -81,15 +85,34 @@ class Storage_model extends CI_Model
         if ($this->storage_exists($location_id, $type_id)) {
             $current_item = $this->get_storage_item($location_id, $type_id);
             $new_amount = (int)($current_item['amount'] ?? 0) + (int)$quantity;
-            return $this->update_storage($location_id, $type_id, $new_amount, $editor_nik);
+            $result = $this->update_storage($location_id, $type_id, $new_amount, $editor_nik);
+            // Log history: IN
+            if (isset($this->History_model) && method_exists($this->History_model, 'insert_history')) {
+                $this->History_model->insert_history([
+                    'electric_id' => $type_id,
+                    'type' => 'Masuk',
+                    'qty' => $quantity,
+                    'user_nik' => $editor_nik,
+                ]);
+            }
+            return $result;
         } else {
-            return $this->db->insert('as_storage', [
+            $insertResult = $this->db->insert('as_storage', [
                 'location_id' => $location_id,
                 'category' => $category,
                 'type_id' => $type_id,
                 'amount' => $quantity,
                 'editor' => $editor_nik
             ]);
+            if ($insertResult && isset($this->History_model) && method_exists($this->History_model, 'insert_history')) {
+                $this->History_model->insert_history([
+                    'electric_id' => $type_id,
+                    'type' => 'Masuk',
+                    'qty' => $quantity,
+                    'user_nik' => $editor_nik,
+                ]);
+            }
+            return $insertResult;
         }
     }
 
@@ -104,6 +127,15 @@ class Storage_model extends CI_Model
         }
         $new_amount = $current_item['amount'] - $quantity;
         if ($this->update_storage($location_id, $type_id, $new_amount, $editor_nik)) {
+            // Log history: OUT
+            if (isset($this->History_model) && method_exists($this->History_model, 'insert_history')) {
+                $this->History_model->insert_history([
+                    'electric_id' => $type_id,
+                    'type' => 'Keluar',
+                    'qty' => $quantity,
+                    'user_nik' => $editor_nik,
+                ]);
+            }
             return ['success' => true, 'message' => 'Barang berhasil diambil'];
         } else {
             return ['success' => false, 'message' => 'Gagal memperbarui database'];
@@ -130,11 +162,8 @@ class Storage_model extends CI_Model
 
     public function get_all_locations()
     {
-        $this->db->distinct();
-        $this->db->select('location_id');
-        $this->db->order_by('location_id');
-        $query = $this->db->get('as_storage');
-        return $query->result_array();
+        // Mengambil data dari tabel master lokasi
+        return $this->db->order_by('location_name', 'ASC')->get('as_location')->result_array();
     }
     
     public function get_storage_overview()

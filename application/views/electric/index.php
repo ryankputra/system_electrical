@@ -11,9 +11,6 @@
     <div class="card-header bg-white border-bottom px-lg-5 px-4 py-4">
         <div class="row g-3 align-items-center">
             <div class="col-12 col-lg-6">
-                <div class="mb-2">
-                    <a href="<?= site_url('electric/type'); ?>" class="btn btn-secondary rounded-pill px-4">Kembali ke Pilih Type</a>
-                </div>
                 <h3 class="m-0">Data Electrical</h3>
             </div>
             <div class="col-12 col-lg-6">
@@ -45,19 +42,7 @@
                             </select>
                         </div>
                     </form>
-                    <?php
-                    // Determine the query parameter for the main Add button based on the current filter
-                    $topAddUrl = site_url('electric/add');
-                    if (!empty($filterKeyword['type'])) {
-                        // Get the first type from the filter (already in array form)
-                        $firstType = is_array($filterKeyword['type']) ? $filterKeyword['type'][0] : $filterKeyword['type'];
-                        $topAddUrl .= '?type=' . urlencode($firstType);
-                    } elseif (!empty($filterKeyword['nama'])) {
-                        $firstNama = is_array($filterKeyword['nama']) ? $filterKeyword['nama'][0] : $filterKeyword['nama'];
-                        $topAddUrl .= '?type=' . urlencode($firstNama);
-                    }
-                    ?>
-                    <a id="add-new-btn" href="<?= $topAddUrl; ?>" class="btn btn-primary rounded-pill px-4" type="button">Tambah</a>
+                    <a id="add-new-btn" href="<?= site_url('electric/add'); ?>" class="btn btn-primary rounded-pill px-4" type="button">Tambah</a>
                 </div>
             </div>
         </div>
@@ -69,59 +54,42 @@
             <p>Electric tidak ditemukan. Coba sesuaikan kata kunci pencarian atau filter Anda.</p>
         </div>
     <?php else : ?>
-        <?php
-        $showBrand = $showVoltage = $showAmpere = $showDaya = $showLocation = false;
-        foreach (($electrics ?? []) as $e) {
-            if (!empty($e['brand'])) $showBrand = true;
-            if (!empty($e['voltage'])) $showVoltage = true;
-            if (!empty($e['ampere'])) $showAmpere = true;
-            if (!empty($e['daya'])) $showDaya = true;
-            if (!empty($e['location'])) $showLocation = true;
-        }
-        ?>
         <div class="card-body p-0 table-responsive">
             <table class="table table-borderless table-hover table-striped mb-0 align-middle">
                 <thead>
                     <tr class="text-center">
-                        <th>ID</th>
-                        <?php if ($showBrand) : ?><th>Brand</th><?php endif; ?>
+                        <th>No</th>
+                        <th>ID Barang</th>
                         <th>Nama</th>
-                        <th>Type</th>
-                        <?php if ($showVoltage) : ?><th>Voltage</th><?php endif; ?>
-                        <?php if ($showAmpere) : ?><th>Ampere</th><?php endif; ?>
-                        <?php if ($showLocation) : ?><th>Location</th><?php endif; ?>
+                        <th>Brand</th>
+                        <th>Tipe</th>
+                        <th>Lokasi</th>
                         <th>Stok</th>
                         <th class="pe-lg-4">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($electrics as $electric) : ?>
+                    <?php $no = (isset($start) ? (int)$start + 1 : 1); ?>
+                    <?php foreach (($electrics ?? []) as $electric) : ?>
                         <tr class="text-center">
-                            <td>
-                                <span data-bs-toggle="tooltip" title="<?= htmlspecialchars($electric['electric_id']) ?>">
-                                    <?= htmlspecialchars(substr($electric['electric_id'], 0, 15)) . (strlen($electric['electric_id']) > 15 ? '...' : '') ?>
-                                </span>
-                            </td>
-                            <?php if ($showBrand) : ?><td><?= htmlspecialchars($electric['brand'] ?? '-') ?></td><?php endif; ?>
-                            <td><?= htmlspecialchars($electric['nama']) ?></td>
-                            <td><?= htmlspecialchars($electric['type']) ?></td>
-                            <?php if ($showVoltage) : ?><td><?= htmlspecialchars($electric['voltage'] ?? '-') ?></td><?php endif; ?>
-                            <?php if ($showAmpere) : ?><td><?= htmlspecialchars($electric['ampere'] ?? '-') ?></td><?php endif; ?>
-                            <?php if ($showLocation) : ?><td><?= htmlspecialchars($electric['location'] ?? '-') ?></td><?php endif; ?>
-                            <td><span class="badge bg-success fs-6"><?= $electric['total_stock'] ?? 0 ?></span></td>
-                            
+                            <td><?= $no++ ?></td>
+                            <td><?= htmlspecialchars($electric['electric_id'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($electric['nama'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($electric['brand'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($electric['type'] ?? '-') ?></td>
+                            <td><?= htmlspecialchars($electric['location'] ?? '-') ?></td>
+                            <td><span class="badge bg-success fs-6"><?= (int)($electric['total_stock'] ?? 0) ?></span></td>
                             <td class="pe-lg-4">
                                 <div class="btn-group btn-group-sm" role="group">
-                                    <button type="button" class="btn btn-outline-success" onclick="quickStoreItem('<?= htmlspecialchars($electric['nama']) ?>', '<?= htmlspecialchars($electric['electric_id']) ?>', '<?= htmlspecialchars($electric['location'] ?? '') ?>')">
+                                    <button type="button" class="btn btn-outline-success" onclick="quickStoreItem('<?= htmlspecialchars($electric['nama'] ?? '') ?>', '<?= htmlspecialchars($electric['electric_id'] ?? '') ?>', '<?= htmlspecialchars($electric['location'] ?? '') ?>')">
                                         <i class="fas fa-plus"></i> Simpan
                                     </button>
-                                    <button type="button" class="btn btn-outline-warning" onclick="quickTakeItem('<?= htmlspecialchars($electric['nama']) ?>', '<?= htmlspecialchars($electric['electric_id']) ?>', '<?= htmlspecialchars($electric['location'] ?? '') ?>', <?= $electric['total_stock'] ?? 0 ?>)">
+                                    <button type="button" class="btn btn-outline-warning" onclick="quickTakeItem('<?= htmlspecialchars($electric['nama'] ?? '') ?>', '<?= htmlspecialchars($electric['electric_id'] ?? '') ?>', '<?= htmlspecialchars($electric['location'] ?? '') ?>', <?= (int)($electric['total_stock'] ?? 0) ?>)">
                                         <i class="fas fa-minus"></i> Ambil
                                     </button>
-                                    <a href="<?= site_url('electric/edit/' . urlencode($electric['electric_id'])) ?>" class="btn <?= ($electric['total_stock'] ?? 0) > 0 ? 'btn-outline-secondary disabled' : 'btn-outline-primary' ?>">
+                                    <a href="<?= site_url('electric/edit/' . urlencode($electric['electric_id'] ?? '')) ?>" class="btn <?= ((int)($electric['total_stock'] ?? 0)) > 0 ? 'btn-outline-secondary disabled' : 'btn-outline-primary' ?>">
                                         <i class="fas fa-edit"></i> Edit
                                     </a>
-                                    <?php // Add per-row: use type_id if numeric id exists, else use name as identifier ?>
                                 </div>
                             </td>
                         </tr>

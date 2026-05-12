@@ -53,13 +53,12 @@ $route['default_controller'] = 'auth';
 $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
-// Full routes for Electric feature (new controller will be `Electric`)
+// Dashboard & Auth
+$route['user/dashboard'] = 'user/dashboard';
+$route['auth/index'] = 'auth/index';
+
+// Features
 $route['electric'] = 'electric';
 $route['electric/(:any)'] = 'electric/$1';
-// Full routes for Electric type management (new controller will be `Electric_type`)
 $route['electric_type'] = 'electric_type';
 $route['electric_type/(:any)'] = 'electric_type/$1';
-
-// legacy pneumatic routes removed; electric is primary. If backward compatibility needed, re-add aliases.
-$route['storage/low_stock_detail'] = 'LowStock/detail';
-$route['lowstock/export_csv'] = 'LowStock/export_csv';

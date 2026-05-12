@@ -1,0 +1,26 @@
+# Composer / PHP
+/vendor/
+/.env
+/vendor/
+/.idea/
+/.vscode/
+/.DS_Store
+Thumbs.db
+
+# Node
+/node_modules/
+
+# Logs and uploads
+*.log
+application/logs/
+application/cache/
+/uploads/
+/assets/img/electric/
+
+# OS files
+ehthumbs.db
+Icon?
+
+# Misc
+*.zip
+*.tar.gz

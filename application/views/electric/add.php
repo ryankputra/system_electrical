@@ -22,11 +22,15 @@
                 </div>
                 <input type="hidden" name="type_id" value="<?= $typeData['id']; ?>">
             <?php else: ?>
-                 <div class="mb-3">
-                    <div class="alert alert-danger">
-                        Kategori belum dipilih.
-                        <a href="<?= site_url('electric/type') ?>" class="btn btn-outline-danger btn-sm ms-2">Kembali ke Pemilihan Kategori</a>
-                    </div>
+                <div class="mb-3">
+                    <label for="type_id" class="form-label">Kategori</label>
+                    <select id="type_id" name="type_id" class="form-select <?= form_error('type_id') ? 'is-invalid' : '' ?>" required>
+                        <option value="">-- Pilih Kategori --</option>
+                        <?php foreach (($types ?? []) as $t) : ?>
+                            <option value="<?= htmlspecialchars($t['id'], ENT_QUOTES, 'UTF-8') ?>" <?= set_select('type_id', $t['id']); ?>><?= htmlspecialchars($t['type'], ENT_QUOTES, 'UTF-8') ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?= form_error('type_id', "<div class='invalid-feedback'>", "</div>"); ?>
                 </div>
             <?php endif; ?>
 
@@ -89,10 +93,17 @@
                 <?= form_error('daya', "<div class='invalid-feedback'>", "</div>"); ?>
             </div>
 
-            <div class="mb-2">
-                <label for="location" class="form-label">Lokasi <small class="text-muted">(opsional)</small></label>
-                <input id="location" type="text" class="form-control rounded-pill <?= form_error('location') ? 'is-invalid' : '' ?>" name="location" placeholder="Contoh: RAK E2, PANEL 5" value="<?= set_value('location'); ?>" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
-                <?= form_error('location', "<div class='invalid-feedback'>", "</div>"); ?>
+            <div class="mb-3">
+                <label for="location" class="form-label">Lokasi Penyimpanan</label>
+                <select name="location" id="location" class="form-select" required>
+                    <option value="">-- Pilih Lokasi --</option>
+                    <?php foreach(($locations ?? []) as $loc) : ?>
+                        <option value="<?= htmlspecialchars($loc['location_name'], ENT_QUOTES, 'UTF-8'); ?>" <?= set_select('location', $loc['location_name']); ?>>
+                            <?= htmlspecialchars($loc['location_name'], ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <?= form_error('location', '<small class="text-danger">', '</small>'); ?>
             </div>
 
             <div class="mb-3">
@@ -108,7 +119,7 @@
             </div>
 
             <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary rounded-pill px-5" <?= (isset($typeData)) ? '' : 'disabled' ?>>Simpan</button>
+                <button type="submit" class="btn btn-primary rounded-pill px-5">Simpan</button>
             </div>
         </form>
     </div>

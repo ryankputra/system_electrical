@@ -83,6 +83,9 @@
                             </div>
                         </th>
 
+                        <!-- Role Column -->
+                        <th scope="col" class="text-center">Role</th>
+
                         <!-- Edit Column -->
                         <th scope="col" class="text-center">Edit</th>
 
@@ -97,6 +100,7 @@
                         <tr>
                             <th scope="row" class="text-center ps-lg-5 ps-4"><?= $user['nik']; ?></th>
                             <td class="text-center"><?= $user['name']; ?></td>
+                            <td class="text-center"><?= isset($user['role']) ? ucfirst($user['role']) : '-'; ?></td>
                             <td class="text-center">
                                 <a href="<?= site_url('user/edit/' . $user['nik']); ?>" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit pengguna">
                                     <img src="<?= base_url('assets/img/edit.png'); ?>" alt="edit" class="action-button">

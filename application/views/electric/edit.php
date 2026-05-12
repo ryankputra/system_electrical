@@ -106,15 +106,19 @@
             </div>
 
             <!-- Location Input Section -->
-            <div class="mb-2">
-                <label for="location" class="form-label">Location <small class="text-muted">(opsional)</small></label>
-                <div class="position-relative">
-                    <input id="location" type="text" class="form-control rounded-pill pe-5 <?= form_error('location') ? 'is-invalid' : '' ?>" name="location" placeholder="Contoh: RAK E2, RAK E3, RAK E5" value="<?= set_value('location') ? set_value('location') : ($electric['location'] ?? ''); ?>" onkeyup="toggleClear('location', 'clear-button-location')" autocomplete="off" maxlength="100" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
-                    <img src="<?= base_url('assets/img/delete.png'); ?>" alt="delete" class="action-button clear-button" id="clear-button-location" onclick="clearInput('location', 'clear-button-location')" aria-hidden="true">
-                    <?= form_error('location', "<div class='invalid-feedback'>", "</div>"); ?>
-                </div>
+            <div class="mb-3">
+                <label for="location" class="form-label">Lokasi Penyimpanan</label>
+                <select name="location" id="location" class="form-select">
+                    <option value="">-- Pilih Lokasi --</option>
+                    <?php foreach ($locations as $loc) : ?>
+                        <option value="<?= htmlspecialchars($loc['location_name'] ?? ($loc['location'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>" <?= set_select('location', $loc['location_name'] ?? ($loc['location'] ?? ''), set_value('location', $electric['location'] ?? '') === ($loc['location_name'] ?? ($loc['location'] ?? ''))); ?>>
+                            <?= htmlspecialchars($loc['location_name'] ?? ($loc['location'] ?? ''), ENT_QUOTES, 'UTF-8'); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <?= form_error('location', '<small class="text-danger">', '</small>'); ?>
                 <div class="form-text text-muted">
-                    <small>Lokasi penyimpanan electrical. Maksimal 100 karakter.</small>
+                    <small>Lokasi penyimpanan electrical.</small>
                 </div>
             </div>
 

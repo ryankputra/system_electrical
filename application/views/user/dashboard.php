@@ -135,7 +135,7 @@
             <div class="card border-0 shadow-sm rounded-4 h-100">
                 <div class="card-header bg-transparent border-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Transaksi Terbaru</h5>
-                    <a href="<?= site_url('storage/reports'); ?>" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
+                    <a href="<?= site_url('transaksi_stok/reports'); ?>" class="btn btn-sm btn-outline-primary">Lihat Semua</a>
                 </div>
                 <div class="card-body p-4">
                     <div class="table-responsive">
@@ -182,7 +182,7 @@
             <div class="card border-0 shadow-sm rounded-4 h-100 border-start border-danger border-4">
                 <div class="card-header bg-danger bg-opacity-10 border-0 pt-4 pb-2 d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 text-danger"><i class="fas fa-exclamation-circle me-2"></i>Detail Stok Rendah</h5>
-                    <a href="<?= site_url('storage/low_stock_detail'); ?>" class="btn btn-sm btn-outline-danger">Lihat Detail</a>
+                    <a href="<?= site_url('transaksi_stok/low_stock_detail'); ?>" class="btn btn-sm btn-outline-danger">Lihat Detail</a>
                 </div>
                 <div class="card-body p-4" style="max-height: 450px; overflow-y: auto;">
                     <?php if (!empty($low_stock)): ?>

@@ -31,6 +31,30 @@
                 </div>
             </div>
 
+            <!-- Password Input Section (optional) -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Password <small class="text-muted">(Kosongkan jika tidak ingin mengubah)</small></label>
+                <div class="position-relative">
+                    <input id="password" type="password" class="form-control rounded-pill pe-5 <?= form_error('password') ? 'is-invalid' : '' ?>" name="password" placeholder="Biarkan kosong jika tidak diganti" value="<?= set_value('password'); ?>" onkeyup="toggleClear('password', 'clear-button-password')" autocomplete="new-password">
+                    <img src="<?= base_url('assets/img/delete.png'); ?>" alt="delete" class="action-button clear-button" id="clear-button-password" onclick="clearInput('password', 'clear-button-password')" aria-hidden="true">
+                    <?= form_error('password', "<div class='invalid-feedback'>", "</div>"); ?>
+                </div>
+            </div>
+
+            <!-- Role Input Section -->
+            <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <?php $selectedRole = set_value('role') ? set_value('role') : $user['role']; ?>
+                <?php $availableRoles = isset($roles) && is_array($roles) ? $roles : ['admin', 'user']; ?>
+                <select id="role" name="role" class="form-select rounded-pill <?= form_error('role') ? 'is-invalid' : '' ?>">
+                    <option value="">-- Pilih Role --</option>
+                    <?php foreach ($availableRoles as $r) : ?>
+                        <option value="<?= $r ?>" <?= $selectedRole === $r ? 'selected' : '' ?>><?= ucfirst($r) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <?= form_error('role', "<div class='invalid-feedback d-block'>", "</div>"); ?>
+            </div>
+
             <?php if ($this->session->userdata('user_data')['nik'] !== $user['nik']) : ?>
                 <!-- Save and Delete Button (for other users) -->
                 <div class="d-flex justify-content-between">
@@ -57,5 +81,10 @@
         id: 'name',
         button: 'clear-button-name'
     }];
+    // add password clear mapping
+    window.inputConfigs.push({
+        id: 'password',
+        button: 'clear-button-password'
+    });
 </script>
 <script src="<?= base_url('assets/img/js/forminput.js'); ?>"></script>

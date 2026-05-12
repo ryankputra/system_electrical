@@ -25,6 +25,7 @@
 </head>
 
 <body>
+    <?php $_user_data_for_header = $this->session->userdata('user_data') ?? []; $displayName = !empty($_user_data_for_header['name']) ? explode(' ', $_user_data_for_header['name'])[0] : 'Guest'; ?>
     <nav class="navbar navbar-dark fixed-top shadow-sm" style="background-color: #004274;">
         <div class="container-fluid">
             <div class="d-flex align-items-center gap-3">
@@ -38,7 +39,7 @@
             </div>
 
             <div class="d-flex align-items-center gap-3">
-                <span class="text-white">Hi, <?= isset($this->session->userdata('user_data')['name']) ? explode(' ', $this->session->userdata('user_data')['name'])[0] : 'Guest'; ?></span>
+                <span class="text-white">Hi, <?= htmlspecialchars($displayName, ENT_QUOTES, 'UTF-8'); ?></span>
                 <div class="vr" style="height: 24px; background-color: #ffffff40;"></div>
                 <a href="<?= site_url('auth/logout'); ?>" class="text-white text-decoration-none">
                     Logout
@@ -53,15 +54,16 @@
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                 </div>
 
-                <div class="offcanvas-body">
-                    <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
-                        <li class="nav-item"><a class="nav-link" href="<?= site_url('user/dashboard'); ?>">Beranda</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?= site_url('user'); ?>">User</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?= site_url('electric/type'); ?>">Electrical</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?= site_url('electric_type'); ?>">Kelola Type</a></li>
-                        <li class="nav-item"><a class="nav-link" href="<?= site_url('storage'); ?>">Storage</a></li>
-                    </ul>
-                </div>
+                    <div class="offcanvas-body">
+                        <?php $userInfo = $this->session->userdata('user_data') ?? []; ?>
+                        <ul class="navbar-nav justify-content-end flex-grow-1 pe-3">
+                            <li class="nav-item"><a class="nav-link" href="<?= site_url('user/dashboard'); ?>">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="<?= site_url('user'); ?>">Manajemen User</a></li>
+                            <li class="nav-item"><a class="nav-link" href="<?= site_url('electric'); ?>">Katalog Electrical</a></li>
+                            <li class="nav-item"><a class="nav-link" href="<?= site_url('location'); ?>"><i class="fas fa-map-marker-alt me-2"></i>Master Lokasi</a></li>
+                            <li class="nav-item"><a class="nav-link" href="<?= site_url('history'); ?>">Riwayat Stok</a></li>
+                        </ul>
+                    </div>
             </div>
         </div>
     </nav>

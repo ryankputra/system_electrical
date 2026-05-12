@@ -46,6 +46,8 @@ class Electric extends CI_Controller
         // Load required models and libraries
         $this->load->model('Electric_model');
         $this->load->model('Electric_type_model');
+        $this->load->model('Storage_model'); // PASTI KAN INI ADA
+        $this->load->model('Location_model'); // Master lokasi
         $this->load->library(['form_validation', 'pagination']);
         $this->load->helper('common');
 
@@ -117,9 +119,8 @@ class Electric extends CI_Controller
             }
         }
         
-        // Load Storage_model and retrieve location data for modal
-        $this->load->model('Storage_model');
-        $locations = $this->Storage_model->get_all_locations();
+        // Retrieve location data for modal from master lokasi
+        $locations = $this->Location_model->get_all();
 
         $data = [
             'title' => 'Data Electric',
@@ -132,7 +133,8 @@ class Electric extends CI_Controller
             'hasFilters' => (!empty($sessionData['search']) || !empty($sessionData['filter']) || !empty($sessionData['sort'])),
             'name_options' => $nameOptions,
             'type_options' => $typeOptions,
-            'locations'    => $locations, 
+            'locations'    => $locations,
+            'start' => $startData,
         ];
         render_view('electric/index', $data);
     }
@@ -198,6 +200,8 @@ class Electric extends CI_Controller
 
         if ($this->input->method() === 'post') {
             $this->setValidationRules();
+            // Tambahkan validasi lokasi
+            $this->form_validation->set_rules('location', 'Lokasi', 'required');
 
             if ($this->form_validation->run()) {
                 $typeId = (int)$this->input->post('type_id', true);
@@ -267,13 +271,15 @@ class Electric extends CI_Controller
             }
         }
 
-        if (!$typeData && $this->input->method() !== 'post') {
-            set_message(['info', 'Silakan pilih kategori jenis electrical terlebih dahulu.']);
-            // Redirect user to type selection so they can choose a category
-            redirect('electric/type');
-            return;
+        // If no specific type has been provided, provide list of types to the form
+        if (!$typeData) {
+            $data['types'] = $this->Electric_type_model->getAllTypes();
         }
-        $data = ['title' => 'Tambah Electric', 'typeData' => $typeData];
+
+        // Ambil data lokasi untuk dropdown
+        $data['locations'] = $this->Location_model->get_all();
+        $data['title'] = 'Tambah Electric';
+        $data['typeData'] = $typeData;
         render_view('electric/add', $data);
     }
 
@@ -404,11 +410,11 @@ class Electric extends CI_Controller
             }
         }
         
-        $data = [
-            'title'    => 'Edit Electric',
-            'electric' => $electric,
-            'typeData' => $typeData
-        ];
+        // Ambil data lokasi agar dropdown muncul saat edit
+        $data['locations'] = $this->Location_model->get_all();
+        $data['electric'] = $electric;
+        $data['typeData'] = $typeData;
+        $data['title'] = 'Edit Electric';
         render_view('electric/edit', $data);
     }
 

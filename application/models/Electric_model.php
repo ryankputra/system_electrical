@@ -21,7 +21,28 @@ class Electric_model extends CI_Model
             GROUP BY type_id
         )";
 
-        $this->db->select('e.*, s.total_stock');
+        // Determine how location is stored and ensure we always provide a `location` column
+        $has_location_col = $this->db->field_exists('location', $this->table);
+        $has_location_id_col = $this->db->field_exists('location_id', $this->table);
+        $has_location_name_col = $this->db->field_exists('location_name', $this->table);
+
+        $select = ['e.*', 's.total_stock'];
+
+        if ($has_location_id_col) {
+            // If electric table stores a location_id, join to master table to get the name
+            $this->db->join('as_location l', 'e.location_id = l.id', 'left');
+            $select[] = 'l.location_name as location';
+        } elseif ($has_location_col) {
+            // If electric table already stores location name
+            $select[] = 'e.location as location';
+        } elseif ($has_location_name_col) {
+            $select[] = 'e.location_name as location';
+        } else {
+            // Ensure the result always contains a `location` key
+            $select[] = "NULL as location";
+        }
+
+        $this->db->select($select);
         $this->db->from($this->table . ' e');
 
         $this->db->join(
@@ -48,7 +69,12 @@ class Electric_model extends CI_Model
             list($field, $direction) = explode('-', $sort);
             $this->db->order_by('e.' . $field, $direction);
         } else {
-            $this->db->order_by('e.updated_at', 'DESC');
+            // Use updated_at if available, otherwise fall back to created_at to avoid SQL errors
+            if ($this->db->field_exists('updated_at', $this->table)) {
+                $this->db->order_by('e.updated_at', 'DESC');
+            } else {
+                $this->db->order_by('e.created_at', 'DESC');
+            }
         }
 
         $this->db->limit($limit, $start);
@@ -94,21 +120,28 @@ class Electric_model extends CI_Model
         return $this->db->count_all_results($this->table) > 0; 
     }
 
-    public function generateElectricId(string $nama, string $type, $voltage, $ampere): string 
-    { 
-        $safeNama = preg_replace('/[^a-z0-9\-]/i', '-', strtolower(trim($nama))); 
-        $safeType = preg_replace('/[^a-z0-9\-]/i', '-', strtolower(trim($type))); 
-        $cleanPart = function($value) { 
-            if ($value === null || trim($value) === '') { 
-                return '0'; 
-            } 
-            $cleanedValue = str_replace('.', '-', trim($value)); 
-            return preg_replace('/[^a-z0-9\-]/i', '', strtolower($cleanedValue)); 
-        }; 
-        $vPart = $cleanPart($voltage); 
-        $aPart = $cleanPart($ampere); 
-        return 'elc-' . $safeNama . '-' . $safeType . '-' . $vPart . '-' . $aPart; 
+   public function generateElectricId(string $nama, string $type, $voltage, $ampere): string 
+{ 
+    // Mengambil 3 huruf pertama nama dan tipe untuk ID yang lebih pendek
+    $prefix = 'ELC';
+    $safeNama = strtoupper(substr(preg_replace('/[^a-z0-9]/i', '', $nama), 0, 3));
+    
+    // Cari nomor urut terakhir di database untuk nama tersebut
+    $this->db->like('electric_id', $prefix . '-' . $safeNama);
+    $this->db->order_by('electric_id', 'DESC');
+    $lastId = $this->db->get($this->table)->row_array();
+
+    if ($lastId) {
+        $lastNumber = intval(substr($lastId['electric_id'], -3)) + 1;
+    } else {
+        $lastNumber = 1;
     }
+
+    $formattedNumber = str_pad($lastNumber, 3, "0", STR_PAD_LEFT);
+    
+    // Hasilnya akan seperti: ELC-LAM-001
+    return $prefix . '-' . $safeNama . '-' . $formattedNumber; 
+}
 
     public function countElectric(?string $search, ?array $filter): int 
     { 
@@ -125,17 +158,27 @@ class Electric_model extends CI_Model
 
     public function getElectricFilter(string $column, ?string $search = null, ?array $filter = null): array 
     { 
-        $this->db->select($column)->distinct()->where("$column IS NOT NULL")->where("$column !=", '')->order_by($column, 'ASC'); 
-        if ($search) { 
-            $this->db->group_start()->like('nama', $search)->or_like('type', $search)->or_like('brand', $search)->group_end(); 
-        } 
-        if ($filter) { 
-            foreach($filter as $key => $val) { 
-                if(!empty($val)) $this->db->where_in($key, $val); 
-            } 
-        } 
-        $results = $this->db->get($this->table)->result_array(); 
-        return array_column($results, $column); 
+        // If the column does not exist in the electric table, provide safe fallbacks
+        if (!$this->db->field_exists($column, $this->table)) {
+            if ($column === 'location') {
+                // Get master location names
+                $rows = $this->db->select('location_name')->order_by('location_name', 'ASC')->get('as_location')->result_array();
+                return array_column($rows, 'location_name');
+            }
+            return [];
+        }
+
+        $this->db->select($column)->distinct()->where("$column IS NOT NULL")->where("$column !=", '')->order_by($column, 'ASC');
+        if ($search) {
+            $this->db->group_start()->like('nama', $search)->or_like('type', $search)->or_like('brand', $search)->group_end();
+        }
+        if ($filter) {
+            foreach($filter as $key => $val) {
+                if(!empty($val)) $this->db->where_in($key, $val);
+            }
+        }
+        $results = $this->db->get($this->table)->result_array();
+        return array_column($results, $column);
     }
 
     public function getAllElectrics(): array 

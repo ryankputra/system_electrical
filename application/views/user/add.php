@@ -35,6 +35,29 @@
                 </div>
             </div>
 
+            <!-- Password Input Section -->
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <div class="position-relative">
+                    <input id="password" type="password" class="form-control rounded-pill pe-5 <?= form_error('password') ? 'is-invalid' : '' ?>" name="password" placeholder="Minimal 6 karakter" value="<?= set_value('password'); ?>" onkeyup="toggleClear('password', 'clear-button-password')" autocomplete="new-password">
+                    <img src="<?= base_url('assets/img/delete.png'); ?>" alt="delete" class="action-button clear-button" id="clear-button-password" onclick="clearInput('password', 'clear-button-password')" aria-hidden="true">
+                    <?= form_error('password', "<div class='invalid-feedback'>", "</div>"); ?>
+                </div>
+            </div>
+
+            <!-- Role Input Section -->
+            <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <?php $availableRoles = isset($roles) && is_array($roles) ? $roles : ['admin', 'user']; ?>
+                <select id="role" name="role" class="form-select rounded-pill <?= form_error('role') ? 'is-invalid' : '' ?>">
+                    <option value="">-- Pilih Role --</option>
+                    <?php foreach ($availableRoles as $r) : ?>
+                        <option value="<?= $r ?>" <?= set_value('role') === $r ? 'selected' : '' ?>><?= ucfirst($r) ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <?= form_error('role', "<div class='invalid-feedback d-block'>", "</div>"); ?>
+            </div>
+
             <!-- Submit Button -->
             <div class="text-center">
                 <button type="submit" class="btn btn-primary rounded-pill">Tambah</button>
@@ -56,6 +79,10 @@
         {
             id: 'name',
             button: 'clear-button-name'
+        },
+        {
+            id: 'password',
+            button: 'clear-button-password'
         }
     ];
 </script>

@@ -149,8 +149,32 @@ class User extends CI_Controller
             self::CONFIG['validation']['name']['errors']
         );
 
+        // Validate password and role for new users
+        $this->form_validation->set_rules(
+            'password',
+            'Password',
+            'required|min_length[6]',
+            [
+                'required'   => '%s harus diisi',
+                'min_length' => '%s minimal 6 karakter',
+            ]
+        );
+
+        $this->form_validation->set_rules(
+            'role',
+            'Role',
+            'required',
+            [
+                'required' => '%s harus diisi',
+            ]
+        );
+
         if ($this->form_validation->run() === false) {
-            $data = ['title' => 'Tambah Pengguna Air System', 'user' => null];
+            $roles = $this->User_model->getRoles();
+            if (empty($roles)) {
+                $roles = ['admin', 'user']; // fallback jika kolom enum tidak ditemukan
+            }
+            $data = ['title' => 'Tambah Pengguna Air System', 'user' => null, 'roles' => $roles];
             render_view('user/add', $data);
             return;
         }
@@ -188,8 +212,33 @@ class User extends CI_Controller
             self::CONFIG['validation']['name']['errors']
         );
 
+        // Role required on edit; password optional but validate length when provided
+        $this->form_validation->set_rules(
+            'role',
+            'Role',
+            'required',
+            [
+                'required' => '%s harus diisi',
+            ]
+        );
+
+        if ($this->input->post('password')) {
+            $this->form_validation->set_rules(
+                'password',
+                'Password',
+                'min_length[6]',
+                [
+                    'min_length' => '%s minimal 6 karakter',
+                ]
+            );
+        }
+
         if ($this->form_validation->run() === false) {
-            $data = ['title' => 'Edit Pengguna Air System', 'user' => $user];
+            $roles = $this->User_model->getRoles();
+            if (empty($roles)) {
+                $roles = ['admin', 'user'];
+            }
+            $data = ['title' => 'Edit Pengguna Air System', 'user' => $user, 'roles' => $roles];
             render_view('user/edit', $data);
             return;
         }

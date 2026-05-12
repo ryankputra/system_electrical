@@ -18,6 +18,7 @@ class Electric_type_model extends CI_Model {
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('Id_generator_model');
     }
 
     /**
@@ -30,9 +31,12 @@ class Electric_type_model extends CI_Model {
         $this->db->select('t.*, COUNT(e.type_id) AS usage_count');
         $this->db->from($this->table . ' AS t');
         $this->db->join('as_electric AS e', 't.id = e.type_id', 'left');
-    $this->db->group_by('t.id');
-    // Order newest first: prefer created_at if available, fall back to id
-    $this->db->order_by('t.created_at DESC, t.id DESC');
+        $this->db->group_by('t.id');
+        // Order newest first: prefer created_at if available, fall back to id
+        if ($this->db->field_exists('created_at', $this->table)) {
+            $this->db->order_by('t.created_at', 'DESC');
+        }
+        $this->db->order_by('t.id', 'DESC');
         return $this->db->get()->result_array();
     }
 
@@ -78,8 +82,11 @@ class Electric_type_model extends CI_Model {
             'created_at' => mdate('%Y-%m-%d %H:%i:%s', now('Asia/Jakarta')),
             'updated_at' => mdate('%Y-%m-%d %H:%i:%s', now('Asia/Jakarta')),
         ];
+        // Generate manual ID and insert (no AUTO_INCREMENT)
+        $newId = $this->Id_generator_model->generate_manual_id($this->table, 'id');
+        $data['id'] = (int)$newId;
         $this->db->insert($this->table, $data);
-        return (int)$this->db->insert_id();
+        return (int)$newId;
     }
 
     /**
