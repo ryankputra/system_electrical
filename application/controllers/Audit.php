@@ -53,7 +53,36 @@ class Audit extends CI_Controller
         $data = [
             'title' => 'Audit / Stock Opname',
             'electrics' => $electrics,
+            'audit_history' => []
         ];
+
+        // If OE Manager, fetch the history of audits for this location
+        if (is_manajer_oe() && !empty($lokasiId)) {
+            $historyTable = $this->db->table_exists('as_history') ? 'as_history' : ($this->db->table_exists('history') ? 'history' : null);
+            if ($historyTable) {
+                $qtyField = null;
+                foreach (['qty', 'quantity', 'jumlah', 'amount'] as $c) {
+                    if ($this->db->field_exists($c, $historyTable)) { $qtyField = $c; break; }
+                }
+                $dateField = null;
+                foreach (['created_at', 'date', 'tanggal_terima'] as $c) {
+                    if ($this->db->field_exists($c, $historyTable)) { $dateField = $c; break; }
+                }
+
+                $this->db->select('h.electric_id, ' . ($qtyField ? 'h.' . $qtyField : '0') . ' as qty, h.keterangan, h.' . $dateField . ' as date, h.user_nik');
+                $this->db->from($historyTable . ' h');
+                if ($this->db->table_exists('as_electric')) {
+                    $this->db->join('as_electric e', 'h.electric_id = e.electric_id', 'left');
+                    $this->db->select('e.nama, e.type as tipe, e.brand');
+                    $this->db->where('e.location', $lokasiId);
+                }
+                $this->db->where('h.type', 'Audit');
+                $this->db->order_by('h.' . $dateField, 'DESC');
+                
+                $data['audit_history'] = $this->db->get()->result_array();
+            }
+        }
+
         render_view('audit/index', $data);
     }
 
@@ -116,7 +145,7 @@ class Audit extends CI_Controller
             'electric_id' => $electric_id,
             'type' => 'Audit',
             'user_nik' => $user_nik,
-            'keterangan' => 'Stock Opname: system=' . $systemStock . ', counted=' . $counted . ', diff=' . $diff . '. ' . ($note ?? ''),
+            'keterangan' => 'Penyesuaian Audit: Stok Sistem ' . $systemStock . ' menjadi Stok Fisik ' . $counted . '. Alasan: ' . ($note ?? ''),
         ];
         if ($qtyCol !== null) $auditInsert[$qtyCol] = abs($diff);  // amount of discrepancy
         if ($this->db->field_exists('qty_sisa', $historyTable)) $auditInsert['qty_sisa'] = 0;  // Audit log does not hold batch stock
@@ -140,7 +169,7 @@ class Audit extends CI_Controller
                 'electric_id' => $electric_id,
                 'type' => 'Masuk',
                 'user_nik' => $user_nik,
-                'keterangan' => 'Audit surplus adjustment (' . $diff . ' units)',
+                'keterangan' => 'Penambahan dari Hasil Audit (Surplus: ' . $diff . ' unit). Alasan: ' . ($note ?? ''),
             ];
             if ($qtyCol !== null) $inInsert[$qtyCol] = $diff;  // surplus amount
             if ($this->db->field_exists('qty_sisa', $historyTable)) $inInsert['qty_sisa'] = $diff;  // ONLY the surplus amount is available in this batch
@@ -200,10 +229,10 @@ class Audit extends CI_Controller
                 'electric_id' => $electric_id,
                 'type' => 'Keluar',
                 'user_nik' => $user_nik,
-                'keterangan' => 'Audit shortage adjustment (' . $absQty . ' units). ' . ($batchRef ? 'From ' . $batchRef : '') . ($note ? ' Reason: ' . $note : ''),
+                'keterangan' => 'Pengurangan dari Hasil Audit (Kekurangan: ' . $absQty . ' unit). ' . ($batchRef ? 'Memotong ' . $batchRef . '. ' : '') . 'Alasan: ' . ($note ?? ''),
             ];
             if ($qtyCol !== null) $outInsert[$qtyCol] = $absQty;  // shortage amount
-            if ($this->db->field_exists('qty_sisa', $historyTable)) $outInsert['qty_sisa'] = $counted;  // final verified quantity
+            if ($this->db->field_exists('qty_sisa', $historyTable)) $outInsert['qty_sisa'] = 0;  // Keluar record does not hold batch stock
             if ($this->db->field_exists('tanggal_terima', $historyTable)) $outInsert['tanggal_terima'] = $now;
             elseif ($this->db->field_exists('date', $historyTable)) $outInsert['date'] = $now;
             else $outInsert['created_at'] = $now;
@@ -213,7 +242,7 @@ class Audit extends CI_Controller
 
         // Recompute as_electric.stock if exists
         if ($this->db->table_exists('as_electric') && $this->db->field_exists('stock', 'as_electric') && $this->db->field_exists('qty_sisa', $historyTable)) {
-            $row = $this->db->select('SUM(qty_sisa) as total')->where('electric_id', $electric_id)->get($historyTable)->row_array();
+            $row = $this->db->select('SUM(qty_sisa) as total')->where('electric_id', $electric_id)->where('type', 'Masuk')->get($historyTable)->row_array();
             $newStock = isset($row['total']) ? (int)$row['total'] : 0;
             $this->db->where('electric_id', $electric_id)->update('as_electric', ['stock' => $newStock]);
         }
@@ -401,8 +430,17 @@ class Audit extends CI_Controller
         fwrite($out, implode($delimiter, array_map($escape, $headers)) . $eol);
 
         foreach ($auditRows as $row) {
-            preg_match('/diff=(-?\d+)/', $row['keterangan'], $matches);
-            $selisih = isset($matches[1]) ? $matches[1] : $row['qty'];
+            $selisih = $row['qty']; // fallback (absolute value)
+            
+            // Coba parsing dari format baru (Sistem X menjadi Fisik Y)
+            if (preg_match('/Stok Sistem (\d+) menjadi Stok Fisik (\d+)/i', $row['keterangan'], $m)) {
+                $selisih = (int)$m[2] - (int)$m[1];
+                if ($selisih > 0) $selisih = '+' . $selisih; // tambahkan tanda + jika surplus
+            } 
+            // Coba parsing dari format lama (diff=X)
+            elseif (preg_match('/diff=(-?\d+)/', $row['keterangan'], $m)) {
+                $selisih = $m[1];
+            }
 
             $line = [
                 $row['electric_id'],

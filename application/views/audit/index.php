@@ -200,75 +200,103 @@
                                         <th class="ps-4">#</th>
                                         <th>ID Barang</th>
                                         <th>Nama Barang</th>
-                                        <th class="text-center">Stok Sistem</th>
-                                        <th class="text-center">Stok Fisik</th>
-                                        <th class="text-center">Selisih</th>
-                                        <th>Keterangan / Alasan</th>
-                                        <th class="text-center">Aksi</th>
+                                        <?php if (is_manajer_oe()): ?>
+                                            <th class="text-center">Tanggal Audit</th>
+                                            <th class="text-center">Selisih</th>
+                                            <th>Keterangan / Alasan</th>
+                                        <?php else: ?>
+                                            <th class="text-center">Stok Sistem</th>
+                                            <th class="text-center">Stok Fisik</th>
+                                            <th class="text-center">Selisih</th>
+                                            <th>Keterangan / Alasan</th>
+                                            <th class="text-center">Aksi</th>
+                                        <?php endif; ?>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php
-                                        $no = 1;
-                                        if (!empty($electrics) && is_array($electrics)) {
-                                            foreach ($electrics as $item):
-                                                $stok = (int)($item['total_amount'] ?? $item['system_stock'] ?? 0);
-                                                $electricId = htmlspecialchars($item['electric_id'] ?? '');
-                                                $tipe = htmlspecialchars(!empty($item['type']) && $item['type'] !== '-' ? $item['type'] : '');
-                                                $kategori = htmlspecialchars(!empty($item['nama']) ? $item['nama'] : '');
+                                    <?php if (is_manajer_oe()): ?>
+                                        <?php if (!empty($audit_history)): ?>
+                                            <?php $no = 1; foreach ($audit_history as $row): 
+                                                $electricId = htmlspecialchars($row['electric_id'] ?? '');
+                                                $tipe = htmlspecialchars(!empty($row['tipe']) && $row['tipe'] !== '-' ? $row['tipe'] : '');
+                                                $kategori = htmlspecialchars(!empty($row['nama']) ? $row['nama'] : '');
                                                 $nama = $tipe ? $tipe : ($kategori ?: '-');
                                                 $detailHtml = $tipe && $kategori && $tipe !== $kategori ? "<div class='fw-bold'>{$tipe}</div><small class='text-muted'><i class='fas fa-tag me-1'></i>{$kategori}</small>" : "<div class='fw-bold'>{$nama}</div>";
-                                                $savedNote = htmlspecialchars($item['note'] ?? '');
-                                                $isManager = $this->session->userdata('role') == 'Manajer OE';
-                                                $rowId = 'row-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $electricId);
+                                                
+                                                // Extract selisih from keterangan
+                                                preg_match('/Stok Sistem (\d+) menjadi Stok Fisik (\d+)/i', $row['keterangan'], $m);
+                                                if (isset($m[1]) && isset($m[2])) {
+                                                    $selisih = (int)$m[2] - (int)$m[1];
+                                                    if ($selisih > 0) { $selisih = "<span class='text-success fw-bold'>+{$selisih}</span>"; }
+                                                    elseif ($selisih < 0) { $selisih = "<span class='text-danger fw-bold'>{$selisih}</span>"; }
+                                                } else {
+                                                    $selisih = $row['qty']; // fallback
+                                                }
+                                                $dateFmt = date('d M Y H:i', strtotime($row['date']));
+                                            ?>
+                                            <tr>
+                                                <td class="ps-4 fw-bold"><?= $no++; ?></td>
+                                                <td><small class="font-monospace"><?= $electricId ?: '-'; ?></small></td>
+                                                <td><?= $detailHtml; ?></td>
+                                                <td class="text-center"><span class="badge bg-light text-dark"><?= $dateFmt; ?></span></td>
+                                                <td class="text-center"><?= $selisih; ?></td>
+                                                <td><small><?= htmlspecialchars($row['keterangan'] ?? '-'); ?></small></td>
+                                            </tr>
+                                            <?php endforeach; ?>
+                                        <?php else: ?>
+                                            <tr><td colspan="6" class="text-center text-muted p-5"><i class="fas fa-check-circle fa-3x text-success mb-3"></i><p class="mb-0">Belum ada barang yang diaudit di lokasi ini pada hari ini.</p></td></tr>
+                                        <?php endif; ?>
 
-                                    ?>
-                                    <tr class="audit-row" id="<?= $rowId; ?>" data-search-text="<?= strtolower($electricId . ' ' . $nama); ?>">
-                                        <td class="ps-4 fw-bold"><?= $no++; ?></td>
-                                        <td><small class="font-monospace"><?= $electricId ?: '-'; ?></small></td>
-                                        <td><?= $detailHtml; ?></td>
-                                        <td class="text-center stok-sistem" id="stok-sistem-<?= $rowId; ?>">
-                                            <span class="badge bg-info"><?= $stok; ?></span>
-                                        </td>
-                                        <td class="text-center">
-                                            <input type="number" 
-                                                   id="input-fisik-<?= $rowId; ?>" 
-                                                   class="form-control input-fisik text-center" 
-                                                   value="<?= $stok ?>" 
-                                                   style="width:100px;margin:auto;" 
-                                                   min="0" 
-                                                   <?= $isManager ? 'disabled' : ''; ?> 
-                                                   onkeyup="hitungSelisih('<?= $rowId; ?>')" 
-                                                   oninput="hitungSelisih('<?= $rowId; ?>')" />
-                                        </td>
-                                        <td class="text-center text-selisih fw-bold" id="selisih-<?= $rowId; ?>" style="color: black;">+0</td>
-                                        <td>
-                                            <?php if ($isManager): ?>
-                                                <div class="text-muted small"><?= $savedNote !== '' ? $savedNote : '-'; ?></div>
-                                            <?php else: ?>
+                                    <?php else: ?>
+                                        <?php
+                                            $no = 1;
+                                            if (!empty($electrics) && is_array($electrics)) {
+                                                foreach ($electrics as $item):
+                                                    $stok = (int)($item['total_amount'] ?? $item['system_stock'] ?? 0);
+                                                    $electricId = htmlspecialchars($item['electric_id'] ?? '');
+                                                    $tipe = htmlspecialchars(!empty($item['type']) && $item['type'] !== '-' ? $item['type'] : '');
+                                                    $kategori = htmlspecialchars(!empty($item['nama']) ? $item['nama'] : '');
+                                                    $nama = $tipe ? $tipe : ($kategori ?: '-');
+                                                    $detailHtml = $tipe && $kategori && $tipe !== $kategori ? "<div class='fw-bold'>{$tipe}</div><small class='text-muted'><i class='fas fa-tag me-1'></i>{$kategori}</small>" : "<div class='fw-bold'>{$nama}</div>";
+                                                    $rowId = 'row-' . preg_replace('/[^a-zA-Z0-9_-]/', '', $electricId);
+                                        ?>
+                                        <tr class="audit-row" id="<?= $rowId; ?>" data-search-text="<?= strtolower($electricId . ' ' . $nama); ?>">
+                                            <td class="ps-4 fw-bold"><?= $no++; ?></td>
+                                            <td><small class="font-monospace"><?= $electricId ?: '-'; ?></small></td>
+                                            <td><?= $detailHtml; ?></td>
+                                            <td class="text-center stok-sistem" id="stok-sistem-<?= $rowId; ?>">
+                                                <span class="badge bg-info"><?= $stok; ?></span>
+                                            </td>
+                                            <td class="text-center">
+                                                <input type="number" 
+                                                       id="input-fisik-<?= $rowId; ?>" 
+                                                       class="form-control input-fisik text-center" 
+                                                       value="<?= $stok ?>" 
+                                                       style="width:100px;margin:auto;" 
+                                                       min="0" 
+                                                       onkeyup="hitungSelisih('<?= $rowId; ?>')" 
+                                                       oninput="hitungSelisih('<?= $rowId; ?>')" />
+                                            </td>
+                                            <td class="text-center text-selisih fw-bold" id="selisih-<?= $rowId; ?>" style="color: black;">+0</td>
+                                            <td>
                                                 <select class="form-select form-select-sm select-alasan" 
                                                         id="alasan-<?= $rowId; ?>" 
                                                         disabled>
                                                     <option value="">-- Pilih Alasan --</option>
-                                                    <option value="Barang Rusak / Broken">Barang Rusak</option>
-                                                    <option value="Selisih Hilang (Lupa Catat)">Hilang / Lupa Catat</option>
-                                                    <option value="Kelebihan Fisik (Surplus)">Kelebihan Fisik</option>
                                                 </select>
-                                            <?php endif; ?>
-                                        </td>
-                                        <td class="text-center">
-                                            <?php if ($this->session->userdata('role') == 'Staf Gudang'): ?>
+                                            </td>
+                                            <td class="text-center">
                                                 <button type="button" 
                                                         class="btn btn-success btn-sm btn-simpan" 
                                                         onclick="simpanAdjustment('<?= $rowId; ?>')">
                                                     <i class="fas fa-save me-1"></i>Simpan
                                                 </button>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                    <?php endforeach; } else { ?>
-                                        <tr><td colspan="8" class="text-center text-muted p-4"><i class="fas fa-inbox me-2"></i>Tidak ada barang untuk lokasi ini.</td></tr>
-                                    <?php } ?>
+                                            </td>
+                                        </tr>
+                                        <?php endforeach; } else { ?>
+                                            <tr><td colspan="8" class="text-center text-muted p-4"><i class="fas fa-inbox me-2"></i>Tidak ada barang untuk lokasi ini.</td></tr>
+                                        <?php } ?>
+                                    <?php endif; ?>
                                 </tbody>
                             </table>
                         </div>
