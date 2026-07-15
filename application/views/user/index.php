@@ -1,3 +1,4 @@
+<?php $users = $users ?? []; $sortKeyword = $sortKeyword ?? ['', '']; $display = $display ?? 0; $hasFilters = $hasFilters ?? false; ?>
 <?php if ($this->session->flashdata('action')) : ?>
     <!-- Flash Notification Alert -->
     <div class="cust-notification m-3">
@@ -32,7 +33,9 @@
                     </form>
 
                     <!-- Add User Button -->
-                    <a href="<?= site_url('user/add'); ?>" class="btn btn-primary rounded-pill px-4" type="button">Tambah</a>
+                    <?php if (is_admin()): ?>
+                        <a href="<?= site_url('user/add'); ?>" class="btn btn-primary rounded-pill px-4" type="button">Tambah</a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -102,14 +105,22 @@
                             <td class="text-center"><?= $user['name']; ?></td>
                             <td class="text-center"><?= isset($user['role']) ? ucfirst($user['role']) : '-'; ?></td>
                             <td class="text-center">
-                                <a href="<?= site_url('user/edit/' . $user['nik']); ?>" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit pengguna">
-                                    <img src="<?= base_url('assets/img/edit.png'); ?>" alt="edit" class="action-button">
-                                </a>
+                                <?php if (is_admin()): ?>
+                                    <a href="<?= site_url('user/edit/' . $user['nik']); ?>" data-bs-toggle="tooltip" data-bs-placement="top" title="Edit pengguna">
+                                        <img src="<?= base_url('assets/img/edit.png'); ?>" alt="edit" class="action-button">
+                                    </a>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
                             </td>
                             <td class="text-center pe-lg-5 pe-4">
-                                <a href="<?= site_url('user/delete/' . $user['nik']); ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus pengguna">
-                                    <img src="<?= base_url('assets/img/delete.png'); ?>" alt="delete" class="action-button">
-                                </a>
+                                <?php if (is_admin()): ?>
+                                    <a href="<?= site_url('user/delete/' . $user['nik']); ?>" onclick="return confirm('Apakah Anda yakin ingin menghapus pengguna ini?')" data-bs-toggle="tooltip" data-bs-placement="top" title="Hapus pengguna">
+                                        <img src="<?= base_url('assets/img/delete.png'); ?>" alt="delete" class="action-button">
+                                    </a>
+                                <?php else: ?>
+                                    <span class="text-muted">-</span>
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach ?>
@@ -138,13 +149,15 @@
                         </form>
                     <?php endif; ?>
 
-                    <!-- Download Button -->
-                    <a href="<?= site_url('user/download'); ?>" class="btn btn-primary <?= $hasFilters ? '' : 'rounded-start-pill' ?>">Download</a>
+                    <?php if (is_admin()): ?>
+                        <!-- Download Button -->
+                        <a href="<?= site_url('user/download'); ?>" class="btn btn-primary <?= $hasFilters ? '' : 'rounded-start-pill' ?>">Download</a>
 
-                    <!-- Upload Modal Trigger -->
-                    <button type="button" class="btn btn-primary rounded-end-pill" data-bs-toggle="modal" data-bs-target="#uploadModal">
-                        Upload
-                    </button>
+                        <!-- Upload Modal Trigger -->
+                        <button type="button" class="btn btn-primary rounded-end-pill" data-bs-toggle="modal" data-bs-target="#uploadModal">
+                            Upload
+                        </button>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>

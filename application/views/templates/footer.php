@@ -2,8 +2,8 @@
 
     <!-- Footer -->
     <footer class="fixed-bottom d-flex text-white px-2 py-1 justify-content-between" style="background-color: #004274; font-size: 10px;">
-        <span>Electrical System V 1.0</span>
-        <span>Operation Excellence 2025</span>
+        <span>Electrical System V 2.0</span>
+        <span>Operation Excellence 2026</span>
     </footer>
 
     <!-- Scripts: Bootstrap then app logic (ASRS canonical) -->

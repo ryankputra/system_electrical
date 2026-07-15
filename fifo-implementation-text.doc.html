@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    margin: 4cm 3cm 3cm 4cm;
+    text-align: justify;
+    color: #000;
+  }
+  h2 {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 0;
+    margin-bottom: 12pt;
+  }
+  p {
+    text-indent: 1.27cm;
+    margin: 0 0 0 0;
+    padding: 0;
+  }
+  p.no-indent {
+    text-indent: 0;
+  }
+  .italic { font-style: italic; }
+  .bold { font-weight: bold; }
+  .code-block {
+    text-align: center;
+    text-indent: 0;
+    margin: 14pt 0;
+    font-style: italic;
+  }
+  .equation {
+    text-align: center;
+    text-indent: 0;
+    margin: 14pt 0;
+  }
+</style>
+</head>
+<body>
+
+<h2>3.2.2.&nbsp;&nbsp;&nbsp;Implementasi Algoritma Antrean (<span class="italic">First-In-First-Out</span>)</h2>
+
+<p>
+Implementasi algoritma pemrosesan berbasis antrean (<span class="italic">Queue-Based Processing</span>) dalam sistem manajemen stok ini dilakukan oleh penulis pada lapisan aplikasi (<span class="italic">application layer</span>) menggunakan kerangka kerja CodeIgniter 3 dengan pola arsitektur <span class="italic">Model-View-Controller</span> (MVC). Tindakan ini diambil untuk memastikan kejelasan proses rotasi barang dalam mengelola logika program yang rumit tanpa mengandalkan manipulasi array eksternal yang membebani memori server. Proses dimulai dengan tahap inisialisasi pada modul pengadaan (<span class="italic">Purchase Order</span>), di mana setiap kali transaksi barang masuk berhasil diinput, sistem secara otomatis menghasilkan rekam jejak <span class="italic">batch</span> baru ke dalam tabel <span class="code">as_history</span> dengan menyimpan parameter penanda waktu (<span class="code">created_at</span>) berformat <span class="code">DATETIME</span> serta menginisialisasi kolom <span class="code">qty_sisa</span> (<span class="italic">remaining quantity</span>) yang merepresentasikan jumlah unit tersedia dari <span class="italic">batch</span> tersebut.
+</p>
+
+<p>
+Setelah data transaksi tersimpan di server, penulis menerapkan operasi internal algoritma FIFO saat terjadi instruksi permintaan komponen teknik atau pengeluaran stok melalui <span class="italic">Work Order</span> maupun transaksi manual. Dalam setiap eksekusi transaksi keluar, penulis menyusun baris kode pada model untuk melakukan pemfilteran data menggunakan kueri <span class="italic">Structured Query Language</span> (SQL) dengan persamaan sebagai berikut:
+</p>
+
+<p class="code-block">
+SELECT * FROM as_history WHERE electric_id = X AND qty_sisa &gt; 0 ORDER BY created_at ASC;
+</p>
+
+<p>
+Melalui instruksi tersebut, sistem mengambil seluruh <span class="italic">batch</span> masuk yang masih memiliki sisa stok (<span class="code">qty_sisa &gt; 0</span>) dan mengurutkannya berdasarkan waktu kedatangan tertua. Selanjutnya, algoritma melakukan iterasi terhadap setiap <span class="italic">batch</span> secara berurutan mulai dari yang paling awal (<span class="italic">front of queue</span>), di mana pada setiap iterasi dilakukan perhitungan pengambilan unit sebagai berikut:
+</p>
+
+<p class="equation">
+<span class="italic">take</span> = min(<span class="italic">qty_sisa</span>, <span class="italic">remaining_qty</span>)
+</p>
+
+<p>
+Melalui mekanisme tersebut, saldo <span class="italic">batch</span> dipotong secara parsial sesuai kebutuhan permintaan. Setiap transaksi keluar disimpan sebagai rekam jejak terpisah dengan referensi <span class="code">from_batch_id</span> yang menunjuk ke <span class="italic">batch</span> asal, sehingga memastikan ketertelusuran (<span class="italic">traceability</span>) penuh terhadap asal-usul setiap unit yang dikeluarkan [20]. Mekanisme pemotongan parsial ini memungkinkan satu <span class="italic">batch</span> dikonsumsi oleh beberapa transaksi keluar yang berbeda, sekaligus menjamin rotasi fisik suku cadang kelistrikan di gudang mengikuti urutan kronologis yang akurat, sehingga mampu mencegah penurunan kualitas fisik produk akibat durasi penyimpanan yang terlalu lama [16].
+</p>
+
+<p>
+Untuk melengkapi aspek akuntabilitas, setiap transaksi masuk dan keluar dicatat secara kronologis di tabel <span class="code">as_history</span> sebagai kartu stok digital yang berfungsi sebagai <span class="italic">audit trail</span>. Setiap rekam jejak dilengkapi dengan stempel waktu (<span class="code">created_at</span>) dan identifikasi pengguna (<span class="code">user_nik</span>), sehingga meminimalisir risiko manipulasi data keuangan gudang [16]. Total stok aktual pada tabel <span class="code">as_electric</span> dihitung ulang secara otomatis menggunakan persamaan:
+</p>
+
+<p class="equation">
+<span class="italic">stock</span> = SUM(<span class="italic">qty_sisa</span>)
+</p>
+
+<p>
+Persamaan di atas menjumlahkan seluruh sisa <span class="italic">batch</span> masuk yang tersisa di <span class="italic">database</span>, sehingga menjamin konsistensi data antara tabel inventaris dengan riwayat transaksi. Melalui skema rekayasa <span class="italic">queue-based</span> ini, integrasi yang kuat antara kode program PHP dengan skema basis data MySQL mampu menciptakan sistem manajemen stok yang tangguh dalam melindungi nilai aset persediaan perusahaan.
+</p>
+
+</body>
+</html>

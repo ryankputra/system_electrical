@@ -24,13 +24,37 @@ class Auth extends CI_Controller {
             $user = $this->User_model->checkLogin($nik, $password);
 
             if ($user) {
-                // Set session mirip kode lama kamu tapi ditambah status login
+                $roleId = 2;
+                if (isset($user['role_id']) && is_numeric($user['role_id'])) {
+                    $roleId = (int) $user['role_id'];
+                } elseif (isset($user['role'])) {
+                    $r = strtolower(trim((string) $user['role']));
+                    if (is_numeric($r)) {
+                        $roleId = (int) $r;
+                    } else {
+                        $adminAliases = ['staf gudang', 'staf_gudang', 'stafgudang'];
+                        $managerAliases = ['manajer oe', 'manajer_oe', 'manager oe', 'manager_oe', 'manajer', 'manager'];
+                        $teknisiAliases = ['teknisi', 'staff lapangan', 'staff_lapangan', 'engineer'];
+                        
+                        if (in_array($r, $adminAliases, true)) {
+                            $roleId = 1;
+                        } elseif (in_array($r, $managerAliases, true)) {
+                            $roleId = 2;
+                        } elseif (in_array($r, $teknisiAliases, true)) {
+                            $roleId = 3;
+                        }
+                    }
+                }
+
                 $this->session->set_userdata([
                     'user_data' => $user,
-                    'role'      => $user['role'],
+                    'role'      => $user['role'] ?? null,
+                    'role_id'   => $roleId,
                     'logged_in' => TRUE
                 ]);
-                redirect('user/dashboard');
+
+                // Arahkan ke centralized dashboard controller; role handling hanya staf gudang/manajer OE
+                redirect('dashboard');
             } else {
                 // Jika salah, balik ke login
                 $this->session->set_flashdata('error', 'NIK atau Password Salah!');

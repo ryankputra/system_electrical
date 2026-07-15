@@ -2,16 +2,12 @@
     <div class="card-header bg-transparent border-0 px-4 pt-3 pb-1">
             <div class="d-flex align-items-center justify-content-between">
             <h4 class="m-0">Tambah Electrical</h4>
-            <?php if (isset($typeData) && !empty($typeData)): ?>
-                <a href="<?= site_url('electric') . '?type=' . urlencode($typeData['type']); ?>" class="btn btn-secondary rounded-pill">Kembali</a>
-            <?php else: ?>
-                <a href="<?= site_url('electric'); ?>" class="btn btn-secondary rounded-pill">Kembali</a>
-            <?php endif; ?>
+            <a href="<?= site_url('electric'); ?>" class="btn btn-secondary rounded-pill">Kembali</a>
         </div>
     </div>
 
     <div class="card-body p-4 pt-3">
-        <form action="<?= site_url('electric/add'); ?>" method="post" enctype="multipart/form-data">
+        <form action="<?= site_url('electric/store'); ?>" method="post" enctype="multipart/form-data">
 
             <?php if (isset($typeData) && !empty($typeData)): ?>
                 <div class="mb-3">
@@ -27,10 +23,13 @@
                     <select id="type_id" name="type_id" class="form-select <?= form_error('type_id') ? 'is-invalid' : '' ?>" required>
                         <option value="">-- Pilih Kategori --</option>
                         <?php foreach (($types ?? []) as $t) : ?>
-                            <option value="<?= htmlspecialchars($t['id'], ENT_QUOTES, 'UTF-8') ?>" <?= set_select('type_id', $t['id']); ?>><?= htmlspecialchars($t['type'], ENT_QUOTES, 'UTF-8') ?></option>
+                            <option value="<?= htmlspecialchars($t['id'], ENT_QUOTES, 'UTF-8') ?>" <?= set_select('type_id', $t['id']) ?: (isset($selected_type) && (int)$selected_type === (int)$t['id'] ? 'selected' : '') ?>><?= htmlspecialchars($t['type'], ENT_QUOTES, 'UTF-8') ?></option>
                         <?php endforeach; ?>
                     </select>
                     <?= form_error('type_id', "<div class='invalid-feedback'>", "</div>"); ?>
+                    <div class="mt-2">
+                        <a href="<?= site_url('electric/type') ?>" class="btn btn-outline-secondary btn-sm">Pilih Kategori Lain</a>
+                    </div>
                 </div>
             <?php endif; ?>
 
@@ -40,12 +39,7 @@
                 <?= form_error('brand', "<div class='invalid-feedback'>", "</div>"); ?>
             </div>
 
-            <div class="mb-2">
-                <label for="nama" class="form-label">Nama</label>
-                <input id="nama" type="text" class="form-control rounded-pill <?= form_error('nama') ? 'is-invalid' : '' ?>" name="nama" placeholder="Nama umum perangkat" 
-                       value="<?= set_value('nama', $typeData['type'] ?? '') ?>" style="text-transform: uppercase;" oninput="this.value = this.value.toUpperCase()">
-                <?= form_error('nama', "<div class='invalid-feedback'>", "</div>"); ?>
-            </div>
+
 
             <div class="mb-2">
                 <label for="type" class="form-label">Type / Model</label>
@@ -98,66 +92,19 @@
                 <select name="location" id="location" class="form-select" required>
                     <option value="">-- Pilih Lokasi --</option>
                     <?php foreach(($locations ?? []) as $loc) : ?>
-                        <option value="<?= htmlspecialchars($loc['location_name'], ENT_QUOTES, 'UTF-8'); ?>" <?= set_select('location', $loc['location_name']); ?>>
-                            <?= htmlspecialchars($loc['location_name'], ENT_QUOTES, 'UTF-8'); ?>
+                        <option value="<?= (int)($loc['id'] ?? 0); ?>" <?= set_select('location', $loc['id']); ?>>
+                            <?= htmlspecialchars($loc['location_name'] ?? $loc['location'] ?? '', ENT_QUOTES, 'UTF-8'); ?>
                         </option>
                     <?php endforeach; ?>
                 </select>
                 <?= form_error('location', '<small class="text-danger">', '</small>'); ?>
             </div>
 
-            <div class="mb-3">
-                <label for="image" class="form-label">Gambar <small class="text-muted">(opsional)</small></label>
-                <input id="image" type="file" name="image" accept="image/*" class="form-control" onchange="previewImage(this)">
-                <div class="form-text">Format yang didukung: JPG, JPEG, PNG, GIF. Maksimal 2MB</div>
-                <div id="imagePreview" class="mt-2" style="display: none;">
-                    <img id="previewImg" src="" alt="Preview" class="img-thumbnail" style="max-height: 150px;">
-                    <div class="mt-1">
-                        <small class="text-success">Preview gambar</small>
-                    </div>
-                </div>
-            </div>
-
-            <div class="text-center mt-4">
-                <button type="submit" class="btn btn-primary rounded-pill px-5">Simpan</button>
+            <div class="d-flex justify-content-between mt-4">
+                <button type="submit" name="submit_kembali" value="1" class="btn btn-outline-secondary rounded-pill px-4">Simpan & Kembali</button>
+                <button type="submit" name="submit_tambah_lagi" value="1" class="btn btn-primary rounded-pill px-4"><i class="fas fa-plus me-1"></i> Simpan & Tambah Lagi</button>
             </div>
         </form>
     </div>
 </div>
-
-<script>
-function previewImage(input) {
-    const preview = document.getElementById('imagePreview');
-    const previewImg = document.getElementById('previewImg');
-    
-    if (input.files && input.files[0]) {
-        const file = input.files[0];
-        
-        // Check file size (2MB = 2048KB)
-        if (file.size > 2048 * 1024) {
-            alert('Ukuran file terlalu besar! Maksimal 2MB');
-            input.value = '';
-            preview.style.display = 'none';
-            return;
-        }
-        
-        // Check file type
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-        if (!validTypes.includes(file.type)) {
-            alert('Format file tidak didukung! Gunakan JPG, JPEG, PNG, atau GIF');
-            input.value = '';
-            preview.style.display = 'none';
-            return;
-        }
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            previewImg.src = e.target.result;
-            preview.style.display = 'block';
-        };
-        reader.readAsDataURL(file);
-    } else {
-        preview.style.display = 'none';
-    }
-}
-</script>
+

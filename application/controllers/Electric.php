@@ -2,10 +2,9 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 require_once FCPATH . 'vendor/autoload.php';
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\IOFactory;
+// PhpSpreadsheet classes are referenced dynamically to avoid editor/analysis
+// warnings when the package is not installed. Ensure `composer install`
+// is run in production/dev environment to enable Excel features.
 
 /**
  * Electric Controller
@@ -46,7 +45,7 @@ class Electric extends CI_Controller
         // Load required models and libraries
         $this->load->model('Electric_model');
         $this->load->model('Electric_type_model');
-        $this->load->model('Storage_model'); // PASTI KAN INI ADA
+        // Storage_model removed — legacy table may be absent in some installations
         $this->load->model('Location_model'); // Master lokasi
         $this->load->library(['form_validation', 'pagination']);
         $this->load->helper('common');
@@ -73,8 +72,22 @@ class Electric extends CI_Controller
             $this->session->unset_userdata(['keyword', 'sort', 'filter']);
             redirect('electric');
         }
+        // Support both `type_id` (preferred) and legacy `type` (name) GET params
+        $getTypeId = $this->input->get('type_id', true);
         $getType = $this->input->get('type', true);
-        if (!empty($getType)) {
+        $typeId = null;
+        if (!empty($getTypeId) && is_numeric($getTypeId)) {
+            $typeId = (int)$getTypeId;
+            // Reset any existing session-level filter to avoid stale filters
+            $this->session->unset_userdata('filter');
+            // Verify type exists
+            $typeRow = $this->Electric_type_model->getById($typeId);
+            if (empty($typeRow)) {
+                set_message(['danger', 'Kategori type tidak ditemukan']);
+                redirect('electric');
+                return;
+            }
+        } elseif (!empty($getType)) {
             $existingTypes = $this->Electric_model->getElectricFilter('type', null, null);
             $existingNames = $this->Electric_model->getElectricFilter('nama', null, null);
             $normalized = strtoupper(trim($getType));
@@ -96,21 +109,79 @@ class Electric extends CI_Controller
         ];
         $nameOptions = $this->Electric_model->getElectricFilter('nama', $sessionData['search'], $sessionData['filter']);
         $typeOptions = $this->Electric_model->getElectricFilter('type', $sessionData['search'], $sessionData['filter']);
-        $totalRows = $this->Electric_model->countElectric($sessionData['search'], $sessionData['filter']);
-        $config = [
-            'base_url'   => site_url('electric/index'),
-            'total_rows' => $totalRows,
-            'per_page'   => self::CONFIG['pagination']['items_per_page'],
-        ];
-        $this->pagination->initialize($config);
-        $startData = (int) ($this->uri->segment(3) ?: 0);
-        $electrics = $this->Electric_model->getElectric(
-            self::CONFIG['pagination']['items_per_page'],
-            $startData,
-            $sessionData['search'],
-            $sessionData['filter'],
-            $sessionData['sort']
-        );
+
+        // If a numeric type_id was provided via GET we will run a dedicated filtered query here
+        if (!empty($typeId) && is_int($typeId)) {
+            // reset session filters to avoid interference
+            $this->session->unset_userdata('filter');
+
+            $perPage = self::CONFIG['pagination']['items_per_page'];
+            // count matching items
+            $totalRows = (int) $this->db->from('as_electric e')->where('e.type_id', $typeId)->count_all_results();
+
+            $config = [
+                'base_url' => site_url('electric/index') . '?type_id=' . $typeId,
+                'page_query_string' => TRUE,
+                'query_string_segment' => 'per_page',
+                'total_rows' => $totalRows,
+                'per_page' => $perPage,
+            ];
+            $this->pagination->initialize($config);
+            $startData = (int) ($this->input->get('per_page') ?: 0);
+
+            // Build explicit query with joins so type name appears correctly
+            $historySub = "(SELECT electric_id, SUM(qty_sisa) as history_stock FROM as_history GROUP BY electric_id)";
+            $this->db->select(
+                'e.electric_id, '
+                . 'e.nama, '
+                . 'e.brand, '
+                . 'e.type, '
+                . 'e.voltage, '
+                . 'e.voltage_unit, '
+                . 'e.ampere, '
+                . 'e.daya, '
+                . 'e.daya_unit, '
+                . "COALESCE(l.location_name, '-') as display_location, "
+                . "COALESCE(t.type, '-') as type_name, "
+                . 'COALESCE(hs.history_stock, 0) as stock', false
+            );
+            $this->db->from('as_electric e');
+            $this->db->join($historySub . ' hs', 'hs.electric_id = e.electric_id', 'left', false);
+            if ($this->db->table_exists('as_location')) {
+                $this->db->join('as_location l', 'l.id = e.location', 'left');
+            }
+            if ($this->db->table_exists('as_electric_types')) {
+                $this->db->join('as_electric_types t', 't.id = e.type_id', 'left');
+            }
+            $this->db->where('e.type_id', $typeId);
+            if (!empty($sessionData['search'])) {
+                $this->db->group_start()->like('e.nama', $sessionData['search'])->or_like('e.type', $sessionData['search'])->or_like('e.brand', $sessionData['search'])->group_end();
+            }
+            if (!empty($sessionData['sort']) && strpos($sessionData['sort'], '-') !== false) {
+                list($field, $direction) = explode('-', $sessionData['sort'], 2);
+                $this->db->order_by('e.' . $field, $direction);
+            } else {
+                $this->db->order_by('e.nama', 'ASC');
+            }
+            $this->db->limit($perPage, $startData);
+            $electrics = $this->db->get()->result_array();
+        } else {
+            $totalRows = $this->Electric_model->countElectric($sessionData['search'], $sessionData['filter']);
+            $config = [
+                'base_url'   => site_url('electric/index'),
+                'total_rows' => $totalRows,
+                'per_page'   => self::CONFIG['pagination']['items_per_page'],
+            ];
+            $this->pagination->initialize($config);
+            $startData = (int) ($this->uri->segment(3) ?: 0);
+            $electrics = $this->Electric_model->getElectric(
+                self::CONFIG['pagination']['items_per_page'],
+                $startData,
+                $sessionData['search'],
+                $sessionData['filter'],
+                $sessionData['sort']
+            );
+        }
         if (empty($electrics) && (!empty($sessionData['search']) || !empty($sessionData['filter']))) {
             $totalRowsWithoutFilter = $this->Electric_model->countElectric(null, null);
             if ($totalRowsWithoutFilter > 0) {
@@ -118,12 +189,41 @@ class Electric extends CI_Controller
                 redirect('electric');
             }
         }
-        
+        // Ensure each row has a `display_location` key (compatibility with model variations)
+        if (!empty($electrics) && is_array($electrics)) {
+            foreach ($electrics as &$erow) {
+                if (!isset($erow['display_location']) || $erow['display_location'] === null) {
+                    if (isset($erow['location']) && $erow['location'] !== null && $erow['location'] !== '') {
+                        $erow['display_location'] = $erow['location'];
+                    } elseif (isset($erow['location_name']) && $erow['location_name'] !== null && $erow['location_name'] !== '') {
+                        $erow['display_location'] = $erow['location_name'];
+                    } else {
+                        $erow['display_location'] = '-';
+                    }
+                }
+                // Ensure spec keys exist to avoid undefined index in views
+                if (!isset($erow['brand'])) $erow['brand'] = '';
+                if (!isset($erow['voltage'])) $erow['voltage'] = '';
+                if (!isset($erow['voltage_unit'])) $erow['voltage_unit'] = '';
+                if (!isset($erow['ampere'])) $erow['ampere'] = '';
+            }
+            unset($erow);
+        }
+
         // Retrieve location data for modal from master lokasi
         $locations = $this->Location_model->get_all();
 
+        // Page title: if filtering by a specific type_id, show the type name
+        $pageTitle = 'Data Electric';
+        if (!empty($typeId) && is_int($typeId)) {
+            $typeInfo = $this->Electric_type_model->getById($typeId);
+            if (!empty($typeInfo) && !empty($typeInfo['type'])) {
+                $pageTitle = 'Daftar ' . $typeInfo['type'];
+            }
+        }
+
         $data = [
-            'title' => 'Data Electric',
+            'title' => $pageTitle,
             'electrics' => $electrics,
             'pagination' => ['links' => $this->pagination->create_links()],
             'total_rows' => $totalRows,
@@ -181,94 +281,29 @@ class Electric extends CI_Controller
      *
      * @return void
      */
-    public function add(): void
+    public function add($type_id = NULL): void
     {
+        require_admin();
+        $typeData = null;
+        $typeIdFromUrl = $type_id !== null ? (int)$type_id : null;
         $typeIdFromGet = $this->input->get('type_id', true);
         $typeNameFromGet = $this->input->get('type', true);
-        $typeData = null;
 
-        // Prefer numeric type_id if provided
-        if ($typeIdFromGet) {
-            $typeData = $this->Electric_type_model->getById((int)$typeIdFromGet);
+        // Prefer numeric type_id from URL path, then GET param
+        $effectiveTypeId = $typeIdFromUrl ?: ($typeIdFromGet ? (int)$typeIdFromGet : null);
+        if ($effectiveTypeId) {
+            $typeData = $this->Electric_type_model->getById((int)$effectiveTypeId);
         }
 
         // If no type_id was provided or not found, allow passing the type name as fallback
         if (!$typeData && !empty($typeNameFromGet)) {
-            // Electric_type_model::getByType expects the type string (it uppercases internally)
             $typeData = $this->Electric_type_model->getByType($typeNameFromGet);
+            $effectiveTypeId = $typeData['id'] ?? $effectiveTypeId;
         }
 
         if ($this->input->method() === 'post') {
-            $this->setValidationRules();
-            // Tambahkan validasi lokasi
-            $this->form_validation->set_rules('location', 'Lokasi', 'required');
-
-            if ($this->form_validation->run()) {
-                $typeId = (int)$this->input->post('type_id', true);
-                $categoryData = $this->Electric_type_model->getById($typeId);
-                if (!$categoryData) {
-                    set_message(['danger', 'Kategori Jenis Electrical tidak valid!']);
-                    redirect('electric/add');
-                    return;
-                }
-                $imageFilename = null;
-                if (!empty($_FILES['image']['name'])) {
-                    $uploadPath = FCPATH . 'assets/img/electric/';
-                    if (!is_dir($uploadPath)) {
-                        if (!mkdir($uploadPath, 0755, true)) {
-                            set_message(['danger', 'Tidak dapat membuat direktori upload']);
-                            redirect('electric/add?type_id=' . $typeId);
-                            return;
-                        }
-                    }
-                    
-                    $cleanName = preg_replace('/[^a-zA-Z0-9\-_]/', '-', $this->input->post('nama'));
-                    $fileName = strtolower($cleanName) . '-' . time();
-                    
-                    $config = [
-                        'upload_path' => $uploadPath,
-                        'allowed_types' => 'jpg|jpeg|png|gif',
-                        'max_size' => 2048, // 2MB
-                        'file_name' => $fileName,
-                        'overwrite' => FALSE,
-                        'remove_spaces' => TRUE
-                    ];
-                    
-                    $this->load->library('upload', $config);
-                    
-                    if ($this->upload->do_upload('image')) {
-                        $uploadData = $this->upload->data();
-                        $imageFilename = $uploadData['file_name'];
-                    } else {
-                        $error = $this->upload->display_errors('', '');
-                        set_message(['danger', 'Upload gambar gagal: ' . $error]);
-                        redirect('electric/add?type_id=' . $typeId);
-                        return;
-                    }
-                }
-                $dataToSave = [
-                    'nama'      => $this->input->post('nama', true),
-                    'brand'     => $this->input->post('brand', true),
-                    'type_id'   => $typeId,
-                    'type'      => $this->input->post('type', true),
-                    'voltage'   => $this->input->post('voltage', true) ?: null,
-                    'voltage_unit' => $this->input->post('voltage_unit', true),
-                    'ampere'    => $this->input->post('ampere', true) ?: null,
-                    'daya'      => $this->input->post('daya', true) ?: null,
-                    'daya_unit' => $this->input->post('daya_unit', true),
-                    'location'  => $this->input->post('location', true),
-                    'image'     => $imageFilename,
-                    'editor'    => $this->session->userdata('user_data')['nama'] ?? 'SYSTEM',
-                ];
-                $this->Electric_model->addElectric($dataToSave);
-                set_message(['success', 'Data electric berhasil ditambahkan!']);
-                redirect('electric');
-            } else {
-                $postedTypeId = $this->input->post('type_id', true);
-                if ($postedTypeId) {
-                    $typeData = $this->Electric_type_model->getById((int)$postedTypeId);
-                }
-            }
+            $this->store();
+            return;
         }
 
         // If no specific type has been provided, provide list of types to the form
@@ -280,7 +315,127 @@ class Electric extends CI_Controller
         $data['locations'] = $this->Location_model->get_all();
         $data['title'] = 'Tambah Electric';
         $data['typeData'] = $typeData;
+        // Provide the raw selected type id to the view so the select can auto-select
+        $data['selected_type'] = isset($effectiveTypeId) ? (int)$effectiveTypeId : null;
         render_view('electric/add', $data);
+    }
+
+    /**
+     * Store new electric via POST (separated handler).
+     * Ensures `type_id` and `location_id` are saved as IDs and uses manual ID generation.
+     *
+     * @return void
+     */
+    public function store(): void
+    {
+        require_admin();
+        if ($this->input->method() !== 'post') {
+            redirect('electric/add');
+            return;
+        }
+
+        $postedTypeId = $this->input->post('type_id', true);
+        if ($postedTypeId) {
+            $typeData = $this->Electric_type_model->getById((int)$postedTypeId);
+            if ($typeData && !empty($typeData['type'])) {
+                $_POST['nama'] = $typeData['type'];
+            }
+        }
+
+        $this->setValidationRules();
+        $this->form_validation->set_rules('location', 'Lokasi', 'required');
+
+        if (!$this->form_validation->run()) {
+            $postedTypeId = $this->input->post('type_id', true);
+            if ($postedTypeId) {
+                $typeData = $this->Electric_type_model->getById((int)$postedTypeId);
+            }
+            set_message(['danger', 'Validasi gagal. Periksa input dan coba lagi.']);
+            redirect('electric/add');
+            return;
+        }
+
+        $typeId = (int)$this->input->post('type_id', true);
+        $categoryData = $this->Electric_type_model->getById($typeId);
+        if (!$categoryData) {
+            set_message(['danger', 'Kategori Jenis Electrical tidak valid!']);
+            redirect('electric/add');
+            return;
+        }
+
+        $imageFilename = null;
+        if (!empty($_FILES['image']['name'])) {
+            $uploadPath = FCPATH . 'assets/img/electric/';
+            if (!is_dir($uploadPath)) {
+                if (!mkdir($uploadPath, 0755, true)) {
+                    set_message(['danger', 'Tidak dapat membuat direktori upload']);
+                    redirect('electric/add');
+                    return;
+                }
+            }
+
+            $cleanName = preg_replace('/[^a-zA-Z0-9\-_]/', '-', $this->input->post('nama', true));
+            $fileName = strtolower($cleanName) . '-' . time();
+
+            $config = [
+                'upload_path' => $uploadPath,
+                'allowed_types' => 'jpg|jpeg|png|gif',
+                'max_size' => 2048,
+                'file_name' => $fileName,
+                'overwrite' => FALSE,
+                'remove_spaces' => TRUE
+            ];
+
+            $this->load->library('upload', $config);
+            if ($this->upload->do_upload('image')) {
+                $uploadData = $this->upload->data();
+                $imageFilename = $uploadData['file_name'];
+            } else {
+                $error = $this->upload->display_errors('', '');
+                set_message(['danger', 'Upload gambar gagal: ' . $error]);
+                redirect('electric/add');
+                return;
+            }
+        }
+
+        $locationInput = $this->input->post('location', true);
+        // Enforce storing LOCATION as ID (FK) per schema: prefer 'location' as FK column, else 'location_id'.
+        if ($this->db->field_exists('location', 'as_electric')) {
+            $locationField = ['location' => (int)$locationInput];
+        } elseif ($this->db->field_exists('location_id', 'as_electric')) {
+            $locationField = ['location_id' => (int)$locationInput];
+        } else {
+            // Fallback: attempt to resolve id -> name but still store id where possible
+            $locRow = $this->db->get_where('as_location', ['id' => $locationInput])->row_array();
+            $locationField = ['location' => $locRow['id'] ?? $locationInput];
+        }
+
+        $dataToSave = [
+            'nama'      => $this->input->post('nama', true),
+            'brand'     => $this->input->post('brand', true),
+            'type_id'   => $typeId,
+            'type'      => $this->input->post('type', true),
+            'voltage'   => $this->input->post('voltage', true) ?: null,
+            'voltage_unit' => $this->input->post('voltage_unit', true),
+            'ampere'    => $this->input->post('ampere', true) ?: null,
+            'daya'      => $this->input->post('daya', true) ?: null,
+            'daya_unit' => $this->input->post('daya_unit', true),
+            'image'     => $imageFilename,
+            'editor'    => $this->session->userdata('user_data')['nama'] ?? 'SYSTEM',
+        ] + $locationField;
+
+        $ok = $this->Electric_model->addElectric($dataToSave);
+        if ($ok) {
+            set_message(['success', 'Data electric berhasil ditambahkan!']);
+        } else {
+            set_message(['danger', 'Gagal menambahkan data electric. ID mungkin sudah ada.']);
+        }
+        
+        if ($this->input->post('submit_tambah_lagi')) {
+            redirect('electric/add?type_id=' . $typeId);
+        } else {
+            redirect('electric');
+        }
     }
 
     /**
@@ -293,6 +448,7 @@ class Electric extends CI_Controller
      */
     public function edit(string $electricId): void
     {
+        require_admin();
         $electricId = urldecode($electricId);
         $electric = $this->Electric_model->getById($electricId);
         if (!$electric) show_404();
@@ -300,6 +456,14 @@ class Electric extends CI_Controller
         $typeData = $this->Electric_type_model->getById((int)$electric['type_id']);
 
         if ($this->input->method() === 'post') {
+            $postedTypeId = $this->input->post('type_id', true);
+            if ($postedTypeId) {
+                $typeData = $this->Electric_type_model->getById((int)$postedTypeId);
+                if ($typeData && !empty($typeData['type'])) {
+                    $_POST['nama'] = $typeData['type'];
+                }
+            }
+
             $this->setValidationRules();
 
             if ($this->form_validation->run()) {
@@ -366,6 +530,17 @@ class Electric extends CI_Controller
                     }
                 }
                 
+                $locationInput = $this->input->post('location', true);
+                // Store location as FK id (prefer 'location' column per schema)
+                if ($this->db->field_exists('location', 'as_electric')) {
+                    $locationField = ['location' => (int)$locationInput];
+                } elseif ($this->db->field_exists('location_id', 'as_electric')) {
+                    $locationField = ['location_id' => (int)$locationInput];
+                } else {
+                    $locRow = $this->db->get_where('as_location', ['id' => $locationInput])->row_array();
+                    $locationField = ['location' => isset($locRow['id']) ? (int)$locRow['id'] : (int)$locationInput];
+                }
+
                 $dataToUpdate = [
                     'nama'      => $this->input->post('nama', true),
                     'brand'     => $this->input->post('brand', true),
@@ -376,10 +551,9 @@ class Electric extends CI_Controller
                     'ampere'    => $this->input->post('ampere', true) ?: null,
                     'daya'      => $this->input->post('daya', true) ?: null,
                     'daya_unit' => $this->input->post('daya_unit', true),
-                    'location'  => $this->input->post('location', true),
                     'image'     => $imageFilename,
                     'editor'    => $this->session->userdata('user_data')['nama'] ?? 'SYSTEM',
-                ];
+                ] + $locationField;
                 
                 $newElectricId = $this->Electric_model->generateElectricId(
                     $dataToUpdate['nama'],
@@ -412,6 +586,8 @@ class Electric extends CI_Controller
         
         // Ambil data lokasi agar dropdown muncul saat edit
         $data['locations'] = $this->Location_model->get_all();
+        // Provide list of available categories for the edit form
+        $data['types'] = $this->Electric_type_model->getAllTypes();
         $data['electric'] = $electric;
         $data['typeData'] = $typeData;
         $data['title'] = 'Edit Electric';
@@ -428,6 +604,7 @@ class Electric extends CI_Controller
      */
     public function delete(string $electricId): void
     {
+        require_admin();
         $electricId = urldecode($electricId);
         $electric = $this->Electric_model->getById($electricId);
         if (!$electric) {
@@ -448,6 +625,7 @@ class Electric extends CI_Controller
      */
     public function download(): void
     {
+        require_admin();
         try {
             $electrics = $this->Electric_model->getAllElectrics();
             $this->generateExcelFile($electrics);
@@ -467,8 +645,18 @@ class Electric extends CI_Controller
      */
     public function template(): void
     {
+        require_admin();
         try {
-            $spreadsheet = new Spreadsheet();
+            $spreadsheetClass = 'PhpOffice\\PhpSpreadsheet\\Spreadsheet';
+            $writerClass = 'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx';
+            $ioClass = 'PhpOffice\\PhpSpreadsheet\\IOFactory';
+            if (!class_exists($spreadsheetClass) || !class_exists($writerClass) || !class_exists($ioClass)) {
+                set_message(['danger', 'PhpSpreadsheet library tidak terpasang. Jalankan "composer install" untuk mengaktifkan fitur Excel.']);
+                redirect('electric');
+                return;
+            }
+
+            $spreadsheet = new $spreadsheetClass();
             $sheet = $spreadsheet->getActiveSheet();
             $sheet->setCellValue('A1', 'Nama');
             $sheet->setCellValue('B1', 'Type');
@@ -492,6 +680,7 @@ class Electric extends CI_Controller
      */
     public function upload(): void
     {
+        require_admin();
         $this->handleFileUpload();
     }
 
@@ -503,10 +692,20 @@ class Electric extends CI_Controller
      */
     private function generateExcelFile(array $electrics): void
     {
-        $spreadsheet = new Spreadsheet();
+        $spreadsheetClass = 'PhpOffice\\PhpSpreadsheet\\Spreadsheet';
+        $writerClass = 'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx';
+        if (!class_exists($spreadsheetClass) || !class_exists($writerClass)) {
+            set_message(['danger', 'PhpSpreadsheet library tidak terpasang. Jalankan "composer install" untuk mengaktifkan fitur Excel.']);
+            redirect('electric');
+            return;
+        }
+
+        $spreadsheet = new $spreadsheetClass();
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setCellValue('A1', 'Electric ID')->setCellValue('B1', 'Nama')->setCellValue('C1', 'Type')->setCellValue('D1', 'Voltage')->setCellValue('E1', 'Ampere')->setCellValue('F1', 'Daya')->setCellValue('G1', 'Created At')->setCellValue('H1', 'Updated At')->setCellValue('I1', 'Editor');
-        $headerStyle = ['font' => ['bold' => true], 'fill' => ['fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E9ECEF']]];
+        $fillClass = 'PhpOffice\\PhpSpreadsheet\\Style\\Fill';
+        $fillSolid = (class_exists($fillClass) && defined($fillClass . '::FILL_SOLID')) ? constant($fillClass . '::FILL_SOLID') : 'solid';
+        $headerStyle = ['font' => ['bold' => true], 'fill' => ['fillType' => $fillSolid, 'startColor' => ['rgb' => 'E9ECEF']]];
         $sheet->getStyle("A1:{$sheet->getHighestColumn()}1")->applyFromArray($headerStyle);
         $row = 2;
         foreach ($electrics as $electric) {
@@ -528,9 +727,14 @@ class Electric extends CI_Controller
      * @param string $filename The name of the file to output.
      * @return void
      */
-    private function outputExcelFile(Spreadsheet $spreadsheet, string $filename): void
+    private function outputExcelFile($spreadsheet, string $filename): void
     {
-        $writer = new Xlsx($spreadsheet);
+        $writerClass = 'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx';
+        if (!class_exists($writerClass)) {
+            set_message(['danger', 'PhpSpreadsheet writer tidak tersedia.']);
+            return;
+        }
+        $writer = new $writerClass($spreadsheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
@@ -554,7 +758,12 @@ class Electric extends CI_Controller
         }
         $file = $_FILES['file']['tmp_name'];
         try {
-            $spreadsheet = @IOFactory::load($file);
+            $ioClass = 'PhpOffice\\PhpSpreadsheet\\IOFactory';
+            if (!class_exists($ioClass)) {
+                set_message(['danger', 'PhpSpreadsheet library tidak terpasang.']);
+                return;
+            }
+            $spreadsheet = @call_user_func([$ioClass, 'load'], $file);
             $sheet = $spreadsheet->getActiveSheet();
             $data = $sheet->toArray(null, true, true, true);
             array_shift($data);

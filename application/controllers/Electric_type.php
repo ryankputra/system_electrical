@@ -30,6 +30,9 @@ class Electric_type extends CI_Controller
             redirect(base_url());
         }
 
+        // Only Admin may manage electrical types
+        require_admin();
+
         // Load required dependencies
         $this->load->model('Electric_type_model');
         $this->load->library(['form_validation', 'upload']);

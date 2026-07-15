@@ -48,7 +48,7 @@
     </main>
 
     <footer class="fixed-bottom d-flex text-white px-2 py-1 justify-content-between" style="background-color: #004274; font-size: 10px;">
-        <span>ELECTRICAL-SYSTEM V 1.0 | Operation Excellence 2026</span>
+        <span>ELECTRICAL-SYSTEM V 2.0 | Operation Excellence 2026</span>
     </footer>
 
     <script src="<?= base_url('assets/img/js/bootstrap.bundle.min.js'); ?>"></script>

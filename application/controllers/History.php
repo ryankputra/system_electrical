@@ -66,36 +66,203 @@ class History extends CI_Controller
      */
     public function out()
     {
+        // Allow both Admin and Technician to perform 'Keluar' (take) operations.
         $this->load->model('Electric_model');
         if ($this->input->method() === 'post') {
             $electric_id = $this->input->post('electric_id', true);
             $qty = (int) $this->input->post('qty', true);
             $keterangan = $this->input->post('keterangan', true);
             $user_nik = $this->session->userdata('user_data')['nik'] ?? null;
+            $wo_id = $this->input->post('wo_id', true) ?: null;
 
-            if (!$electric_id || $qty <= 0) {
+            if ($qty <= 0) {
                 set_message(['danger', 'Data tidak valid']);
                 redirect('history/out');
                 return;
             }
 
-            $res = $this->History_model->insert_history([
+            $res = $this->History_model->addTransaction([
                 'electric_id' => $electric_id,
                 'type' => 'Keluar',
                 'qty' => $qty,
                 'user_nik' => $user_nik,
                 'keterangan' => $keterangan,
+                'wo_id' => $wo_id
             ]);
 
-            if ($res['success']) set_message(['success', 'Transaksi Keluar disimpan (ID: ' . $res['id'] . ')']);
-            else set_message(['danger', 'Gagal menyimpan transaksi: ' . $res['message']]);
-
-            redirect('history');
+            if ($res['success']) {
+                set_message(['success', 'Barang Keluar berhasil dicatat.']);
+                redirect('history/mine');
+            } else {
+                set_message(['danger', 'Gagal mencatat barang keluar: ' . $res['message']]);
+                redirect('history/out');
+            }
             return;
         }
 
-        $electrics = $this->Electric_model->getAllElectrics();
-        $data = ['title' => 'Catat Barang Keluar', 'electrics' => $electrics];
+        $this->load->model('Location_model');
+        $this->load->model('Wo_model');
+        
+        $lokasi_id = $this->input->get('lokasi_id', true);
+        
+        $locations = $this->Location_model->get_all();
+        $work_orders = $this->Wo_model->get_all();
+        
+        $barang_per_lokasi = [];
+        if (!empty($lokasi_id)) {
+            $all_electrics = $this->Electric_model->getAllElectrics();
+            foreach ($all_electrics as $el) {
+                if ((string)($el['location'] ?? '') === (string)$lokasi_id) {
+                    // Get location name
+                    $locRow = $this->db->get_where('as_location', ['id' => $lokasi_id])->row_array();
+                    $el['location_name'] = $locRow ? $locRow['location_name'] : $lokasi_id;
+                    $barang_per_lokasi[] = $el;
+                }
+            }
+        }
+        
+        $data = [
+            'title' => 'Catat Barang Keluar',
+            'lokasi_id' => $lokasi_id,
+            'locations' => $locations,
+            'work_orders' => $work_orders,
+            'barang_per_lokasi' => $barang_per_lokasi
+        ];
+        
         render_view('history/out', $data);
+    }
+
+    /**
+     * Show digital stock card for a specific electric component.
+     */
+    public function stock_card()
+    {
+        $electric_id = $this->input->get('electric_id', true);
+        $this->load->model('Electric_model');
+        
+        $all_history = $this->History_model->get_all_history();
+        $card_history = [];
+        $running_balance = 0;
+        
+        if (!empty($electric_id)) {
+            // Filter chronologically and compute running balance
+            foreach ($all_history as $row) {
+                if ((string)$row['electric_id'] === (string)$electric_id) {
+                    $type = strtolower($row['type'] ?? '');
+                    $qty = (int)($row['display_amount'] ?? 0);
+                    
+                    if (strpos($type, 'masuk') !== false || $type === 'in') {
+                        $running_balance += $qty;
+                    } elseif (strpos($type, 'keluar') !== false || $type === 'out') {
+                        $running_balance -= $qty;
+                    }
+                    
+                    $row['running_balance'] = $running_balance;
+                    $card_history[] = $row;
+                }
+            }
+        }
+        
+        $selected_electric = null;
+        $active_batches = [];
+        if (!empty($electric_id)) {
+            $selected_electric = $this->Electric_model->getById($electric_id);
+            if ($selected_electric) {
+                $selected_electric['stock'] = !empty($card_history) ? $card_history[count($card_history) - 1]['running_balance'] : 0;
+            }
+            
+            // Build map of database ID to sequential batch number
+            $batch_seq_map = [];
+            foreach ($card_history as $row) {
+                $type = strtolower($row['type'] ?? '');
+                $isMasuk = strpos($type, 'masuk') !== false || $type === 'in';
+                if ($isMasuk && isset($row['batch_seq']) && $row['batch_seq'] !== '-') {
+                    $batch_seq_map[(int)$row['id']] = $row['batch_seq'];
+                }
+            }
+            
+            // Fetch active batches for this electric and attach sequential batch display number
+            $all_avail = $this->History_model->get_available_batches();
+            foreach ($all_avail as $b) {
+                if ((string)$b['electric_id'] === (string)$electric_id) {
+                    $b_id = (int)$b['id'];
+                    $b['batch_seq_display'] = isset($batch_seq_map[$b_id]) ? $batch_seq_map[$b_id] : $b_id;
+                    $active_batches[] = $b;
+                }
+            }
+        }
+        
+        $data = [
+            'title' => 'Kartu Stok Suku Cadang',
+            'electrics' => $this->Electric_model->getAllElectrics(),
+            'categories' => $this->db->get('as_electric_types')->result_array(),
+            'selected_id' => $electric_id,
+            'selected_electric' => $selected_electric,
+            'active_batches' => $active_batches,
+            'card_history' => $card_history
+        ];
+        
+        render_view('history/stock_card', $data);
+    }
+
+    /**
+     * Show outbound history for the currently logged in technician.
+     */
+    public function mine()
+    {
+        $user_nik = $this->session->userdata('user_data')['nik'] ?? null;
+        $all_history = $this->History_model->get_all_history();
+        $history = [];
+        
+        if ($user_nik) {
+            foreach ($all_history as $row) {
+                if ((string)($row['user_nik'] ?? '') === (string)$user_nik) {
+                    $history[] = $row;
+                }
+            }
+        }
+        
+        $data = [
+            'title' => 'Riwayat Pengambilan Saya',
+            'history' => $history
+        ];
+        render_view('history/mine', $data);
+    }
+
+    /**
+     * View for thermal printer sticker print.
+     */
+    public function print_sticker($id) 
+    {
+        $data['history'] = $this->db->get_where('as_history', ['id' => $id])->row_array();
+        if (!$data['history']) {
+            show_404();
+        }
+        $this->load->model('Electric_model');
+        $data['electric'] = $this->Electric_model->getById($data['history']['electric_id']);
+        
+        // Month names and color coding
+        $months = [
+            '01' => ['name' => 'JANUARI', 'color' => '#E74C3C'],   // Merah
+            '02' => ['name' => 'FEBRUARI', 'color' => '#3498DB'],  // Biru
+            '03' => ['name' => 'MARET', 'color' => '#F1C40F'],     // Kuning
+            '04' => ['name' => 'APRIL', 'color' => '#2ECC71'],     // Hijau
+            '05' => ['name' => 'MEI', 'color' => '#E67E22'],       // Oranye
+            '06' => ['name' => 'JUNI', 'color' => '#9B59B6'],      // Ungu
+            '07' => ['name' => 'JULI', 'color' => '#8E44AD'],      // Ungu Tua
+            '08' => ['name' => 'AGUSTUS', 'color' => '#34495E'],   // Biru Dongker
+            '09' => ['name' => 'SEPTEMBER', 'color' => '#1ABC9C'], // Tosca
+            '10' => ['name' => 'OKTOBER', 'color' => '#D35400'],   // Coklat
+            '11' => ['name' => 'NOVEMBER', 'color' => '#7F8C8D'],  // Abu-abu
+            '12' => ['name' => 'DESEMBER', 'color' => '#2C3E50']   // Hitam
+        ];
+        
+        $date = strtotime($data['history']['created_at']);
+        $m = date('m', $date);
+        
+        $data['month_name'] = $months[$m]['name'];
+        $data['month_color'] = $months[$m]['color'];
+        
+        $this->load->view('history/print_sticker', $data);
     }
 }

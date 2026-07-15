@@ -1,4 +1,5 @@
 <!-- Card -->
+<?php $roles = $roles ?? ['Staf Gudang', 'Manajer OE', 'Teknisi']; ?>
 <div class="card mx-auto rounded-5 shadow border-0 mb-5 w-75" style="margin-top: 5rem;">
     <!-- Card Header -->
     <div class="card-header bg-transparent border-0 px-4 pt-3 pb-1">
@@ -48,11 +49,11 @@
             <!-- Role Input Section -->
             <div class="mb-3">
                 <label for="role" class="form-label">Role</label>
-                <?php $availableRoles = isset($roles) && is_array($roles) ? $roles : ['admin', 'user']; ?>
+                <?php $selectedRole = set_value('role'); ?>
                 <select id="role" name="role" class="form-select rounded-pill <?= form_error('role') ? 'is-invalid' : '' ?>">
                     <option value="">-- Pilih Role --</option>
-                    <?php foreach ($availableRoles as $r) : ?>
-                        <option value="<?= $r ?>" <?= set_value('role') === $r ? 'selected' : '' ?>><?= ucfirst($r) ?></option>
+                    <?php foreach ($roles as $r): ?>
+                        <option value="<?= htmlspecialchars($r) ?>" <?= $selectedRole === $r ? 'selected' : '' ?>><?= htmlspecialchars($r) ?></option>
                     <?php endforeach; ?>
                 </select>
                 <?= form_error('role', "<div class='invalid-feedback d-block'>", "</div>"); ?>

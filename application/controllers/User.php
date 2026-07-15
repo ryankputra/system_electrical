@@ -2,10 +2,8 @@
 defined('BASEPATH') or exit('No direct script access allowed');
 
 require_once __DIR__ . '/../../vendor/autoload.php';
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-use PhpOffice\PhpSpreadsheet\IOFactory;
+// PhpSpreadsheet used dynamically to avoid editor warnings when package
+// is not installed. Run `composer install` to enable Excel features.
 
 /**
  * @package ElectricalSystem
@@ -22,6 +20,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
  */
 class User extends CI_Controller
 {
+    private const ROLE_OPTIONS = [
+        'Staf Gudang',
+        'Manajer OE',
+        'Teknisi',
+    ];
+
     /**
      * Configuration array for all settings.
      *
@@ -87,6 +91,7 @@ class User extends CI_Controller
      */
     public function index(): void
     {
+        require_admin();
         // Handle possible Excel file upload like ASRS implementation
         $this->handleFileUpload();
         $this->handleSessionState();
@@ -136,6 +141,7 @@ class User extends CI_Controller
      */
     public function add(): void
     {
+        require_admin();
         $this->form_validation->set_rules(
             self::CONFIG['validation']['nik']['field'],
             self::CONFIG['validation']['nik']['label'],
@@ -163,17 +169,15 @@ class User extends CI_Controller
         $this->form_validation->set_rules(
             'role',
             'Role',
-            'required',
+            'required|in_list[' . self::ROLE_OPTIONS[0] . ',' . self::ROLE_OPTIONS[1] . ',' . self::ROLE_OPTIONS[2] . ']',
             [
                 'required' => '%s harus diisi',
+                'in_list'  => '%s tidak valid',
             ]
         );
 
         if ($this->form_validation->run() === false) {
-            $roles = $this->User_model->getRoles();
-            if (empty($roles)) {
-                $roles = ['admin', 'user']; // fallback jika kolom enum tidak ditemukan
-            }
+            $roles = self::ROLE_OPTIONS;
             $data = ['title' => 'Tambah Pengguna Air System', 'user' => null, 'roles' => $roles];
             render_view('user/add', $data);
             return;
@@ -193,6 +197,7 @@ class User extends CI_Controller
      */
     public function edit($nik = null): void
     {
+        require_admin();
         if ($nik === null) {
             show_404();
             return;
@@ -216,9 +221,10 @@ class User extends CI_Controller
         $this->form_validation->set_rules(
             'role',
             'Role',
-            'required',
+            'required|in_list[' . self::ROLE_OPTIONS[0] . ',' . self::ROLE_OPTIONS[1] . ',' . self::ROLE_OPTIONS[2] . ']',
             [
                 'required' => '%s harus diisi',
+                'in_list'  => '%s tidak valid',
             ]
         );
 
@@ -234,10 +240,7 @@ class User extends CI_Controller
         }
 
         if ($this->form_validation->run() === false) {
-            $roles = $this->User_model->getRoles();
-            if (empty($roles)) {
-                $roles = ['admin', 'user'];
-            }
+            $roles = self::ROLE_OPTIONS;
             $data = ['title' => 'Edit Pengguna Air System', 'user' => $user, 'roles' => $roles];
             render_view('user/edit', $data);
             return;
@@ -256,6 +259,7 @@ class User extends CI_Controller
      */
     public function delete($nik = null): void
     {
+        require_admin();
         if ($nik === null) {
             show_404();
             return;
@@ -274,65 +278,8 @@ class User extends CI_Controller
      */
     public function dashboard(): void
     {
-        // Load models needed for dashboard statistics
-        $this->load->model(['Storage_model', 'Electric_type_model', 'Electric_model', 'Report_model']);
-
-        // Total locations
-        $locations = $this->Storage_model->get_all_locations();
-        $total_locations = is_array($locations) ? count($locations) : 0;
-
-        // Total items across storage (sum of total_amount from overview)
-        $overview = $this->Storage_model->get_storage_overview();
-        $total_items = 0;
-        if (is_array($overview)) {
-            foreach ($overview as $row) {
-                $total_items += isset($row['total_amount']) ? (int)$row['total_amount'] : 0;
-            }
-        }
-
-        // Total electrical types
-        $total_types = count($this->Electric_type_model->getAllTypes());
-
-        // Recent transactions
-        $recent_transactions = $this->Report_model->get_all_transactions(10, 0);
-
-        // Low stock (threshold: 5) — allow override via GET ?threshold=
-        $thresholdParam = $this->input->get('threshold', true);
-        $threshold = ($thresholdParam !== null && is_numeric($thresholdParam)) ? (int)$thresholdParam : 5;
-        $low_stock = array_filter(is_array($overview) ? $overview : [], function ($r) use ($threshold) {
-            return isset($r['total_amount']) && (int)$r['total_amount'] <= $threshold;
-        });
-
-        // Daily transactions for last 7 days for chart
-        $start = date('Y-m-d', strtotime('-6 days'));
-        $end = date('Y-m-d');
-        $dailyRows = $this->Report_model->get_daily_summary($start, $end);
-        // map by date
-        $dailyMap = [];
-        foreach ($dailyRows as $dr) {
-            $dailyMap[$dr['transaction_date']] = (int)$dr['total_transactions'];
-        }
-        $chart_labels = [];
-        $chart_data = [];
-        for ($i = 6; $i >= 0; $i--) {
-            $d = date('Y-m-d', strtotime("-{$i} days"));
-            $chart_labels[] = date('d M', strtotime($d));
-            $chart_data[] = isset($dailyMap[$d]) ? $dailyMap[$d] : 0;
-        }
-
-        $data = [
-            'title' => 'Dashboard',
-            'total_locations' => $total_locations,
-            'total_items' => $total_items,
-            'total_types' => $total_types,
-            'recent_transactions' => $recent_transactions,
-            'low_stock' => $low_stock,
-            'threshold' => $threshold,
-            'chart_labels' => $chart_labels,
-            'chart_data' => $chart_data,
-        ];
-
-        render_view('user/dashboard', $data);
+        // Redirect legacy user/dashboard calls to centralized dashboard
+        redirect('dashboard');
     }
 
     ## Private Helper Methods
@@ -409,6 +356,7 @@ class User extends CI_Controller
      */
     public function upload(): void
     {
+        require_admin();
         // Delegate to the central handler which expects a file in \\$_FILES['file']
         $this->handleFileUpload();
     }
@@ -423,7 +371,15 @@ class User extends CI_Controller
      */
     private function generateExcelFile(array $users): void
     {
-        $spreadsheet = new Spreadsheet();
+        $spreadsheetClass = 'PhpOffice\\PhpSpreadsheet\\Spreadsheet';
+        $writerClass = 'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx';
+        if (!class_exists($spreadsheetClass) || !class_exists($writerClass)) {
+            set_message(['danger', 'PhpSpreadsheet library tidak terpasang. Jalankan "composer install" untuk mengaktifkan fitur Excel.']);
+            redirect('user');
+            return;
+        }
+
+        $spreadsheet = new $spreadsheetClass();
         $sheet = $spreadsheet->getActiveSheet();
 
         // Set headers
@@ -433,10 +389,12 @@ class User extends CI_Controller
         $sheet->setCellValue('D1', 'Diperbarui');
 
         // Style headers
+        $fillClass = 'PhpOffice\\PhpSpreadsheet\\Style\\Fill';
+        $fillSolid = (class_exists($fillClass) && defined($fillClass . '::FILL_SOLID')) ? constant($fillClass . '::FILL_SOLID') : 'solid';
         $headerStyle = [
             'font' => ['bold' => true],
             'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'fillType' => $fillSolid,
                 'startColor' => ['rgb' => 'E9ECEF']
             ]
         ];
@@ -464,7 +422,7 @@ class User extends CI_Controller
         header("Content-Disposition: attachment; filename=\"{$filename}\"");
         header('Cache-Control: max-age=0');
 
-        $writer = new Xlsx($spreadsheet);
+        $writer = new $writerClass($spreadsheet);
         $writer->save('php://output');
         exit;
     }
@@ -476,7 +434,15 @@ class User extends CI_Controller
      */
     private function generateTemplateFile(): void
     {
-        $spreadsheet = new Spreadsheet();
+        $spreadsheetClass = 'PhpOffice\\PhpSpreadsheet\\Spreadsheet';
+        $writerClass = 'PhpOffice\\PhpSpreadsheet\\Writer\\Xlsx';
+        if (!class_exists($spreadsheetClass) || !class_exists($writerClass)) {
+            set_message(['danger', 'PhpSpreadsheet library tidak terpasang. Jalankan "composer install" untuk mengaktifkan fitur Excel.']);
+            redirect('user');
+            return;
+        }
+
+        $spreadsheet = new $spreadsheetClass();
         $sheet = $spreadsheet->getActiveSheet();
 
         // Set headers
@@ -488,10 +454,12 @@ class User extends CI_Controller
         $sheet->setCellValue('B2', 'John Doe');
 
         // Style headers
+        $fillClass = 'PhpOffice\\PhpSpreadsheet\\Style\\Fill';
+        $fillSolid = (class_exists($fillClass) && defined($fillClass . '::FILL_SOLID')) ? constant($fillClass . '::FILL_SOLID') : 'solid';
         $headerStyle = [
             'font' => ['bold' => true],
             'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'fillType' => $fillSolid,
                 'startColor' => ['rgb' => 'E9ECEF']
             ]
         ];
@@ -509,7 +477,7 @@ class User extends CI_Controller
         header("Content-Disposition: attachment; filename=\"{$filename}\"");
         header('Cache-Control: max-age=0');
 
-        $writer = new Xlsx($spreadsheet);
+        $writer = new $writerClass($spreadsheet);
         $writer->save('php://output');
         exit;
     }
@@ -539,7 +507,12 @@ class User extends CI_Controller
         $file = $_FILES['file']['tmp_name'];
 
         try {
-            $spreadsheet = @IOFactory::load($file);
+            $ioClass = 'PhpOffice\\PhpSpreadsheet\\IOFactory';
+            if (!class_exists($ioClass)) {
+                set_message(['danger', 'PhpSpreadsheet library tidak terpasang.']);
+                return;
+            }
+            $spreadsheet = @call_user_func([$ioClass, 'load'], $file);
             $sheet = $spreadsheet->getActiveSheet();
             $data = $sheet->toArray(null, true, true, true);
             array_shift($data); // remove header row
@@ -624,7 +597,11 @@ class User extends CI_Controller
      */
     private function processExcelFile(string $filePath): array
     {
-        $spreadsheet = IOFactory::load($filePath);
+        $ioClass = 'PhpOffice\\PhpSpreadsheet\\IOFactory';
+        if (!class_exists($ioClass)) {
+            return ['success' => false, 'inserted' => 0, 'errors' => 1, 'errorMessages' => ['PhpSpreadsheet missing']];
+        }
+        $spreadsheet = call_user_func([$ioClass, 'load'], $filePath);
         $sheet = $spreadsheet->getActiveSheet();
         $rows = $sheet->toArray();
 

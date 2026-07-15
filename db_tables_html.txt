@@ -1,0 +1,63 @@
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_user</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_user</code> digunakan untuk mengelola data akun pengguna (administrator, staf gudang, manager) yang memiliki hak akses untuk masuk dan mengoperasikan modul sistem sesuai dengan hak akses (role) masing-masing. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_user</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.12 Tampilan Struktur Tabel as_user di phpMyAdmin</p>
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_suppliers</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_suppliers</code> digunakan untuk menyimpan data produsen/vendor penyuplai suku cadang kelistrikan (nama perusahaan, kontak, alamat) yang terlibat dalam alur pengadaan barang. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_suppliers</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.13 Tampilan Struktur Tabel as_suppliers di phpMyAdmin</p>
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_location</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_location</code> menyimpan data master lokasi fisik atau penomoran rak/lemari penyimpanan di dalam gudang PT Apparel One Indonesia guna memandu staf saat menaruh atau mengambil barang. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_location</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.14 Tampilan Struktur Tabel as_location di phpMyAdmin</p>
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_electric_types</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_electric_types</code> digunakan untuk mendefinisikan kategori atau tipe suku cadang kelistrikan (misalnya Relay, Sensor, MCB) guna mempermudah pengelompokan suku cadang di gudang. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_electric_types</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.15 Tampilan Struktur Tabel as_electric_types di phpMyAdmin</p>
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_electric</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_electric</code> bertindak sebagai master data suku cadang kelistrikan yang menyimpan informasi spesifikasi teknis barang seperti merk, tipe, voltase, ampere, daya, kapasitas stok global, dan lokasi rak penyimpanan. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_electric</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.16 Tampilan Struktur Tabel as_electric di phpMyAdmin</p>
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_purchase_orders</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_purchase_orders</code> berfungsi menyimpan data transaksi dokumen Purchase Order (PO) yang memuat nomor PO, tanggal pemesanan, supplier tujuan, total nominal belanja, dan status approval dokumen. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_purchase_orders</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.17 Tampilan Struktur Tabel as_purchase_orders di phpMyAdmin</p>
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_po_details</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_po_details</code> berfungsi mencatat baris detail item suku cadang apa saja yang dipesan dalam satu dokumen Purchase Order (PO) beserta harga beli dan jumlah kuantitas yang diajukan. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_po_details</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.18 Tampilan Struktur Tabel as_po_details di phpMyAdmin</p>
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_work_orders</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_work_orders</code> digunakan untuk mendokumentasikan transaksi pengeluaran barang berbasis dokumen Work Order (WO) yang memuat nomor WO, nama teknisi peminta, tanggal barang dikeluarkan, dan rincian kuantitas pengeluaran. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_work_orders</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.19 Tampilan Struktur Tabel as_work_orders di phpMyAdmin</p>
+<p style="font-weight: bold; margin-top: 20px; margin-bottom: 5px; text-indent: 0.5in;">Struktur Tabel as_history</p>
+<p style="text-indent: 0.5in; margin-bottom: 10px;">Tabel <code>as_history</code> bertindak sebagai kartu stok digital dan log transaksi mutasi barang masuk/keluar, sekaligus menyimpan timestamp kronologis per batch masuk yang krusial untuk menjalankan kueri antrean FIFO. Keterangan identifikasi tabel relasional ini dideklarasikan sebagai berikut:</p>
+<div style="margin-left: 0.5in; margin-bottom: 10px;">
+<p style="margin: 0;">Nama tabel : <code>as_history</code></p>
+<p style="margin: 0;">Auto Increment : -</p>
+</div>
+<p style="color: gray; font-style: italic; text-align: center; margin-bottom: 25px;">Gambar 4.20 Tampilan Struktur Tabel as_history di phpMyAdmin</p>

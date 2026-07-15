@@ -1,0 +1,445 @@
+BLOCK 0 [p]: HALAMAN JUDUL
+BLOCK 1 [p]: SKRIPSI(Proyek Informatika)
+BLOCK 2 [p]: OPTIMASI MANAJEMEN STOK MENGGUNAKAN PENDEKATAN QUEUE-BASED PROCESSING
+BLOCK 3 [p]: PADA APLIKASI INVENTORY
+BLOCK 4 [p]: (Studi Kasus: PT. Apparel One Indonesia)
+BLOCK 5 [p]: Diajukan untuk memenuhi salah satu syaratmemperoleh gelar Sarjana Komputer (S. Kom.)
+BLOCK 6 [p]: pada Prodi S1 Informatika
+BLOCK 7 [p]: Disusun Oleh :
+BLOCK 8 [p]: AYUSIAWAN RYAN KUSUMA PUTRA223016012
+BLOCK 9 [p]: FAKULTAS SAINS DAN TEKNOLOGI
+BLOCK 10 [p]: UNIVERSITAS PIGNATELLI TRIPUTRA
+BLOCK 11 [p]: SURAKARTA
+BLOCK 12 [p]: 2026
+BLOCK 13 [p]: PERSETUJUAN TUGAS AKHIR
+BLOCK 14 [p]: Nama: Ayusiawan Ryan Kusuma Putra
+BLOCK 15 [p]: NIM: 223016012
+BLOCK 16 [p]: Program Studi: S1 Informatika
+BLOCK 17 [p]: Fakultas: Sains dan Teknologi
+BLOCK 18 [p]: Judul Tugas Akhir      : Optimasi Manajemen Stok Menggunakan
+BLOCK 19 [p]: Pendekatan Queue-Based Processing Pada Aplikasi
+BLOCK 20 [p]: Inventory
+BLOCK 21 [p]: Tugas Akhir ini telah diperiksa dan disetujui,
+BLOCK 22 [p]: Surakarta, 17 Februari 2026
+BLOCK 23 [p]: Mengetahui,Dosen Pembimbing,Tutus Praningki, S.Kom., M.Kom.NIDN. 0714078602Mengetahui,Dosen Pembimbi
+BLOCK 24 [p]: PENGESAHAN DEWAN PENGUJI
+BLOCK 25 [p]: Nama: Ayusiawan Ryan Kusuma Putra
+BLOCK 26 [p]: NIM: 223016012
+BLOCK 27 [p]: Program Studi: S1 Informatika
+BLOCK 28 [p]: Fakultas: Sains dan Teknologi
+BLOCK 29 [p]: Judul Tugas Akhir      : Optimasi Manajemen Stok Menggunakan
+BLOCK 30 [p]: Pendekatan Queue-Based Processing Pada Aplikasi
+BLOCK 31 [p]: Inventory
+BLOCK 32 [p]: Tugas akhir ini telah diujikan dan dipertahankan dihadapan Dewan Penguji pada Sidang tugas akhir tan
+BLOCK 33 [p]: Surakarta, 17 Juli 2026
+BLOCK 34 [p]: Anggota Penguji 2NamaNIDN / NIDK / NUPTKAnggota Penguji 2NamaNIDN / NIDK / NUPTKDewan Penguji :
+BLOCK 35 [p]: Anggota Penguji 1NamaNIDN / NIDK / NUPTKAnggota Penguji 1NamaNIDN / NIDK / NUPTK
+BLOCK 36 [p]: Ketua PengujiNamaNIDN / NIDK / NUPTKKetua PengujiNamaNIDN / NIDK / NUPTK
+BLOCK 37 [p]: PERNYATAAN KEASLIAN TUGAS AKHIR
+BLOCK 38 [p]: Sebagai mahasiswa Universitas Pignatelli Triputra, yang bertanda tangan di bawah ini, Saya :
+BLOCK 39 [p]: Nama: Ayusiawan Ryan Kusuma Putra
+BLOCK 40 [p]: NIM : 223016012
+BLOCK 41 [p]: Menyatakan bahwa karya ilmiah Saya yang berjudul :
+BLOCK 42 [p]: OPTIMASI MANAJEMEN STOK MENGGUNAKAN PENDEKATAN QUEUE-BASED PROCESSING PADA APLIKASI INVENTORY
+BLOCK 43 [p]: Merupakan karya asli saya (kecuali cuplikan dan ringkasan yang masing-masing telah saya jelaskan sum
+BLOCK 44 [p]: Dibuat di: Surakarta
+BLOCK 45 [p]: Pada Tanggal: 17 Juli 2026
+BLOCK 46 [p]: Yang menyatakan
+BLOCK 47 [p]: Materai 10.000Materai 10.000
+BLOCK 48 [p]: (Ayusiawan Ryan Kusuma Putra)        223016012
+BLOCK 49 [p]: PERSETUJUAN PUBLIKASI KARYA ILMIAH
+BLOCK 50 [p]: PERNYATAAN PERSETUJUAN PUBLIKASI KARYA ILMIAH UNTUK KEPENTINGAN AKADEMIS
+BLOCK 51 [p]: Sebagai mahasiswa Universitas Pignatelli Triputra, yang bertanda tangan di bawah ini, Saya:
+BLOCK 52 [p]: Nama: Ayusiawan Ryan Kusuma Putra
+BLOCK 53 [p]: NIM : 223016012
+BLOCK 54 [p]: demi mengembangkan Ilmu Pengetahuan, menyetujui untuk memberikan kepada Universitas Pignatelli Tripu
+BLOCK 55 [p]: OPTIMASI MANAJEMEN STOK MENGGUNAKAN PENDEKATAN QUEUE-BASED PROCESSING PADA APLIKASI INVENTORY
+BLOCK 56 [p]: beserta perangkat yang diperlukan (bila ada). Dengan Hak Bebas Royalti Non-Eksklusif ini Universitas
+BLOCK 57 [p]: Saya bersedia untuk menanggung secara pribadi, tanpa melibatkan pihak Universitas Pignatelli Triputr
+BLOCK 58 [p]: Demikian surat pernyataan ini saya buat dengan sebenarnya
+BLOCK 59 [p]: Dibuat di: Surakarta
+BLOCK 60 [p]: Pada Tanggal: 17 Juli 2026
+BLOCK 61 [p]: Yang menyatakan
+BLOCK 62 [p]: Materai 10.000Materai 10.000
+BLOCK 63 [p]: (Ayusiawan Ryan Kusuma Putra)  223016012
+BLOCK 64 [p]: NERATIVE AI
+BLOCK 65 [p]: PERNYATAAN PENGGUNAAN GENERATIVE ARTIFICIAL INTELLIGENCE
+BLOCK 66 [p]: Sebagai mahasiswa Universitas Pignatelli Triputra, yang bertanda tangan di bawah ini, Saya:
+BLOCK 67 [p]: Nama: Ayusiawan Ryan Kusuma Putra
+BLOCK 68 [p]: NIM : 223016012
+BLOCK 69 [p]: OPTIMASI MANAJEMEN STOK MENGGUNAKAN PENDEKATAN QUEUE-BASED PROCESSING PADA APLIKASI INVENTORY
+BLOCK 70 [p]: Dengan ini menyatakan dengan sebenarnya, bahwa penggunaan perangkat Generative Artificial Intelligen
+BLOCK 71 [p]: Dibuat di: Surakarta
+BLOCK 72 [p]: Pada Tanggal: 17 Juli 2026
+BLOCK 73 [p]: Yang menyatakan
+BLOCK 74 [p]: Materai 10.000Materai 10.000
+BLOCK 75 [p]: (Ayusiawan Ryan Kusuma Putra)        223016012
+BLOCK 76 [p]: KATA PENGANTAR
+BLOCK 77 [p]: Puji Syukur Kami panjatkan kehadirat Tuhan Yang Maha Kuasa, karena hanya atas perkenan-Nya penyusuna
+BLOCK 78 [p]: Tugas Akhir dengan judul OPTIMASI MANAJEMEN STOK MENGGUNAKAN PENDEKATAN QUEUE-BASED PROCESSING PADAA
+BLOCK 79 [p]: 1.Rektor Universitas Pignatelli Triputra yang selalu memberikan dorongan motivasi kepada mahasiswa.
+BLOCK 80 [p]: 2.Dekan Fakultas Sains dan Teknologi Universitas Pignatelli Triputra, yang telah memberikan dukungan
+BLOCK 81 [p]: 3.Bapak Tutus Praningki, S.Kom., M.Kom., selaku Dosen Pembimbing Tugas Akhir yang telah mengorbankan
+BLOCK 82 [p]: 4.Teman-teman seperjuangan Program Studi S1 Informatika angkatan 2022, rekan-rekan komunitas develop
+BLOCK 83 [p]: Disadari bahwa tugas akhir ini masih banyak kekurangan, maka diharapkan tegur sapa, kritik, dan sara
+BLOCK 84 [p]: Akhirnya, disertai harapan semoga tugas akhir ini ada manfaatnya bagi kita semua, khususnya bagi dun
+BLOCK 85 [p]: Surakarta, 29 Januari 2026
+BLOCK 86 [p]: Ayusiawan Ryan Kusuma Putra                 223016012
+BLOCK 87 [p]: ABSTRAK
+BLOCK 88 [p]: PT. Apparel One Indonesia menghadapi tantangan pengelolaan ribuan suku cadang kelistrikan yang masih
+BLOCK 89 [p]: Kata Kunci : maksimal 5 kata kunci
+BLOCK 90 [p]: ABSTRACT
+BLOCK 91 [p]: PT. Apparel One Indonesia faces challenges in managing thousands of electrical spare parts manually,
+BLOCK 92 [p]: Keyword : maximum 5 keyword
+BLOCK 93 [p]: DAFTAR ISI
+BLOCK 94 [p]: DAFTAR GAMBAR
+BLOCK 95 [p]: Gambar 2.1. Kerangka Pemikiran38
+BLOCK 96 [p]: Gambar 4.1. Diagram Konteks Sistem Inventory (DFD Level 0)52
+BLOCK 97 [p]: Gambar 4.2 . DFD Level 1 Dekomposisi Sistem.54
+BLOCK 98 [p]: Gambar 4.3. DFD Level 2 (Detail Proses Transaksi Stok)55
+BLOCK 99 [p]: Gambar 4.4  Activity Diagram Manajemen Autentikasi56
+BLOCK 100 [p]: Gambar 4.5  Activity Diagram Kelola Daftar Master57
+BLOCK 101 [p]: Gambar 4.6  Activity Diagram Barang Masuk58
+BLOCK 102 [p]: Gambar 4.7  Activity Diagram Barang Keluar59
+BLOCK 103 [p]: Gambar 4.8  Activity Diagram Pembuatan PO60
+BLOCK 104 [p]: Gambar 4.9  Activity Diagram Penerimaan PO61
+BLOCK 105 [p]: Gambar 4.10 Activity Diagram Laporan62
+BLOCK 106 [p]: Gambar 4.11 Physical Data Model (PDM) Database64
+BLOCK 107 [p]: Gambar 4.12 Halaman Login Sistem66
+BLOCK 108 [p]: Gambar 4.13 Halaman Dashboard Utama66
+BLOCK 109 [p]: Gambar 4.14 Halaman Kelola Data Master (Kategori Barang)67
+BLOCK 110 [p]: Gambar 4.15 Halaman Pembuatan Purchase Order (PO)68
+BLOCK 111 [p]: Gambar 4.16 Halaman Transaksi Mutasi Barang (Ad-Hoc)68
+BLOCK 112 [p]: Gambar 4.17 Halaman Work Order (WO) / Permintaan Keluar69
+BLOCK 113 [p]: Gambar 4.18 Halaman Audit / Stock Opname (Akses Staf Gudang)70
+BLOCK 114 [p]: Gambar 4.19 Halaman Pemantauan Audit (Akses Manager OE)71
+BLOCK 115 [p]: Gambar 4.20 Respons Sistem Menolak Kredensial Invalid74
+BLOCK 116 [p]: Gambar 4.21 Peringatan Sistem Saat Input Barang Keluar Melebihi Stok74
+BLOCK 117 [p]: Gambar 4.22 Validasi Sistem Mencegah Form Kosong Disimpan74
+BLOCK 118 [p]: Gambar 4.23 Notifikasi Keberhasilan Penyimpanan Data75
+BLOCK 119 [p]: Gambar 4.24 Laporan Riwayat Mutasi Stok Bukti Algoritma FIFO77
+BLOCK 120 [p]: DAFTAR TABEL
+BLOCK 121 [p]: Tabel 2.1. Tinjauan Studi24
+BLOCK 122 [p]: Tabel 2.4. Komponen Physical Data Model (PDM)34
+BLOCK 123 [p]: Tabel 3.3. Bahan Penelitian dan Fungsinya40
+BLOCK 124 [p]: Tabel 4.1 Kebutuhan Fungsional Sistem49
+BLOCK 125 [p]: Tabel 4.2 Kebutuhan Non-Fungsional Sistem50
+BLOCK 126 [p]: Tabel 4.1 Hasil Pengujian Black-Box Menggunakan Equivalence Partitioning71
+BLOCK 127 [p]: Tabel 4.2 Simulasi Pemotongan Antrean FIFO pada Komponen RELAY NNC75
+BLOCK 128 [p]: BAB IPENDAHULUAN
+BLOCK 129 [p]: Latar Belakang
+BLOCK 130 [p]: Manajemen inventori suku cadang dalam industri manufaktur berskala besar merupakan elemen vital yang
+BLOCK 131 [p]: Hingga saat ini divisi Operational Excellence,  PT. Apparel One Indonesia belum memiliki aplikasi ya
+BLOCK 132 [p]: Pembangunan aplikasi inventaris berbasis web yang dirancang khusus mencakup modul Procurement dan St
+BLOCK 133 [p]: Penelitian ini secara khusus menekankan pada pendekatan Queue-Based Processing dengan mengimplementa
+BLOCK 134 [p]: Rumusan Masalah
+BLOCK 135 [p]: Berdasarkan pemaparan pada latar belakang, pernyataan permasalahan dalam penelitian ini adalah sebag
+BLOCK 136 [p]: Belum adanya implementasi pendekatan Queue-Based Processing (FIFO) dalam sistem inventaris untuk men
+BLOCK 137 [p]: Terjadinya ketidaksinkronan data persediaan antara proses pengadaan (Procurement) dan pencatatan fis
+BLOCK 138 [p]: Batasan Masalah
+BLOCK 139 [p]: Mengingat kompleksitas sistem informasi di PT. Apparel One Indonesia, maka penelitian ini dibatasi p
+BLOCK 140 [p]: Penelitian dan pengembangan sistem difokuskan secara khusus pada manajemen stok suku cadang spare pa
+BLOCK 141 [p]: Logika sistem dibatasi pada implementasi pendekatan Queue-Based Processing dengan algoritma First-In
+BLOCK 142 [p]: Sistem yang dibangun mencakup pengembangan struktur basis data dan modul inti core inventory yang me
+BLOCK 143 [p]: Fokus utama pengembangan terletak pada integrasi fitur lanjutan yaitu Modul Procurement digitalisasi
+BLOCK 144 [p]: Pembangunan sistem ini mencakup perancangan antarmuka user interface dan logika program menggunakan 
+BLOCK 145 [p]: Modul Procurement hanya dibatasi pada pencatatan alur operasional pengadaan dan tidak mencakup integ
+BLOCK 146 [p]: Tujuan Penelitian
+BLOCK 147 [p]: Tujuan penelitian ini dimaksudkan untuk menyelesaikan setiap poin rumusan permasalahan yang telah di
+BLOCK 148 [p]: Mengimplementasikan pendekatan Queue-Based Processing dengan algoritma First-In-First-Out (FIFO) pad
+BLOCK 149 [p]: Membangun modul Procurement dan Stock Opname digital yang saling terintegrasi secara otomatis untuk 
+BLOCK 150 [p]: Manfaat Penelitian
+BLOCK 151 [p]: Manfaat dari penelitian ini diharapkan dapat memberikan kontribusi positif bagi berbagai pihak yang 
+BLOCK 152 [p]: Manfaat Bagi Penulis
+BLOCK 153 [p]: Penelitian ini menjadi sarana bagi penulis untuk mengimplementasikan ilmu pengetahuan yang telah dip
+BLOCK 154 [p]: Manfaat Bagi Universitas
+BLOCK 155 [p]: Hasil penelitian ini diharapkan dapat menambah perbendaharaan karya ilmiah di perpustakaan universit
+BLOCK 156 [p]: Manfaat Bagi Masyarakat
+BLOCK 157 [p]: Manfaat utama bagi masyarakat industri, khususnya PT. Apparel One Indonesia, adalah tersedianya sist
+BLOCK 158 [p]: Sistematika Penulisan
+BLOCK 159 [p]: Untuk mempermudah melihat dan mengetahui pembahasan yang ada pada skripsi ini secara menyeluruh, mak
+BLOCK 160 [p]: Bagian Awal Skripsi
+BLOCK 161 [p]: Bagian awal memuat halaman sampul depan, halaman judul, halaman persetujuan dosen pembimbing, halama
+BLOCK 162 [p]: Bagian Utama Skripsi
+BLOCK 163 [p]: Bagian Utama terbagi atas bab dan sub bab yaitu sebagai berikut:
+BLOCK 164 [p]: BAB I PENDAHULUAN
+BLOCK 165 [p]: Bab ini terdiri dari latar belakang, rumusan masalah, batasan masalah, tujuan penelitian, manfaat pe
+BLOCK 166 [p]: BAB II TINJAUAN PUSTAKA
+BLOCK 167 [p]: Bab tinjauan pustaka ini meliputi: Telaah penelitian yang berisi tentang hasil-hasil penelitian terd
+BLOCK 168 [p]: BAB III METODE PENELITIAN
+BLOCK 169 [p]: Dalam bab ini penulis mengemukakan tentang metode penelitian yang dilakukan oleh penulis yang sistem
+BLOCK 170 [p]: BAB IV HASIL DAN PEMBAHASAN
+BLOCK 171 [p]: Bab ini terdiri dari gambaran hasil penelitian dan analisa. Baik dari secara kulitatif, kuantitatif 
+BLOCK 172 [p]: BAB V KESIMPULAN DAN SARAN
+BLOCK 173 [p]: Bab ini berisi kesimpulan dan saran dari seluruh penelitian yang telah dilakukan. Kesimpulan dapat d
+BLOCK 174 [p]: Bagian Akhir Skripsi.
+BLOCK 175 [p]: Bagian akhir dari skripsi ini berisi tentang daftar pustaka dan daftar lampiran.
+BLOCK 176 [p]: BAB IILANDASAN TEORI
+BLOCK 177 [p]: 2.1. Tinjauan Studi
+BLOCK 178 [p]: Tinjauan studi merupakan penelitian yang telah dilakukan sebelumnya digunakan sebagai bahan mendukun
+BLOCK 179 [p]: Karya Ilmiah 1:
+BLOCK 180 [p]: Analisis Pengendalian Internal atas Persediaan Sparepart pada PT Bina Pertiwi Cabang Makassar [6] Pe
+BLOCK 181 [p]: Karya Ilmiah 2:
+BLOCK 182 [p]: Penelitian ini membahas mengenai pengembangan aplikasi monitoring persediaan suku cadang untuk menga
+BLOCK 183 [p]: Karya Ilmiah 3:
+BLOCK 184 [p]: Pengendalian Persediaan Sparepart dengan Menggunakan Metode FIFO di Warehouse di PT. Heinz ABC Indon
+BLOCK 185 [p]: Karya Ilmiah 4:
+BLOCK 186 [p]: Penelitian ini membahas mengenai pengembangan aplikasi manajemen kerja praktik untuk mengatasi masal
+BLOCK 187 [p]: Karya Ilmiah 5:
+BLOCK 188 [p]: Penelitian ini membahas mengenai pengembangan aplikasi logistik untuk mengoptimalkan pengelolaan sto
+BLOCK 189 [p]: Tabel 2.1. Tinjauan Studi
+BLOCK 190 [table]: [['No', 'Peneliti', 'Tahun', 'Judul', 'Metode', 'Hasil', 'Perbedaan dengan Penelitian Ini'], ['1', '
+BLOCK 191 [p]: Berdasarkan tinjauan studi di atas, terdapat celah penelitian gap research yang akan diisi oleh pene
+BLOCK 192 [p]: 2.2. Tinjauan Pustaka
+BLOCK 193 [p]: Konsep dasar manajemen inventori, pendekatan Queue-Based Processing berbasis algoritma First-In-Firs
+BLOCK 194 [p]: 2.2.1 Manajemen Inventaris dan Manajemen Stok
+BLOCK 195 [p]: Manajemen inventaris adalah disiplin yang bertujuan memastikan bahwa pengelolaan material dan sumber
+BLOCK 196 [p]: Manajemen persediaan mengintegrasikan aliran barang dengan aliran informasi secara real-time untuk m
+BLOCK 197 [p]: Pencatatan Masuknya Barang Baru: Verifikasi kuantitas material dari pesanan pengadaan.
+BLOCK 198 [p]: Pemantauan Posisi Penyimpanan: Pelacakan letak fisik komponen di dalam rak gudang.
+BLOCK 199 [p]: Kontrol Pengeluaran Barang: Perekaman pengeluaran stok yang terdokumentasi secara ketat dan selaras 
+BLOCK 200 [p]: Pelaksanaan aktivitas inventori di atas dioptimalkan menggunakan instrumen kartu stok digital. Kartu
+BLOCK 201 [p]: 2.2.2.  Pendekatan Queue-Based Processing (FIFO)
+BLOCK 202 [p]: Queue-Based Processing adalah paradigma pemrosesan data yang mengadopsi struktur antrean (queue) unt
+BLOCK 203 [p]: Implementasi utama dari Queue-Based Processing dalam manajemen stok adalah algoritma First-In, First
+BLOCK 204 [p]: Dalam rangka optimasi stok, implementasi teknis dari algoritma FIFO ini memanfaatkan struktur data a
+BLOCK 205 [p]: 2.2.3. Audit Sistem
+BLOCK 206 [p]: Audit sistem adalah proses evaluasi sistematis terhadap keandalan, integritas, dan akurasi data yang
+BLOCK 207 [p]: Memastikan bahwa setiap transaksi masuk dan keluar memiliki jejak audit (audit trail) yang dapat dil
+BLOCK 208 [p]: Mendeteksi anomali atau penyimpangan data yang dapat mengindikasikan kesalahan pencatatan atau manip
+BLOCK 209 [p]: Memberikan laporan yang transparan untuk kepatuhan operasional (compliance) internal dan eksternal.
+BLOCK 210 [p]: Pengawasan stok yang terintegrasi secara real-time mutlak diperlukan karena pendekatan manual sering
+BLOCK 211 [p]: 2.2.4 Metode Pengembangan Perangkat Lunak (Waterfall)
+BLOCK 212 [p]: Dalam mengembangkan sistem informasi, diperlukan sebuah metodologi atau pendekatan sistematis yang d
+BLOCK 213 [p]: Requirements Analysis (Analisis Kebutuhan): Tahap pengumpulan spesifikasi sistem secara komprehensif
+BLOCK 214 [p]: System Design (Perancangan Sistem): Tahap menerjemahkan kebutuhan menjadi cetak biru arsitektur. Pro
+BLOCK 215 [p]: Implementation (Implementasi): Tahap penerjemahan desain ke dalam baris kode program (coding) menggu
+BLOCK 216 [p]: Testing (Pengujian): Tahap validasi untuk memastikan bahwa seluruh fungsi bekerja tanpa cacat. Pada 
+BLOCK 217 [p]: Maintenance (Pemeliharaan): Tahap perbaikan pasca-implementasi dan operasional untuk memastikan sist
+BLOCK 218 [p]: Model Waterfall dipilih karena spesifikasi kebutuhan sistem manajemen stok dan logika FIFO pada pene
+BLOCK 219 [p]: 2.2.5. Pendekatan Pemodelan Sistem
+BLOCK 220 [p]: Dalam rekayasa perangkat lunak, pemodelan sistem adalah proses pembuatan cetak biru (blueprint) yang
+BLOCK 221 [p]: Pemodelan Sistem Terstruktur (Structured System Modeling): Memandang sistem sebagai kumpulan proses 
+BLOCK 222 [p]: Pemodelan Berorientasi Objek (Object-Oriented Modeling): Memandang sistem sebagai sekumpulan "Objek"
+BLOCK 223 [p]: 2.2.6. Data Flow Diagram (DFD)
+BLOCK 224 [p]: Data Flow Diagram (DFD) adalah instrumen pemodelan terstruktur yang secara khusus dirancang untuk me
+BLOCK 225 [p]: Pemodelan aliran data dalam penelitian ini secara spesifik mengacu pada standar notasi Yourdon dan D
+BLOCK 226 [p]: Tabel 2.2. Data Flow Diagram
+BLOCK 227 [table]: [['No', 'Simbol', 'Nama', 'Fungsi'], ['1', '', 'Process (Proses)', 'Menunjukkan adanya aktivitas, tr
+BLOCK 228 [p]: DFD diuraikan secara hierarkis (top-down) yang terbagi menjadi beberapa tingkatan:
+BLOCK 229 [p]: DFD Level 0 (Diagram Konteks): Merupakan batasan sistem tingkat tertinggi. Diagram ini hanya memilik
+BLOCK 230 [p]: DFD Level 1: Merupakan dekomposisi (penjabaran) dari proses tunggal di Level 0. Diagram ini memecah 
+BLOCK 231 [p]: DFD Level 2: Merupakan rincian lebih lanjut (exploded view) dari proses spesifik di Level 1. Pada le
+BLOCK 232 [p]: 2.2.7. Pemodelan Aktivitas Prosedural (UML)
+BLOCK 233 [p]: Unified Modeling Language (UML) adalah bahasa pemodelan visual yang menjadi standar global untuk men
+BLOCK 234 [p]: Structural Diagram (Diagram Struktural): Kelompok diagram yang digunakan untuk memodelkan elemen-ele
+BLOCK 235 [p]: Behavioral Diagram (Diagram Perilaku): Kelompok diagram yang digunakan untuk memodelkan aspek dinami
+BLOCK 236 [p]: Dari banyaknya jenis diagram UML tersebut, perancangan sistem pada penelitian ini secara khusus memf
+BLOCK 237 [p]: Tabel 2.3. Activity Diagram
+BLOCK 238 [table]: [['No', 'Simbol', 'Nama', 'Fungsi'], ['1', '', 'Status awal', 'Menunjukkan titik awal dimulainya sua
+BLOCK 239 [p]: 2.2.8. Basis Data dan Physical Data Model (PDM)
+BLOCK 240 [p]: Dalam pengembangan aplikasi inventori, basis data berfungsi sebagai pusat penyimpanan seluruh inform
+BLOCK 241 [p]: Data Definition Language (DDL): Digunakan untuk mendefinisikan struktur skema relasional tabel.
+BLOCK 242 [p]: Data Manipulation Language (DML): Digunakan untuk mengelola, menambah, dan memanipulasi isi data per
+BLOCK 243 [p]: Simbol-simbol notasi PDM yang digunakan dalam mendokumentasikan desain teknis penelitian ini adalah:
+BLOCK 244 [p]: Tabel 2.4. Komponen Physical Data Model (PDM)
+BLOCK 245 [table]: [['No', 'Simbol', 'Nama', 'Fungsi'], ['1', '', 'Tabel', 'Merepresentasikan tabel fisik di dalam data
+BLOCK 246 [p]: 2.2.9.  Pengujian Sistem (Black-box Testing)
+BLOCK 247 [p]: Pengujian fungsionalitas sistem dievaluasi menggunakan metode Black-box Testing. Metode ini berfokus
+BLOCK 248 [p]: Partisi Valid: Pengujian menggunakan masukan data yang benar untuk memastikan sistem memprosesnya se
+BLOCK 249 [p]: Partisi Invalid: Pengujian menggunakan skenario anomali (seperti mengosongkan field wajib) untuk mem
+BLOCK 250 [p]: 2.3. Kerangka Pemikiran
+BLOCK 251 [p]: Kerangka pemikiran adalah alur logika yang menstrukturkan tahapan penyelesaian masalah penelitian mu
+BLOCK 252 [p]: Gambar 2.1. Kerangka Pemikiran
+BLOCK 253 [p]: Berdasarkan Gambar 2.1 di atas, penjelasan alur pemikiran diawali dari identifikasi masalah ketidake
+BLOCK 254 [p]: Pertanyaan Penelitian
+BLOCK 255 [p]: Berdasarkan landasan teori dan kerangka pemikiran yang telah dipaparkan, penelitian ini berusaha men
+BLOCK 256 [p]: Pengukuran Data: Bagaimana tingkat selisih (disparitas) data antara stok fisik suku cadang kelistrik
+BLOCK 257 [p]: Analisis Logika: Bagaimana efektivitas penerapan algoritma First-In-First-Out (FIFO) dalam modul pen
+BLOCK 258 [p]: Perancangan Integrasi: Bagaimana merancang arsitektur basis data dan antarmuka pada Framework CodeIg
+BLOCK 259 [p]: Validasi Hasil: Apakah laporan audit dari otomatisasi Stock Opname lebih akurat, transparan, dan efi
+BLOCK 260 [p]: BAB IIIMETODE PENELITIAN
+BLOCK 261 [p]: Instrumen Penelitian
+BLOCK 262 [p]: Untuk memastikan kelancaran proses penelitian dan pengembangan sistem inventaris ini, penulis menyia
+BLOCK 263 [p]: Alat Penelitian
+BLOCK 264 [p]: Alat penelitian terdiri dari perangkat keras (hardware) dan perangkat lunak (software) yang digunaka
+BLOCK 265 [p]: Tabel 3.1 Perangkat Keras (Hardware)
+BLOCK 266 [table]: [['No', 'Nama Perangkat', 'Spesifikasi / Keterangan'], ['1', 'Laptop', 'Lenovo ThinkPad X260'], ['2'
+BLOCK 267 [p]: Tabel 3.2 Perangkat Lunak (Software)
+BLOCK 268 [table]: [['No', 'Nama Perangkat Lunak', 'Fungsi / Keterangan'], ['1', 'Sistem Operasi', 'Windows 11'], ['2',
+BLOCK 269 [p]: Bahan Penelitian
+BLOCK 270 [p]: Bahan penelitian dalam studi ini terbagi menjadi dua jenis: data konkret yang diperoleh selama masa 
+BLOCK 271 [p]: Tabel 3.3. Bahan Penelitian dan Fungsinya
+BLOCK 272 [table]: [['No', 'Jenis Bahan Penelitian', 'Deskripsi dan Fungsi dalam Sistem'], ['1.', 'Data Master Suku Cad
+BLOCK 273 [p]: Data Penelitian
+BLOCK 274 [p]: Data primer yang digunakan dalam penelitian ini diperoleh secara langsung melalui kegiatan observasi
+BLOCK 275 [p]: Selain wawancara, data primer mencakup Data Master Suku Cadang yang diperoleh dari berkas lembar ker
+BLOCK 276 [p]: Data sekunder yang dihasilkan dari konversi data primer ini kemudian diolah untuk membangun skenario
+BLOCK 277 [p]: Mitra Penelitian
+BLOCK 278 [p]: Mitra dalam penelitian tugas akhir ini adalah PT Apparel One Indonesia (AOI), sebuah perusahaan manu
+BLOCK 279 [p]: Metode yang Diusulkan
+BLOCK 280 [p]: Bagian ini menguraikan dua elemen utama dalam perancangan sistem, yaitu metodologi siklus hidup peng
+BLOCK 281 [p]: Metodologi Pengembangan Aplikasi
+BLOCK 282 [p]: Metodologi yang diterapkan dalam penelitian ini adalah metode Waterfall. Pendekatan sekuensial ini d
+BLOCK 283 [p]: Analisis Kebutuhan (Requirements Analysis): Mengumpulkan data melalui observasi dan wawancara dengan
+BLOCK 284 [p]: Desain Sistem (System Design): Mentransformasi kebutuhan fungsional menjadi rancangan logis mengguna
+BLOCK 285 [p]: Implementasi (Implementation): Menulis kode program (coding) untuk membangun antarmuka web dan logik
+BLOCK 286 [p]: Pengujian (Testing): Memverifikasi fungsionalitas sistem secara menyeluruh menggunakan teknik Black-
+BLOCK 287 [p]: Pemeliharaan (Maintenance): Menyiapkan pedoman dan rencana perbaikan pasca-implementasi untuk menjag
+BLOCK 288 [p]: Implementasi Algoritma Antrean (First-In-First-Out).
+BLOCK 289 [p]: Inti dari penyelesaian masalah dalam sistem ini terletak pada pemrosesan antrean stok (Queue-Based P
+BLOCK 290 [p]: Pada Fase Analisis: Dilakukan identifikasi terhadap variabel-variabel krusial yang dibutuhkan oleh F
+BLOCK 291 [p]: Pada Fase Desain: Alur pemotongan antrean dipetakan ke dalam DFD Level 2 secara spesifik, dan strukt
+BLOCK 292 [p]: Pada Fase Implementasi: Logika FIFO dieksekusi secara teknis melalui kueri MySQL yang secara presisi
+BLOCK 293 [p]: Pada Fase Pengujian: Fungsionalitas FIFO divalidasi menggunakan data demonstrasi simulasi. Sistem di
+BLOCK 294 [p]: Pada Fase Pemeliharaan: Sistem dirancang untuk terus menghasilkan rekam jejak historis FIFO berupa k
+BLOCK 295 [p]: Selain implementasi melalui kode komputasi digital, akurasi perputaran stok berbasis First-In First-
+BLOCK 296 [p]: Pelabelan Kemasan (Unit Level) dengan Sistem Color CodingSetiap suku cadang kelistrikan yang baru di
+BLOCK 297 [p]: Penataan Rak Penyimpanan (Bin/Rack Level)Penyimpanan suku cadang kelistrikan di dalam rak atau lemar
+BLOCK 298 [p]: Metode Pengujian
+BLOCK 299 [p]: Tahapan pengujian dilakukan menggunakan metode Black-Box Testing dengan teknik Equivalence Partition
+BLOCK 300 [p]: Pengujian Black Box pada Modul Utama
+BLOCK 301 [p]: Pengujian Black Box dilakukan untuk mengecek fungsi-fungsi sistem dari sudut pandang fungsionalitas 
+BLOCK 302 [p]: Pengujian Parameter Optimasi Stok (FIFO)
+BLOCK 303 [p]: Selain pengujian fungsional, dilakukan pengujian khusus untuk memvalidasi algoritma rotasi stok FIFO
+BLOCK 304 [p]: BAB IVHASIL PENELITIAN DAN PEMBAHASAN
+BLOCK 305 [p]: Data yang Digunakan
+BLOCK 306 [p]: Dalam mengimplementasikan sistem informasi optimasi manajemen stok di PT Apparel One Indonesia, data
+BLOCK 307 [p]: Karakteristik data operasional yang digunakan dalam sistem ini terbagi menjadi dua kelompok utama, y
+BLOCK 308 [p]: Akumulasi karakteristik data matang tersebut secara langsung diolah oleh sistem sesuai dengan batasa
+BLOCK 309 [p]: Hasil Perancangan
+BLOCK 310 [p]: Tahap perancangan sistem merupakan fase penerjemahan dari spesifikasi kebutuhan fungsional dan logik
+BLOCK 311 [p]: Analisis Sistem
+BLOCK 312 [p]: Sebelum memasuki pemodelan teknis, dilakukan analisis kebutuhan sistem untuk mengidentifikasi fungsi
+BLOCK 313 [p]: Tabel 4.1 Kebutuhan Fungsional Sistem
+BLOCK 314 [table]: [['No', 'Peran', 'Fungsi', 'Deskripsi'], ['1', 'Semua Pengguna', 'Autentikasi (Login)', 'Sistem meny
+BLOCK 315 [p]: Tabel 4.2 Kebutuhan Non-Fungsional Sistem
+BLOCK 316 [table]: [['No', 'Kategoti', 'Deskripsi'], ['1', 'Keamanan (Security)', 'Data\xa0password\xa0pengguna tidak d
+BLOCK 317 [p]: Data Flow Diagram (DFD)
+BLOCK 318 [p]: Perancangan alur data sistem dilakukan secara berjenjang menggunakan Data Flow Diagram (DFD) yang te
+BLOCK 319 [p]: Gambar 4.1. Diagram Konteks Sistem Inventory (DFD Level 0)
+BLOCK 320 [p]: Selanjutnya, DFD Level 1 mendekomposisi proses tunggal tersebut ke dalam lima sub-proses utama, yait
+BLOCK 321 [p]: Gambar 4.2 . DFD Level 1 Dekomposisi Sistem.
+BLOCK 322 [p]: Terakhir, DFD Level 2 menguraikan secara rinci Proses 3.0 (Manajemen Transaksi Gudang) menjadi dua s
+BLOCK 323 [p]: Gambar 4.3. DFD Level 2 (Detail Proses Transaksi Stok)
+BLOCK 324 [p]: UML Activity Diagram
+BLOCK 325 [p]: Perancangan alur aktivitas dalam sistem dilakukan menggunakan UML Activity Diagram yang disusun spes
+BLOCK 326 [p]: Model aktivitas pertama yang dirancang adalah Aktivitas Manajemen Autentikasi yang menggambarkan alu
+BLOCK 327 [p]: Gambar 4.4  Activity Diagram Manajemen Autentikasi
+BLOCK 328 [p]: Selanjutnya, terdapat Aktivitas Manajemen Master Data yang menggambarkan bagaimana Staf Gudang menge
+BLOCK 329 [p]: Gambar 4.5  Activity Diagram Kelola Daftar Master
+BLOCK 330 [p]: Gambar 4.6  Activity Diagram Barang Masuk
+BLOCK 331 [p]: Aktivitas berikutnya adalah Pencatatan Barang Keluar (Outbound) yang menggambarkan alur kerja Teknis
+BLOCK 332 [p]: Gambar 4.7  Activity Diagram Barang Keluar
+BLOCK 333 [p]: Gambar 4.8  Activity Diagram Pembuatan PO
+BLOCK 334 [p]: Gambar 4.9  Activity Diagram Penerimaan PO
+BLOCK 335 [p]: Model aktivitas terakhir yang disusun adalah Aktivitas Pelaporan dan Dashboard yang menggambarkan pr
+BLOCK 336 [p]: Gambar 4.10 Activity Diagram Laporan
+BLOCK 337 [p]: 4.2.4. Physical Data Model (PDM)
+BLOCK 338 [p]: Perancangan basis data dilakukan menggunakan Physical Data Model (PDM) yang menggambarkan struktur t
+BLOCK 339 [p]: Gambar 4.11 Physical Data Model (PDM) Database
+BLOCK 340 [p]: Hasil Penelitian
+BLOCK 341 [p]: Bagian ini menguraikan hasil akhir dari tahap implementasi sistem, yang merupakan fase penerjemahan 
+BLOCK 342 [p]: Tampilan Halaman Login
+BLOCK 343 [p]: Implementasi proses akses dan pusat kendali diwujudkan melalui Halaman Login dan Halaman Dashboard. 
+BLOCK 344 [p]: Gambar 4.12 Halaman Login Sistem
+BLOCK 345 [p]: Gambar 4.13 Halaman Dashboard Utama
+BLOCK 346 [p]: Implementasi Pengelolaan Data Master
+BLOCK 347 [p]: Modul pengelolaan Data Master berfungsi sebagai pusat administrasi yang mengendalikan entitas dasar 
+BLOCK 348 [p]: Gambar 4.14 Halaman Kelola Data Master (Kategori Barang)
+BLOCK 349 [p]: Implementasi Proses Pengadaan Barang (Purchase Order)
+BLOCK 350 [p]: Proses pengadaan barang terencana (planned procurement) diakomodasi melalui menu Purchase Order (PO)
+BLOCK 351 [p]: Gambar 4.15 Halaman Pembuatan Purchase Order (PO)
+BLOCK 352 [p]: Implementasi Proses Transaksi dan Rotasi Stok (FIFO)
+BLOCK 353 [p]: Pencatatan sirkulasi barang secara fisik dikelompokkan dalam menu Procurement / Masuk untuk penerima
+BLOCK 354 [p]: Gambar 4.16 Halaman Transaksi Mutasi Barang (Ad-Hoc)
+BLOCK 355 [p]: Sementara itu, untuk proses pengeluaran komponen kelistrikan, sistem menggunakan modul Work Order (W
+BLOCK 356 [p]: Gambar 4.17 Halaman Work Order (WO) / Permintaan Keluar
+BLOCK 357 [p]: Implementasi Modul Pelaporan dan Audit
+BLOCK 358 [p]: Modul Pelaporan dan Audit dirancang untuk mengakomodasi pertanggungjawaban (Accountability) operasio
+BLOCK 359 [p]: Gambar 4.18 Halaman Audit / Stock Opname (Akses Staf Gudang)
+BLOCK 360 [p]: Sebaliknya, apabila fitur ini diakses oleh entitas pengawas seperti Manager OE, logika sistem secara
+BLOCK 361 [p]: Gambar 4.19 Halaman Pemantauan Audit (Akses Manager OE)
+BLOCK 362 [p]: Hasil Pengujian
+BLOCK 363 [p]: Tahap pengujian merupakan parameter krusial untuk mengukur tingkat keberhasilan fungsional sistem ya
+BLOCK 364 [p]: Pengujian Black Box pada Modul Utama
+BLOCK 365 [p]: Pengujian antarmuka dan modul utama dilakukan dengan metode Blackbox Testing, khususnya menggunakan 
+BLOCK 366 [p]: Tabel 4.1 Hasil Pengujian Black-Box Menggunakan Equivalence Partitioning
+BLOCK 367 [table]: [['No', 'Modul', 'Kelas Uji', 'Skenario Input', 'Hasil Yang Di Harapkan', 'Status'], ['1.', 'Autenti
+BLOCK 368 [p]: Sebagai pembuktian (evidence) atas hasil pengujian pada Tabel 4.1 di atas, berikut dilampirkan dokum
+BLOCK 369 [p]: Gambar 4.20 Respons Sistem Menolak Kredensial Invalid
+BLOCK 370 [p]: Gambar 4.21 Peringatan Sistem Saat Input Barang Keluar Melebihi Stok
+BLOCK 371 [p]: Gambar 4.22 Validasi Sistem Mencegah Form Kosong Disimpan
+BLOCK 372 [p]: Gambar 4.23 Notifikasi Keberhasilan Penyimpanan Data
+BLOCK 373 [p]: Pengujian Parameter Optimasi Stok (Pendekatan Queue-Based Processing / FIFO)
+BLOCK 374 [p]: Selain pengujian modul struktural, validasi mendalam juga dilakukan terhadap fungsi algoritma penari
+BLOCK 375 [p]: Hasil pengujian rotasi barang ini sangat krusial dalam lingkup electrical yang sangat sensitif terha
+BLOCK 376 [p]: Tabel 4.2 Simulasi Pemotongan Antrean FIFO pada Komponen RELAY NNC
+BLOCK 377 [table]: [['Waktu Kronologi', 'Aktivitas Transaksi', 'Kuantitas (Unit)', 'Keterangan Antrean (Queue)'], ['28/
+BLOCK 378 [p]: Sebagai pembuktian atas tereksekusinya algoritma antrean tersebut pada aplikasi, berikut dilampirkan
+BLOCK 379 [p]: Gambar 4.24 Laporan Riwayat Mutasi Stok Bukti Algoritma FIFO
+BLOCK 380 [p]: Pembahasan
+BLOCK 381 [p]: Pembahasan di dalam studi ini bertujuan menganalisis temuan-temuan yang didapat dari serangkaian pen
+BLOCK 382 [p]: 4.5.1. Analisis Hasil Pengujian Algoritma Queue-Based Processing (FIFO)
+BLOCK 383 [p]: Pengujian algoritma rotasi stok menggunakan pendekatan Queue-Based Processing (FIFO) yang dilakukan 
+BLOCK 384 [p]: Melalui simulasi transaksi menggunakan sampel data riil dari PT. Apparel One Indonesia, sistem terbu
+BLOCK 385 [p]: 4.5.2. Analisis Hasil Pengujian Black Box pada Modul Sistem
+BLOCK 386 [p]: Pengujian black box yang mencakup semua skenario fungsional untuk peran Staf Gudang, Teknisi, dan Ma
+BLOCK 387 [p]: Semua proses validasi input (seperti pencegahan form kosong dan penolakan jumlah barang keluar yang 
+BLOCK 388 [p]: 4.5.3. Hambatan dan Solusi Selama Pengembangan
+BLOCK 389 [p]: Selama tahap pengembangan, sejumlah tantangan baik teknis maupun non-teknis berhasil ditemukan dan d
+BLOCK 390 [p]: Tantangan kedua berkaitan dengan proses standardisasi dan migrasi data mentah. Beragamnya format sta
+BLOCK 391 [p]: Tantangan ketiga melibatkan penyesuaian antarmuka pengguna pada modul transaksi harian. Beberapa fit
+BLOCK 392 [p]: 4.5.4. Kontribusi Penelitian
+BLOCK 393 [p]: Penelitian ini memberikan sumbangan dalam beberapa bidang. Pertama, dalam hal akademis, penelitian i
+BLOCK 394 [p]: BAB VKESIMPULAN DAN SARAN
+BLOCK 395 [p]: Kesimpulan
+BLOCK 396 [p]: Berdasarkan analisis dan pengembangan Sistem Informasi Manajemen Stok dengan Pendekatan Queue-Based 
+BLOCK 397 [p]: Implementasi Sistem Inventory Terintegrasi. Perangkat lunak inventaris yang dirancang dan dibangun t
+BLOCK 398 [p]: Penerapan Role-Based Access Control (RBAC). Pembagian tiga peran pengguna (Staf Gudang, Teknisi, dan
+BLOCK 399 [p]: Validasi Algoritma Queue-Based Processing (FIFO). Penerapan algoritma antrean First-In First-Out (FI
+BLOCK 400 [p]: Keberhasilan Metode Independent Sandbox Testing. Pendekatan pengujian lingkungan kerja mandiri terbu
+BLOCK 401 [p]: Integritas Audit Trail Digital. Rekam jejak digital pada kartu stok digital tercatat secara kronolog
+BLOCK 402 [p]: Kedua, penerapan pendekatan Queue-Based Processing melalui algoritma antrean First-In First-Out (FIF
+BLOCK 403 [p]: Saran
+BLOCK 404 [p]: Berdasarkan pengalaman dan rintangan yang ditemui selama proses penelitian, penulis memberikan sejum
+BLOCK 405 [p]: Integrasi Pemindai Barcode/QR Code. Disarankan untuk mengintegrasikan perangkat keras eksternal beru
+BLOCK 406 [p]: Integrasi Data Berbasis API. Disarankan untuk menyediakan jalur integrasi data antarsistem berbasis 
+BLOCK 407 [p]: Notifikasi Proaktif (Email/Push Notification). Disarankan untuk merancang fitur notifikasi proaktif 
+BLOCK 408 [p]: Pengembangan Metode FEFO dan Machine Learning. Untuk studi akademis selanjutnya, disarankan perbandi
+BLOCK 409 [p]: Sosialisasi dan Pelatihan Pengguna. Untuk pihak PT. Apparel One Indonesia, disarankan agar program s
+BLOCK 410 [p]: DAFTAR PUSTAKA
+BLOCK 411 [p]: A. Fauzan, E. N. Hatiwati, and F. Dwitama, “Sistem Informasi Inventori Persediaan Barang Pada Pt. Ya
+BLOCK 412 [p]: I. Triana, A. Nugroho, and D. Meisak, “Jurnal Informatika Dan Rekayasa Komputer (JAKAKOM) Perancanga
+BLOCK 413 [p]: W. Gilliani, E. Rasywir, and L. Y. Pradana, “Perancangan Sistem Informasi Pengadaan Barang Berbasis 
+BLOCK 414 [p]: F. M and J. Devitra, “Sistem Informasi Pemantauan Inventory Stock Opname Berbasis Web Pada Sbu-Teh K
+BLOCK 415 [p]: Elin. Panca and P. Rizqi, “Implementasi Sistem Informasi Untuk Pengadaan Barang Pada Pt Swadharma Gr
+BLOCK 416 [p]: A. Rangga, L. ’ Bi, C. Kacing, P. Roreng, and A. Sipi, “Analisis Pengendalian Internal atas Persedia
+BLOCK 417 [p]: H. Asnal et al., “Sistem Monitoring Persediaan Stok Onderdil Menggunakan Metode Reorder Point Pada S
+BLOCK 418 [p]: M. Ramadhan and A. Pusakaningwati, “Pengendalian Persediaan Sparepart dengan Menggunakan Metode Fifo
+BLOCK 419 [p]: M. Choirudin, D. Satyareni, and E. Kurniawan, “Implementasi Framework Codeigniter Pada Pengembangan 
+BLOCK 420 [p]: W. Setyadi and Nurajijah, “Sistem Informasi Logistik untuk Optimalisasi Pengelolaan Stok Barang pada
+BLOCK 421 [p]: I. Darsana et al., Manajemen Operasional. CV. Intelektual Manifes Media, 2023.Accessed:Mar.05,2026.[
+BLOCK 422 [p]: D. Saragih, “Manajemen Operasional Strategi Dan Praktik Terbaik,” Mar. 2024. Accessed: Mar. 04, 2026
+BLOCK 423 [p]: H. Sadiah and M. Ishlah, “Design Of The Inventory Application Of Cv Diva Karya Mandiri Using Rad (Ra
+BLOCK 424 [p]: T. Widiastuti, S. Mola, R. Beeh, and E. Resi, Sistem Pendukung Keputusan Wisata Ende. Kaizen Media P
+BLOCK 425 [p]: https://www.google.com.sg/books/edition/Sistem_Pendukung_Keputusan_ Wisata_Ende/2f1eEQAAQBAJ?hl=id&g
+BLOCK 426 [p]: M. Fathoni, R. Haerani, S. Astiti, D. Prabowo, and T. Putra, Buku Ajar Pemrograman Basis Data 1. PT.
+BLOCK 427 [p]: https://www.google.co.id/books/edition/BUKU_AJAR_PEMROGRAMAN
+BLOCK 428 [p]: _BASIS_DATA_1/4dviEAAAQBAJ?hl=id&gbpv=0
+BLOCK 429 [p]: A. Anwar et al., “Pengantar Manajemen Operasional,” 2024, doi: 10.31237/osf.io/mne2k.
+BLOCK 430 [p]: I. Gunawan and H. C. Wahyuni, Buku Ajar Supply Chain Management dan Aplikasinya. 2024. doi: 10.21070
+BLOCK 431 [p]: M. Maulani, “BUKU AJAR ALGORITMA DAN STRUKTUR DATA
+BLOCK 432 [p]: (PYTHON),”Mar.2025.[Online].Available: https://repository.penerbitwidina.com/publications/636386/buk
+BLOCK 433 [p]: S. Susilowati et al., “Sistem Basis Data Dari ERD hingga SQL,” Mar. 2025. Available: https://reposit
+BLOCK 434 [p]: S. Wicaksono, Manajemen Data Teori dan Aplikasi. European Organization for Nuclear Research, 2024. d
+BLOCK 435 [p]: D. S. Praptama, S. Widiyanti, and R. A. Aziz, “Sistem Informasi Perjalanan Dinas Berbasis Web pada D
+BLOCK 436 [p]: M. N. Gedam and B. B. Meshram, “Jijabai Technological Institute (VJTI),” 2023. Tersedia: www.ijacsa.
+BLOCK 437 [p]: LAMPIRAN
+BLOCK 438 [p]: Biodata Penulis
+BLOCK 439 [p]: Formulir Bimbingan Proposal Tugas Akhir
+BLOCK 440 [p]: Formulir Bimbingan Tugas Akhir
+BLOCK 441 [p]: Formulir Persetujuan Sidang Tugas
+BLOCK 442 [p]: Sertifikat Seminar/Workshop/Kejuruan/Kepanitiaan/Kegiatan
+BLOCK 443 [p]: Sertifikat Kompetensi
+BLOCK 444 [p]: Turnitin

@@ -64,8 +64,10 @@
                             <div class="card-body text-center">
                                 <h5 class="card-title electric-type-label mb-2"><?= htmlspecialchars($typeLabel, ENT_QUOTES, 'UTF-8') ?></h5>
                                 <div class="d-grid gap-2 mt-3">
-                                    <a href="<?= site_url('electric') . '?type=' . urlencode($typeLabel); ?>" class="btn btn-outline-primary btn-sm">Lihat Daftar</a>
-                                    <a href="<?= site_url('electric/add') . '?type_id=' . $type['id']; ?>" class="btn btn-primary btn-sm">Tambah Baru</a>
+                                    <a href="<?= site_url('electric') . '?type_id=' . (int)$type['id']; ?>" class="btn btn-outline-primary btn-sm">Lihat Daftar</a>
+                                    <?php if (is_admin()): ?>
+                                        <a href="<?= site_url('electric/add/' . $type['id']); ?>" class="btn btn-primary btn-sm">Tambah Baru</a>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>

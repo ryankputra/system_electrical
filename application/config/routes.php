@@ -54,7 +54,6 @@ $route['404_override'] = '';
 $route['translate_uri_dashes'] = FALSE;
 
 // Dashboard & Auth
-$route['user/dashboard'] = 'user/dashboard';
 $route['auth/index'] = 'auth/index';
 
 // Features

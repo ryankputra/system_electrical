@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    line-height: 1.5;
+    margin: 4cm 3cm 3cm 4cm;
+    text-align: justify;
+    color: #000;
+  }
+  h3 {
+    font-family: "Times New Roman", Times, serif;
+    font-size: 12pt;
+    font-weight: bold;
+    text-align: left;
+    margin-top: 18pt;
+    margin-bottom: 8pt;
+  }
+  p {
+    text-indent: 1.27cm;
+    margin: 0 0 6pt 0;
+  }
+  .table-caption {
+    text-indent: 0;
+    text-align: center;
+    font-size: 10pt;
+    margin: 18pt 0 8pt 0;
+    color: #000;
+    font-weight: bold;
+  }
+  table.komponen-pdm {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 18pt 0;
+    font-size: 11pt;
+  }
+  table.komponen-pdm th {
+    border: 1px solid #000;
+    padding: 6px 8px;
+    background: #f0f0f0;
+    font-weight: bold;
+    text-align: center;
+    vertical-align: middle;
+  }
+  table.komponen-pdm td {
+    border: 1px solid #000;
+    padding: 8px;
+    vertical-align: middle;
+  }
+  table.komponen-pdm td.no {
+    text-align: center;
+    width: 40px;
+  }
+  table.komponen-pdm td.simbol {
+    text-align: center;
+    width: 160px;
+  }
+  table.komponen-pdm td.nama {
+    text-align: center;
+    width: 140px;
+    font-weight: bold;
+  }
+  /* PDM Symbol: simple rectangle (tabel) */
+  .sym-tabel {
+    display: inline-block;
+    border: 1.5px solid #000;
+    padding: 8px 20px;
+    font-size: 10pt;
+    font-weight: bold;
+    text-align: center;
+  }
+  .sym-tabel-sm {
+    display: inline-block;
+    border: 1.5px solid #000;
+    padding: 4px 10px;
+    font-size: 9pt;
+    font-weight: bold;
+    text-align: center;
+  }
+  table.komponen-pdm tr.section-header td {
+    text-align: center;
+    font-weight: bold;
+    background: #f0f0f0;
+  }
+  /* PDM Symbol: relasi (two boxes + arrow) */
+  .sym-relasi {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .sym-relasi .row {
+    display: flex;
+    align-items: center;
+  }
+  .sym-relasi .fk-label {
+    font-size: 8pt;
+    margin-bottom: 2px;
+  }
+  .sym-relasi .box {
+    border: 1.5px solid #000;
+    padding: 4px 8px;
+    font-size: 8pt;
+    white-space: nowrap;
+  }
+  .sym-relasi .arrow {
+    width: 40px;
+    height: 1.5px;
+    background: #000;
+    position: relative;
+  }
+  .sym-relasi .arrow::after {
+    content: '';
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    border: 5px solid transparent;
+    border-left-color: #000;
+  }
+  .diagram-placeholder {
+    text-indent: 0;
+    text-align: center;
+    border: 2px dashed #999;
+    padding: 30px 20px;
+    margin: 18pt 0;
+    background: #f9f9f9;
+    font-size: 11pt;
+    color: #666;
+    font-style: italic;
+  }
+  .diagram-caption {
+    text-indent: 0;
+    text-align: center;
+    font-size: 10pt;
+    margin: 0 0 18pt 0;
+    color: #000;
+    font-style: normal;
+  }
+</style>
+</head>
+<body>
+
+<h3>2.2.10.&nbsp;&nbsp;&nbsp;Perancangan Basis Data Relasional</h3>
+
+<p>Setelah seluruh aliran fungsional aplikasi dan aktivitas pengguna selesai dipetakan, perancangan berlanjut pada tahap desain data. Pada tahap desain data ini, model relasional digunakan untuk mengelola informasi secara terstruktur melalui tabel-tabel yang saling terhubung guna menjamin integritas data persediaan suku cadang kelistrikan [19]. Pemodelan data logis ini diawali dengan pembuatan Entity Relationship Diagram (ERD) untuk memvisualisasikan hubungan abstrak antar-entitas beserta atribut pendukungnya di dalam basis data [19]. Rancangan ERD tersebut kemudian diwujudkan secara konkret ke dalam tingkatan fisik berbentuk Physical Data Model (PDM). PDM berfungsi untuk memetakan arsitektur penyimpanan riil pada MySQL, yang mencakup penentuan tipe data spesifik (seperti varchar, int, decimal, atau datetime), penerapan kunci utama (Primary Key) sebagai identifikasi unik data barang, serta kunci tamu (Foreign Key) untuk mengunci hubungan kardinalitas antar-tabel (One-to-Many) agar terhindar dari anomali data. Komponen standar PDM dijabarkan pada Tabel 2.4.</p>
+
+<p class="table-caption">Tabel 2.4. Komponen Physical Data Model (PDM)</p>
+
+<table class="komponen-pdm">
+  <thead>
+    <tr>
+      <th>No</th>
+      <th>Simbol</th>
+      <th>Nama</th>
+      <th>Fungsi</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="no">1</td>
+      <td class="simbol">
+        <div class="sym-tabel">nama_tabel</div>
+      </td>
+      <td class="nama">Tabel</td>
+      <td>Kotak persegi yang merepresentasikan tabel penyimpanan data dalam basis data</td>
+    </tr>
+    <tr>
+      <td class="no">2</td>
+      <td class="simbol">
+        <div class="sym-relasi">
+          <div class="fk-label">fk_kolom</div>
+          <div class="row">
+            <div class="box">tbl_1</div>
+            <div class="arrow"></div>
+            <div class="box">tbl_2</div>
+          </div>
+        </div>
+      </td>
+      <td class="nama">Relasi</td>
+      <td>Panah penghubung antar tabel yang terdiri dari persamaan antara primary key tabel yang diacu dengan foreign key di tabel lain</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Implementasi teknis dari skema fisik PDM tersebut selanjutnya dieksekusi menggunakan perintah kueri Structured Query Language (SQL). Pengelolaan data ini mencakup Data Definition Language (DDL) untuk membangun struktur fisik database electrical_system, serta Data Manipulation Language (DML) untuk mengolah informasi mutasi stok barang [19]. Dalam mendukung pendekatan Queue-Based Processing, kueri SQL tersebut memanfaatkan klausul pengondisian khusus melalui perintah ORDER BY yang dikombinasikan dengan fungsi urutan waktu kedatangan terkecil (timestamp ASC) [20]. Logika kueri terurut ini sangat vital agar mesin database secara otomatis dapat menyaring dan menunjuk rekaman batch barang paling lama untuk dipotong terlebih dahulu, sehingga sistem mampu mengeksekusi metode First-In-First-Out (FIFO) secara konsisten, aman, dan real-time.</p>
+
+<div class="diagram-placeholder">[ Masukkan Gambar PDM (Physical Data Model) ]</div>
+<p class="diagram-caption"><b>Gambar 2.x</b>&nbsp;&nbsp;Physical Data Model (PDM)</p>
+
+</body>
+</html>
