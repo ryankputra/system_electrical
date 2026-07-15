@@ -4,32 +4,44 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /**
  * User Model
  *
- * Handles database operations related to users, including authentication and profile management.
+ * Mengelola operasi database terkait pengguna, termasuk autentikasi 
+ * dan manajemen profil dengan menggunakan NIK sebagai Primary Key manual.
  *
- * @package ElectricalSystem
- * @subpackage Models
- * @category User
- * @version 1.0.0
+ * @package OE-Inventory
+ * @category Models
+ * @version 1.1.0
  */
 class User_model extends CI_Model
 {
     /**
-     * The name of the user database table used by this model.
+     * Nama tabel database user.
      *
      * @var string
      */
     private string $userTable = 'as_user';
 
     /**
-     * Retrieves a list of users based on search, filter, and sort criteria.
-     *
-     * @param int         $limit         Number of records to retrieve.
-     * @param int         $start         Offset for pagination.
-     * @param string|null $searchKeyword Optional keyword to search in `nik` or `name` fields.
-     * @param array|null  $filterKeyword Optional associative array of filters.
-     * @param string|null $sortKeyword   Optional sort criteria in the format "field-order".
-     *
-     * @return array An array of user records matching the criteria.
+     * Memverifikasi login berdasarkan NIK dan Password.
+     * * @param string $nik
+     * @param string $password
+     * @return array|bool Data user jika berhasil, false jika gagal.
+     */
+    public function checkLogin(string $nik, string $password)
+    {
+        // Cari user berdasarkan NIK (Manual ID)
+        $user = $this->db->get_where($this->userTable, ['nik' => $nik])->row_array();
+
+        if ($user) {
+            // Verifikasi password menggunakan password_verify (standar PHP)
+            if (password_verify($password, $user['password'])) {
+                return $user;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Mengambil daftar user berdasarkan kriteria pencarian, filter, dan sort.
      */
     public function getUser(int $limit, int $start, ?string $searchKeyword = null, ?array $filterKeyword = null, ?string $sortKeyword = null): array
     {
@@ -46,12 +58,7 @@ class User_model extends CI_Model
     }
 
     /**
-     * Counts the number of user records matching search and filter criteria.
-     *
-     * @param string|null $searchKeyword Optional keyword to search in `nik` or `name` fields.
-     * @param array|null  $filterKeyword Optional associative array of filters.
-     *
-     * @return int The total number of records matching the criteria.
+     * Menghitung jumlah total user sesuai filter (untuk pagination).
      */
     public function countUser(?string $searchKeyword = null, ?array $filterKeyword = null): int
     {
@@ -60,112 +67,68 @@ class User_model extends CI_Model
     }
 
     /**
-     * Retrieves distinct values of a specific field for filter dropdowns.
-     *
-     * @param string      $field         The field to retrieve distinct values from.
-     * @param string|null $searchKeyword Optional keyword to search in `nik` or `name` fields.
-     * @param array|null  $filterKeyword Optional associative array of filters.
-     *
-     * @return array An array of distinct values.
-     */
-    public function getUserFilter(string $field, ?string $searchKeyword = null, ?array $filterKeyword = null): array
-    {
-        $this->db->select($field);
-        $this->userSearchAndFilters($searchKeyword, $filterKeyword);
-        $this->db->distinct()->order_by($field, 'ASC');
-        $query = $this->db->get($this->userTable);
-        return array_column($query->result_array(), $field);
-    }
-
-    /**
-     * Inserts a new user record into the database.
-     *
-     * @return void
+     * Menambahkan user baru ke database tanpa auto-increment.
      */
     public function addUser(): void
     {
         $userData = [
-            'nik'        => $this->input->post('nik', true),
+            'nik'        => $this->input->post('nik', true), // Diisi manual dari input
             'name'       => ucwords(strtolower($this->input->post('name', true))),
-            'created_at' => mdate('%Y-%m-%d %H:%i:%s', now('Asia/Jakarta')),
-            'updated_at' => mdate('%Y-%m-%d %H:%i:%s', now('Asia/Jakarta')),
-            'editor'     => $this->session->userdata('user_data')['nik'],
+            'password'   => password_hash($this->input->post('password'), PASSWORD_DEFAULT),
+            'role'       => $this->input->post('role', true), // admin, warehouse, atau staff
+            'created_at' => date('Y-m-d H:i:s'),
+            'updated_at' => date('Y-m-d H:i:s'),
+            'editor'     => $this->session->userdata('nik'), 
         ];
         $this->db->insert($this->userTable, $userData);
     }
 
     /**
-     * Retrieves a single user record by their unique NIK.
-     *
-     * @param int $nik The NIK of the user to retrieve.
-     *
-     * @return array|null The user record, or null if not found.
+     * Mengambil satu record user berdasarkan NIK.
      */
-    public function getByNik(int $nik): ?array
+    public function getByNik(string $nik): ?array
     {
         return $this->db->get_where($this->userTable, ['nik' => $nik])->row_array();
     }
 
     /**
-     * Updates an existing user's details.
-     *
-     * @param int $nik The NIK of the user to update.
-     *
-     * @return void
+     * Mengupdate data user.
      */
-    public function editUser(int $nik): void
+    public function editUser(string $nik): void
     {
         $userData = [
             'name'       => ucwords(strtolower($this->input->post('name', true))),
-            'updated_at' => mdate('%Y-%m-%d %H:%i:%s', now('Asia/Jakarta')),
-            'editor'     => $this->session->userdata('user_data')['nik'],
+            'role'       => $this->input->post('role', true),
+            'updated_at' => date('Y-m-d H:i:s'),
+            'editor'     => $this->session->userdata('nik'),
         ];
+        
+        // Jika password diisi, update password juga
+        if ($this->input->post('password')) {
+            $userData['password'] = password_hash($this->input->post('password'), PASSWORD_DEFAULT);
+        }
+
         $this->db->update($this->userTable, $userData, ['nik' => $nik]);
     }
 
     /**
-     * Deletes a user record based on their NIK.
-     *
-     * @param int $nik The NIK of the user to delete.
-     *
-     * @return void
+     * Menghapus user berdasarkan NIK.
      */
-    public function deleteUser(int $nik): void
+    public function deleteUser(string $nik): void
     {
         $this->db->where('nik', $nik)->delete($this->userTable);
     }
 
     /**
-     * Checks if a given NIK already exists in the database.
-     *
-     * @param int $nik The NIK to check.
-     *
-     * @return bool Returns true if the NIK exists, false otherwise.
+     * Cek apakah NIK sudah terdaftar (untuk validasi).
      */
-    public function isNikExists(int $nik): bool
+    public function isNikExists(string $nik): bool
     {
         return $this->db->where('nik', $nik)->count_all_results($this->userTable) > 0;
     }
 
     /**
-     * Inserts multiple user records in a single batch operation.
-     *
-     * @param array $data An array of associative arrays containing user data.
-     *
-     * @return void
-     */
-    public function insertBatch(array $data): void
-    {
-        $this->db->insert_batch($this->userTable, $data);
-    }
-
-    /**
-     * A private helper method to apply search and filter conditions for user retrieval.
-     *
-     * @param string|null $searchKeyword Optional keyword to search in user fields.
-     * @param array|null  $filterKeyword Optional associative array of filters.
-     *
-     * @return void
+     * Helper privat untuk filter pencarian.
      */
     private function userSearchAndFilters(?string $searchKeyword, ?array $filterKeyword): void
     {
@@ -177,8 +140,8 @@ class User_model extends CI_Model
         }
         if ($filterKeyword && is_array($filterKeyword)) {
             foreach ($filterKeyword as $key => $value) {
-                if (is_array($value) && !empty($value)) {
-                    $this->db->where_in($key, $value);
+                if (!empty($value)) {
+                    $this->db->where($key, $value);
                 }
             }
         }

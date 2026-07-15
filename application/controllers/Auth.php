@@ -4,127 +4,106 @@ defined('BASEPATH') or exit('No direct script access allowed');
 /**
  * Authentication Controller
  *
- * Handles user authentication processes such as login and logout.
+ * Mengelola proses login dan logout. 
+ * Mendukung Manual ID (NIK) dan Multi-role (Admin, Warehouse, Staff).
  *
- * @package ElectricalSystem
- * @subpackage Controllers
- * @category User
- * @author Apparel One Indonesia
- * @version 1.0.0
+ * @package OE-Inventory
+ * @category Controllers
+ * @version 1.1.0
  */
 class Auth extends CI_Controller
 {
     /**
      * Constructor
-     *
-     * Loads the required model for user authentication.
+     * Memuat model User_model untuk verifikasi data.
      */
     public function __construct()
     {
         parent::__construct();
-        $this->load->model('user_model');
+        // Memuat model (Pastikan file di models bernama User_model.php)
+        $this->load->model('User_model');
     }
 
     /**
-     * Default method for the Auth controller
-     *
-     * Displays the login page and handles login form submission.
-     * Redirects authenticated users to the dashboard.
-     *
-     * @return void
+     * Halaman Utama Login
      */
     public function index(): void
     {
-        // Check if the user is already logged in
-        if ($this->session->userdata('user_data')) {
-            redirect('user/dashboard');
+        // Cek jika user sudah login, langsung lempar ke dashboard yang sesuai
+        if ($this->session->userdata('logged_in')) {
+            $this->_redirect_by_role($this->session->userdata('role'));
+            return;
         }
 
-        // Load form validation library
         $this->load->library('form_validation');
 
-        // Define validation rules for NIK
-        $config = [
-            [
-                'field' => 'nik',
-                'label' => 'NIK',
-                'rules' => 'required|numeric|exact_length[9]',
-                'errors' => [
-                    'required' => 'Please enter %s',
-                    'numeric' => '%s is not valid',
-                    'exact_length' => '%s is not valid',
-                ],
-            ],
-        ];
+        // Aturan validasi input
+        $this->form_validation->set_rules('nik', 'NIK', 'required', [
+            'required' => 'NIK wajib diisi.'
+        ]);
+        $this->form_validation->set_rules('password', 'Password', 'required', [
+            'required' => 'Password wajib diisi.'
+        ]);
 
-        $this->form_validation->set_rules($config);
-
-        // Check if the form validation passes
-        if (!$this->form_validation->run()) {
-            // Load the login view if validation fails
+        if ($this->form_validation->run() == FALSE) {
+            // Tampilkan view login jika validasi gagal atau baru akses halaman
             $this->load->view('auth/index');
         } else {
-            // Proceed to login if validation succeeds
+            // Proses pengecekan ke database
             $this->_login();
         }
     }
 
     /**
-     * Handles the login process
-     *
-     * Validates the NIK against the database and sets session data for the user.
-     * Redirects to the dashboard upon successful login.
-     *
-     * @return void
+     * Logika verifikasi login
      */
     private function _login(): void
     {
-        // Retrieve NIK from the POST request
         $nik = $this->input->post('nik', true);
+        $password = $this->input->post('password', true);
 
-        // Fetch user details by NIK
-        $userDetail = $this->user_model->getByNik((int) $nik);
-        if (!$userDetail) {
-            // Set error message if NIK is not registered
-            set_message(['danger', 'NIK is not registered']);
-            redirect(base_url());
-            return;
+        // Memanggil fungsi checkLogin di User_model
+        $user = $this->User_model->checkLogin($nik, $password);
+
+        if ($user) {
+            // Menyiapkan data untuk disimpan di session
+            $sessionData = [
+                'nik'       => $user['nik'],
+                'name'      => $user['name'],
+                'role'      => $user['role'],
+                'logged_in' => TRUE
+            ];
+
+            $this->session->set_userdata($sessionData);
+
+            // Arahkan ke dashboard sesuai role masing-masing
+            $this->_redirect_by_role($user['role']);
+        } else {
+            // Jika NIK tidak ditemukan atau Password salah
+            $this->session->set_flashdata('error', 'NIK atau Password salah!');
+            redirect('auth');
         }
+    }
 
-        // Prepare user data for the session
-        $userData = [
-            'nik' => $userDetail['nik'],
-            'name' => $userDetail['name'],
-        ];
-
-        $data = [
-            'user_data' => $userData,
-            'machine' => null, // Machine data is not used in this system
-        ];
-
-        // Set session data
-        $this->session->set_userdata($data);
-
-        // Redirect to the user dashboard
+    /**
+     * Helper untuk mengalihkan halaman berdasarkan role
+     */
+    private function _redirect_by_role(string $role): void
+    {
         redirect('user/dashboard');
     }
 
     /**
-     * Handles the logout process
-     *
-     * Destroys the user session and redirects to the homepage.
-     *
-     * @return void
+     * Proses Logout
      */
     public function logout(): void
     {
-        // Destroy the session
-        session_destroy();
-
-        // Set success message for logout
-        set_message(['success', 'You have successfully logged out']);
-
-        // Redirect to the homepage
-        redirect(base_url());
+        // Hapus semua data session
+        $this->session->sess_destroy();
+        
+        // Opsional: tambahkan pesan sukses logout
+        $this->session->set_flashdata('success', 'Anda telah berhasil keluar.');
+        
+        redirect('auth');
     }
 }
