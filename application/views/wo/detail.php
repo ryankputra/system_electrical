@@ -27,16 +27,20 @@
             </div>
         </div>
 
-        <h5 class="mb-3 border-bottom pb-2">Daftar Barang yang Telah Diambil</h5>
+        <h5 class="mb-3 border-bottom pb-2">Daftar Pengajuan Barang</h5>
         <div class="table-responsive">
             <table class="table table-bordered table-striped align-middle">
                 <thead class="table-light">
                     <tr class="text-center">
                         <th width="5%">No</th>
-                        <th width="20%">Tanggal Ambil</th>
-                        <th width="45%">Nama Barang</th>
-                        <th width="15%">Qty Keluar</th>
-                        <th width="15%">Pengambil</th>
+                        <th width="15%">Waktu Request</th>
+                        <th width="15%">Peminta</th>
+                        <th width="25%">Nama Barang</th>
+                        <th width="10%">Qty</th>
+                        <th width="15%">Status</th>
+                        <?php if (is_admin() || $this->session->userdata('role') === 'Staf Gudang'): ?>
+                        <th width="15%">Aksi</th>
+                        <?php endif; ?>
                     </tr>
                 </thead>
                 <tbody>
@@ -44,18 +48,35 @@
                     <tr class="text-center">
                         <td><?= $no++ ?></td>
                         <td><?= date('d M Y H:i', strtotime($d['created_at'])) ?></td>
+                        <td><?= htmlspecialchars($d['requester_name'] ?? $d['user_nik'] ?? '-') ?></td>
                         <td class="text-start">
                             <?= htmlspecialchars($d['electric_name']) ?><br>
                             <small class="text-muted"><?= htmlspecialchars($d['brand'] . ' - ' . $d['electric_type']) ?></small>
                         </td>
-                        <td><strong><?= $d['amount'] ?></strong></td>
-                        <td><?= htmlspecialchars($d['user_nik']) ?></td>
+                        <td><strong><?= htmlspecialchars($d['qty']) ?></strong></td>
+                        <td>
+                            <?php 
+                                if ($d['status'] === 'Approved') echo '<span class="badge bg-success">Disetujui</span>';
+                                elseif ($d['status'] === 'Rejected') echo '<span class="badge bg-danger">Ditolak</span>';
+                                else echo '<span class="badge bg-warning text-dark">Pending</span>';
+                            ?>
+                        </td>
+                        <?php if (is_admin() || $this->session->userdata('role') === 'Staf Gudang'): ?>
+                        <td>
+                            <?php if ($d['status'] === 'Pending'): ?>
+                                <a href="<?= site_url('wo/approve_item/' . $d['id']) ?>" class="btn btn-sm btn-success" onclick="return confirm('Approve barang ini? Stok akan terpotong (FIFO).')"><i class="fas fa-check"></i></a>
+                                <a href="<?= site_url('wo/reject_item/' . $d['id']) ?>" class="btn btn-sm btn-danger" onclick="return confirm('Tolak barang ini?')"><i class="fas fa-times"></i></a>
+                            <?php else: ?>
+                                <small class="text-muted">Oleh: <?= htmlspecialchars($d['approved_by'] ?? '-') ?></small>
+                            <?php endif; ?>
+                        </td>
+                        <?php endif; ?>
                     </tr>
                     <?php endforeach; ?>
                     
                     <?php if (empty($details)): ?>
                     <tr>
-                        <td colspan="5" class="text-center text-muted py-4">Belum ada barang yang diambil menggunakan Work Order ini.</td>
+                        <td colspan="6" class="text-center text-muted py-4">Belum ada barang yang diajukan untuk Work Order ini.</td>
                     </tr>
                     <?php endif; ?>
                 </tbody>

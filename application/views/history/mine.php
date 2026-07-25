@@ -10,6 +10,65 @@
 		</div>
 	</div>
 
+	<div class="row mb-4">
+		<div class="col-12">
+			<h5 class="mb-3 border-bottom pb-2">Status Pengajuan Barang (Work Order)</h5>
+			<div class="card shadow-sm rounded-4 border-0">
+				<div class="card-body p-0">
+					<div class="table-responsive">
+						<table class="table table-hover table-sm align-middle mb-0">
+							<thead class="table-light">
+								<tr>
+									<th class="ps-4 py-3">#</th>
+									<th class="py-3">Waktu Request</th>
+									<th class="py-3">No. WO</th>
+									<th class="py-3">Barang</th>
+									<th class="py-3">Qty</th>
+									<th class="py-3">Status</th>
+									<th class="pe-4 py-3">Diupdate</th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php if (!empty($pending_requests) && is_array($pending_requests)): ?>
+									<?php $j = 1; foreach ($pending_requests as $pr): ?>
+										<tr>
+											<td class="ps-4"><?= $j++; ?></td>
+											<td><span class="badge bg-light text-dark border"><i class="fas fa-clock text-muted me-1"></i><?= date('d M H:i', strtotime($pr['created_at'])) ?></span></td>
+											<td><span class="fw-bold"><?= htmlspecialchars($pr['wo_number']) ?></span></td>
+											<td>
+												<div class="fw-bold"><?= htmlspecialchars($pr['nama']) ?></div>
+												<small class="text-muted"><?= htmlspecialchars($pr['brand'] . ' - ' . $pr['electric_type']) ?></small>
+											</td>
+											<td><strong><?= $pr['qty'] ?></strong></td>
+											<td>
+												<?php 
+													if ($pr['status'] === 'Approved') echo '<span class="badge bg-success px-3 py-2 rounded-pill"><i class="fas fa-check-circle me-1"></i>Disetujui</span>';
+													elseif ($pr['status'] === 'Rejected') echo '<span class="badge bg-danger px-3 py-2 rounded-pill"><i class="fas fa-times-circle me-1"></i>Ditolak</span>';
+													else echo '<span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-hourglass-half me-1"></i>Pending</span>';
+												?>
+											</td>
+											<td class="pe-4">
+												<?php if($pr['status'] !== 'Pending' && !empty($pr['approved_at'])): ?>
+													<small class="text-muted d-block"><?= date('d M H:i', strtotime($pr['approved_at'])) ?></small>
+													<small class="text-muted">oleh: <?= htmlspecialchars($pr['approved_by'] ?? '-') ?></small>
+												<?php else: ?>
+													<small class="text-muted">-</small>
+												<?php endif; ?>
+											</td>
+										</tr>
+									<?php endforeach; ?>
+								<?php else: ?>
+									<tr><td colspan="7" class="text-center text-muted p-4"><i class="fas fa-inbox fa-2x mb-2 d-block opacity-50"></i>Belum ada pengajuan barang.</td></tr>
+								<?php endif; ?>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<h5 class="mb-3 border-bottom pb-2 mt-4">Riwayat Pengambilan Berhasil</h5>
 	<div class="row">
 		<div class="col-12">
 			<div class="card shadow-sm rounded-4">

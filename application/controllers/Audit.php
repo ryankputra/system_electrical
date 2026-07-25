@@ -408,27 +408,10 @@ class Audit extends CI_Controller
         $this->db->order_by('h.' . $dateField, 'DESC');
         $auditRows = $this->db->get()->result_array();
 
-        $filename = 'hasil_audit_' . $lokasi_nama . '_' . date('Y_m_d_His') . '.csv';
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Pragma: no-cache');
-
-        $out = fopen('php://output', 'w');
-        echo "\xEF\xBB\xBF";
-        echo "sep=;\r\n";
-
-        $delimiter = ';';
-        $eol = "\r\n";
-
-        $escape = function ($field) {
-            $field = (string) ($field ?? '');
-            $field = str_replace('"', '""', $field);
-            return '"' . $field . '"';
-        };
-
-        $headers = ['ID Barang', 'Kategori', 'Tipe/Spesifikasi', 'Brand', 'Selisih (Discrepancy)', 'Keterangan Hasil Audit'];
-        fwrite($out, implode($delimiter, array_map($escape, $headers)) . $eol);
-
+        $data['title'] = 'Laporan Hasil Audit - ' . str_replace('_', ' ', $lokasi_nama);
+        $data['lokasi_nama'] = str_replace('_', ' ', $lokasi_nama);
+        
+        $processedRows = [];
         foreach ($auditRows as $row) {
             $selisih = $row['qty']; // fallback (absolute value)
             
@@ -442,17 +425,12 @@ class Audit extends CI_Controller
                 $selisih = $m[1];
             }
 
-            $line = [
-                $row['electric_id'],
-                $row['nama'] ?? '-',
-                $row['tipe'] ?? '-',
-                $row['brand'] ?? '-',
-                $selisih,
-                $row['keterangan']
-            ];
-            fwrite($out, implode($delimiter, array_map($escape, $line)) . $eol);
+            $row['selisih'] = $selisih;
+            $processedRows[] = $row;
         }
-        fclose($out);
-        exit;
+        
+        $data['rows'] = $processedRows;
+
+        $this->load->view('audit/print_pdf_audit', $data);
     }
 }

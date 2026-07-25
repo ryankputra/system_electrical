@@ -423,7 +423,7 @@ class Dashboard extends CI_Controller
         // Build base query selecting needed fields and optional lokasi
         $select = 'h.*';
         if ($this->db->table_exists('as_electric')) {
-            $select .= ', e.nama as nama_barang, e.electric_id as electric_code';
+            $select .= ', e.nama as nama_barang, e.electric_id as electric_code, e.type, e.brand';
         }
         if ($this->db->table_exists('as_user')) {
             $select .= ', u.name as user_name, u.nik as user_nik';
@@ -453,48 +453,12 @@ class Dashboard extends CI_Controller
         }
         $hasQtySisa = $this->db->field_exists('qty_sisa', $histTable);
 
-        // Send CSV (Excel-friendly)
-        $filename = 'laporan_bulanan_' . date('Y_m') . '.csv';
-        header('Content-Type: text/csv; charset=utf-8');
-        header('Content-Disposition: attachment; filename="' . $filename . '"');
-        header('Pragma: no-cache');
+        $data['title'] = 'Laporan Bulanan ' . date('F Y');
+        $data['rows'] = $rows;
+        $data['dateField'] = $dateField;
+        $data['qtyField'] = $qtyField;
 
-        $out = fopen('php://output', 'w');
-
-        // BOM so Excel recognizes UTF-8, and explicit sep header for Excel to use semicolon
-        echo "\xEF\xBB\xBF";
-        echo "sep=;\r\n";
-
-        $delimiter = ';';
-        $eol = "\r\n";
-
-        $escape = function ($field) {
-            $field = (string) ($field ?? '');
-            $field = str_replace('"', '""', $field);
-            return '"' . $field . '"';
-        };
-
-        // Explicit header row matching requested structure
-        $headers = ['Tanggal', 'Kode Barang', 'Nama Barang', 'Kuantitas', 'Lokasi', 'Status'];
-        fwrite($out, implode($delimiter, array_map($escape, $headers)) . $eol);
-
-        foreach ($rows as $r) {
-            $t = $r[$dateField] ?? ($r['created_at'] ?? '');
-            $code = $r['electric_id'] ?? ($r['electric_code'] ?? '');
-            $name = $r['nama_barang'] ?? $r['nama'] ?? '';
-            if ($qtyField) {
-                $qtyVal = $r[$qtyField] ?? 0;
-            } else {
-                $qtyVal = $r['amount'] ?? ($r['qty'] ?? ($r['jumlah'] ?? ($r['qty_sisa'] ?? 0)));
-            }
-            $lokasi = $r['lokasi'] ?? ($r['location'] ?? '');
-            $status = $r['type'] ?? ($r['keterangan'] ?? '');
-
-            $line = [$t, $code, $name, $qtyVal, $lokasi, $status];
-            fwrite($out, implode($delimiter, array_map($escape, $line)) . $eol);
-        }
-
-        fclose($out);
-        exit;
+        // Render PDF Print View
+        $this->load->view('dashboard/print_pdf', $data);
     }
 }

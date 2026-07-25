@@ -16,9 +16,11 @@
                         <img src="<?= base_url('assets/img/delete.png'); ?>" alt="delete" class="action-button clear-button top-50 translate-middle-y" id="clear-button" onclick="clearKeyword()" style="right: 5.5rem;">
                     </form>
 
+                    <?php if ($this->session->userdata('role') === 'Staf Gudang'): ?>
                     <a href="<?= site_url('po/create') ?>" class="btn btn-primary rounded-pill px-4 flex-shrink-0">
                         <i class="fas fa-plus"></i> Buat PO Baru
                     </a>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
@@ -60,11 +62,12 @@
                         <td><?= date('d M Y', strtotime($po['order_date'])) ?></td>
                         <td><?= htmlspecialchars($po['supplier_name']) ?></td>
                         <td>
-                            <?php if ($po['status'] == 'Pending'): ?>
-                                <span class="badge bg-warning text-dark">Menunggu</span>
-                            <?php else: ?>
-                                <span class="badge bg-success">Selesai</span>
-                            <?php endif; ?>
+                            <?php 
+                                if ($po['status'] === 'Completed') echo '<span class="badge bg-success">Selesai (Completed)</span>';
+                                elseif ($po['status'] === 'Approved') echo '<span class="badge bg-primary">Diproses (Approved)</span>';
+                                elseif ($po['status'] === 'Rejected') echo '<span class="badge bg-danger">Ditolak (Rejected)</span>';
+                                else echo '<span class="badge bg-warning text-dark">Menunggu Approval</span>';
+                            ?>
                         </td>
                         <td class="pe-lg-4">
                             <a href="<?= site_url('po/detail/'.$po['id']) ?>" class="btn btn-sm btn-outline-info"><i class="fas fa-eye"></i> Detail</a>

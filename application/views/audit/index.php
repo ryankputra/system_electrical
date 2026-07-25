@@ -24,7 +24,7 @@
                         <div class="d-flex gap-2">
                             <?php if (is_admin() || is_manajer_oe()): ?>
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadHasilModal">
-                                    <i class="fas fa-file-invoice me-2"></i>Download Laporan Hasil Audit
+                                    <i class="fas fa-print me-2"></i>Cetak Laporan Hasil Audit
                                 </button>
                                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#downloadModal">
                                     <i class="fas fa-file-excel me-2"></i>Download Blanko Stock Opname
@@ -44,11 +44,11 @@
                 <div class="modal-content">
                   <form action="<?= site_url('audit/export_hasil_audit') ?>" method="GET">
                       <div class="modal-header">
-                        <h5 class="modal-title" id="downloadHasilModalLabel"><i class="fas fa-file-invoice me-2"></i>Download Laporan Hasil Audit (Hari Ini)</h5>
+                        <h5 class="modal-title" id="downloadHasilModalLabel"><i class="fas fa-file-pdf me-2"></i>Cetak Hasil Audit (PDF)</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                       </div>
                       <div class="modal-body">
-                        <p class="text-muted">Pilih lokasi laporan hasil audit hari ini yang ingin diunduh:</p>
+                        <p class="text-muted">Pilih lokasi laporan hasil audit hari ini yang ingin dicetak:</p>
                         <div class="form-check mb-3 bg-light p-2 rounded">
                             <input class="form-check-input ms-1" type="checkbox" id="checkAllHasil" onclick="toggleAllHasil(this)">
                             <label class="form-check-label fw-bold ms-2" style="cursor:pointer;" for="checkAllHasil">Pilih Semua Lokasi</label>
@@ -68,7 +68,7 @@
                       </div>
                       <div class="modal-footer border-0">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                        <button type="submit" class="btn btn-primary"><i class="fas fa-file-invoice me-2"></i>Download Excel/CSV</button>
+                        <button type="submit" class="btn btn-primary" formtarget="_blank"><i class="fas fa-print me-2"></i>Cetak (PDF)</button>
                       </div>
                   </form>
                 </div>
@@ -170,8 +170,11 @@
                                 <i class="fas fa-arrow-left me-2"></i>Ganti Lokasi
                             </a>
                             <?php if (is_admin() || is_manajer_oe()): ?>
-                                <a href="<?= site_url('audit/export_audit?lokasi_id=' . $lokasiId); ?>" class="btn btn-success" title="Download Hasil Audit (CSV)">
-                                    <i class="fas fa-download me-2"></i>Download Laporan
+                                <a href="<?= site_url('audit/export_hasil_audit?lokasi_id=' . $lokasiId); ?>" class="btn btn-primary" title="Cetak Laporan Hasil Audit (PDF)" target="_blank">
+                                    <i class="fas fa-print me-2"></i>Cetak Hasil Audit
+                                </a>
+                                <a href="<?= site_url('audit/export_audit?lokasi_id=' . $lokasiId); ?>" class="btn btn-success" title="Download Blanko Stock Opname (Excel)">
+                                    <i class="fas fa-file-excel me-2"></i>Download Blanko
                                 </a>
                             <?php endif; ?>
                         </div>

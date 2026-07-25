@@ -66,8 +66,24 @@
                             <?php if (is_manajer_oe()): ?>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('dashboard'); ?>"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('electric'); ?>"><i class="fas fa-microchip me-2"></i>Katalog Electrical</a></li>
+                                <hr class="border-secondary my-2">
+                                <li class="nav-item px-3 text-white-50 small fw-bold mt-2 mb-1">TRANSAKSI & LAPORAN</li>
+                                <?php 
+                                    $pending_po_count = 0;
+                                    if ($this->db->table_exists('as_purchase_orders')) {
+                                        $pending_po_count = $this->db->where('status', 'Pending')->count_all_results('as_purchase_orders');
+                                    }
+                                ?>
+                                <li class="nav-item"><a class="nav-link" href="<?= site_url('po'); ?>">
+                                    <i class="fas fa-shopping-cart me-2"></i>Persetujuan PO
+                                    <?php if($pending_po_count > 0): ?>
+                                        <span class="badge bg-danger ms-2 rounded-pill"><?= $pending_po_count ?></span>
+                                    <?php endif; ?>
+                                </a></li>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('audit'); ?>"><i class="fas fa-clipboard-check me-2"></i>Audit / Stock Opname</a></li>
-                                <li class="nav-item"><a class="nav-link" href="<?= site_url('history'); ?>"><i class="fas fa-history me-2"></i>Riwayat & Laporan</a></li>
+                                <li class="nav-item"><a class="nav-link" href="<?= site_url('history'); ?>"><i class="fas fa-history me-2"></i>Laporan Mutasi Global</a></li>
+                                <li class="nav-item"><a class="nav-link" href="<?= site_url('history/masuk'); ?>"><i class="fas fa-file-download me-2"></i>Laporan Barang Masuk</a></li>
+                                <li class="nav-item"><a class="nav-link" href="<?= site_url('history/keluar'); ?>"><i class="fas fa-file-upload me-2"></i>Laporan Barang Keluar</a></li>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('history/stock_card'); ?>"><i class="fas fa-address-card me-2"></i>Kartu Stok Digital</a></li>
                                 <hr class="border-secondary my-2">
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('location'); ?>"><i class="fas fa-map-marker-alt me-2"></i>Master Lokasi</a></li>
@@ -84,13 +100,26 @@
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('dashboard'); ?>"><i class="fas fa-tachometer-alt me-2"></i>Dashboard</a></li>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('electric'); ?>"><i class="fas fa-microchip me-2"></i>Katalog Electrical</a></li>
                                 
+                                <?php 
+                                    $pending_wo_count = 0;
+                                    if ($this->db->table_exists('as_wo_details')) {
+                                        $pending_wo_count = $this->db->where('status', 'Pending')->count_all_results('as_wo_details');
+                                    }
+                                ?>
                                 <hr class="border-secondary my-2">
                                 <li class="nav-item px-3 text-white-50 small fw-bold mt-2 mb-1">TRANSAKSI & LAPORAN</li>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('po'); ?>"><i class="fas fa-shopping-cart me-2"></i>Purchase Order (PO)</a></li>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('history/in'); ?>"><i class="fas fa-file-import me-2"></i>Procurement / Masuk</a></li>
-                                <li class="nav-item"><a class="nav-link" href="<?= site_url('wo'); ?>"><i class="fas fa-clipboard-list me-2"></i>Work Order (WO)</a></li>
+                                <li class="nav-item"><a class="nav-link" href="<?= site_url('wo'); ?>">
+                                    <i class="fas fa-clipboard-list me-2"></i>Work Order (WO)
+                                    <?php if($pending_wo_count > 0): ?>
+                                        <span class="badge bg-danger ms-2 rounded-pill"><?= $pending_wo_count ?></span>
+                                    <?php endif; ?>
+                                </a></li>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('audit'); ?>"><i class="fas fa-clipboard-check me-2"></i>Audit / Stock Opname</a></li>
-                                <li class="nav-item"><a class="nav-link" href="<?= site_url('history'); ?>"><i class="fas fa-history me-2"></i>Riwayat & Laporan</a></li>
+                                <li class="nav-item"><a class="nav-link" href="<?= site_url('history'); ?>"><i class="fas fa-history me-2"></i>Laporan Mutasi Global</a></li>
+                                <li class="nav-item"><a class="nav-link" href="<?= site_url('history/masuk'); ?>"><i class="fas fa-file-download me-2"></i>Laporan Barang Masuk</a></li>
+                                <li class="nav-item"><a class="nav-link" href="<?= site_url('history/keluar'); ?>"><i class="fas fa-file-upload me-2"></i>Laporan Barang Keluar</a></li>
                                 <li class="nav-item"><a class="nav-link" href="<?= site_url('history/stock_card'); ?>"><i class="fas fa-address-card me-2"></i>Kartu Stok Digital</a></li>
 
                                 <hr class="border-secondary my-2">

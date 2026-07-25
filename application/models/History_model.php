@@ -229,8 +229,10 @@ class History_model extends CI_Model
                     }
 
                     // Standardized automatic description for centralized outgoing flow (include taken amount)
-                    $roleName = $this->session->userdata('role') ?? 'Sistem';
-                    $keluarInsert['keterangan'] = 'Pengambilan oleh ' . $roleName . ': ' . $take . ' dari Batch #' . $batch['id'];
+                    // Gunakan keterangan dari data input jika ada, atau tambahkan sebagai catatan
+                    $baseKeterangan = 'FIFO Keluar (' . $take . ' pcs dari Batch #' . $batch['id'] . ')';
+                    $customKeterangan = !empty($data['keterangan']) ? ' | ' . $data['keterangan'] : '';
+                    $keluarInsert['keterangan'] = $baseKeterangan . $customKeterangan;
 
                     // If PO/Batch display column exists, populate with informative FIFO label including the batch date
                     $batchDate = null;
@@ -667,7 +669,7 @@ class History_model extends CI_Model
      * Return all history rows joined with electric name and user name.
      * @return array
      */
-    public function get_all_history(): array
+    public function get_all_history(?string $start_date = null, ?string $end_date = null, ?string $type_filter = null): array
     {
         if (!$this->db->table_exists($this->table)) {
             return [];
@@ -746,12 +748,20 @@ class History_model extends CI_Model
             $this->db->select("'' as supplier_name", false);
         }
 
-        // For per-row batch sisa computation we need chronological order (oldest first)
-        if ($this->db->field_exists('created_at', $this->table)) {
-            $this->db->order_by('h.created_at', 'ASC');
-        } else {
-            $this->db->order_by('h.' . $this->dateColumn, 'ASC');
+        $dateColToUse = $this->db->field_exists('created_at', $this->table) ? 'h.created_at' : 'h.'.$this->dateColumn;
+
+        if ($start_date) {
+            $this->db->where("DATE($dateColToUse) >=", $start_date);
         }
+        if ($end_date) {
+            $this->db->where("DATE($dateColToUse) <=", $end_date);
+        }
+        if ($type_filter) {
+            $this->db->where('h.type', $type_filter);
+        }
+
+        // For per-row batch sisa computation we need chronological order (oldest first)
+        $this->db->order_by($dateColToUse, 'ASC');
 
         $rows = $this->db->get()->result_array();
 

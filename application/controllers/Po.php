@@ -6,7 +6,7 @@ class Po extends CI_Controller
     public function __construct()
     {
         parent::__construct();
-        if (!$this->session->userdata('role') || $this->session->userdata('role') !== 'Staf Gudang') {
+        if (!is_admin() && !is_manajer_oe() && $this->session->userdata('role') !== 'Staf Gudang') {
             redirect('auth');
         }
         $this->load->model('Po_model');
@@ -36,6 +36,10 @@ class Po extends CI_Controller
 
     public function create()
     {
+        if ($this->session->userdata('role') !== 'Staf Gudang') {
+            redirect('po');
+            return;
+        }
         $data['title'] = 'Buat Purchase Order';
         $data['suppliers'] = $this->Supplier_model->get_all();
         $data['electrics'] = $this->Electric_model->getAllElectrics();
@@ -47,6 +51,10 @@ class Po extends CI_Controller
 
     public function store()
     {
+        if ($this->session->userdata('role') !== 'Staf Gudang') {
+            redirect('po');
+            return;
+        }
         $supplier_id = $this->input->post('supplier_id');
         $order_date = $this->input->post('order_date');
         
@@ -99,9 +107,15 @@ class Po extends CI_Controller
 
     public function receive($id)
     {
+        if ($this->session->userdata('role') !== 'Staf Gudang') {
+            $this->session->set_flashdata('error', 'Hanya Staf Gudang yang dapat menerima barang.');
+            redirect('po/detail/'.$id);
+            return;
+        }
+
         $po = $this->Po_model->get_by_id($id);
-        if (!$po || $po['status'] != 'Pending') {
-            $this->session->set_flashdata('error', 'PO tidak valid atau sudah diproses.');
+        if (!$po || $po['status'] != 'Approved') {
+            $this->session->set_flashdata('error', 'PO tidak valid atau belum di-Approve oleh Manajer OE.');
             redirect('po');
             return;
         }
@@ -139,6 +153,10 @@ class Po extends CI_Controller
 
     public function delete($id)
     {
+        if ($this->session->userdata('role') !== 'Staf Gudang') {
+            redirect('po');
+            return;
+        }
         $po = $this->Po_model->get_by_id($id);
         if (!$po) show_404();
         
@@ -154,6 +172,42 @@ class Po extends CI_Controller
             $this->session->set_flashdata('error', 'Gagal menghapus Purchase Order.');
         }
         redirect('po');
+    }
+
+    public function approve($id)
+    {
+        if (!is_manajer_oe()) {
+            $this->session->set_flashdata('error', 'Hanya Manajer OE yang dapat meng-approve PO.');
+            redirect('po/detail/'.$id);
+            return;
+        }
+
+        $po = $this->Po_model->get_by_id($id);
+        if ($po && $po['status'] === 'Pending') {
+            $this->Po_model->update_status($id, 'Approved');
+            $this->session->set_flashdata('message', 'Purchase Order berhasil disetujui (Approved). Staf Gudang kini dapat menerima barang.');
+        } else {
+            $this->session->set_flashdata('error', 'Status PO tidak valid untuk di-approve.');
+        }
+        redirect('po/detail/'.$id);
+    }
+
+    public function reject($id)
+    {
+        if (!is_manajer_oe()) {
+            $this->session->set_flashdata('error', 'Hanya Manajer OE yang dapat menolak PO.');
+            redirect('po/detail/'.$id);
+            return;
+        }
+
+        $po = $this->Po_model->get_by_id($id);
+        if ($po && $po['status'] === 'Pending') {
+            $this->Po_model->update_status($id, 'Rejected');
+            $this->session->set_flashdata('message', 'Purchase Order telah ditolak (Rejected).');
+        } else {
+            $this->session->set_flashdata('error', 'Status PO tidak valid untuk ditolak.');
+        }
+        redirect('po/detail/'.$id);
     }
 }
 

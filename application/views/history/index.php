@@ -6,7 +6,7 @@
 				<div>
 					<a href="javascript:history.back()" class="btn btn-sm btn-outline-secondary me-2">Kembali</a>
 					<?php if (is_admin() || is_manajer_oe()): ?>
-						<a href="<?= site_url('dashboard/download_monthly') ?>" class="btn btn-sm" style="background:#004274;color:#fff;border:0;padding:8px 16px;border-radius:6px;">Download Laporan Mutasi (Excel)</a>
+						<a href="<?= site_url('dashboard/download_monthly') ?>" class="btn btn-sm" style="background:#004274;color:#fff;border:0;padding:8px 16px;border-radius:6px;" target="_blank"><i class="fas fa-file-pdf me-1"></i> Cetak Laporan (PDF)</a>
 					<?php endif; ?>
 				</div>
 			</div>

@@ -58,10 +58,11 @@ class Wo_model extends CI_Model
 
     public function get_details($wo_id)
     {
-        $this->db->select('h.*, e.nama as electric_name, e.brand, e.type as electric_type');
-        $this->db->from('as_history h');
-        $this->db->join('as_electric e', 'e.electric_id = h.electric_id', 'left');
-        $this->db->where('h.wo_id', $wo_id);
+        $this->db->select('wd.*, e.nama as electric_name, e.brand, e.type as electric_type, u.name as requester_name');
+        $this->db->from('as_wo_details wd');
+        $this->db->join('as_electric e', 'e.electric_id = wd.electric_id', 'left');
+        $this->db->join('as_user u', 'u.nik = wd.user_nik', 'left');
+        $this->db->where('wd.wo_id', $wo_id);
         return $this->db->get()->result_array();
     }
 }

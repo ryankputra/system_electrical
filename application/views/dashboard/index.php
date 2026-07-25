@@ -60,6 +60,54 @@
             </div>
         </div>
 
+        <?php 
+            $pending_wo_count = 0;
+            $pending_po_count = 0;
+            if ($this->session->userdata('role') === 'Staf Gudang' && $this->db->table_exists('as_wo_details')) {
+                $pending_wo_count = $this->db->where('status', 'Pending')->count_all_results('as_wo_details');
+            }
+            if (is_manajer_oe() && $this->db->table_exists('as_purchase_orders')) {
+                $pending_po_count = $this->db->where('status', 'Pending')->count_all_results('as_purchase_orders');
+            }
+        ?>
+        <?php if($pending_wo_count > 0): ?>
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="alert alert-warning border-0 shadow-sm rounded-4 d-flex justify-content-between align-items-center p-3 mb-0" role="alert" style="background: linear-gradient(to right, #fff3cd, #ffecb5);">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-25 p-2 rounded-circle me-3">
+                            <i class="fas fa-bell text-warning fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="alert-heading mb-1 fw-bold text-dark">Perhatian! Ada Pengajuan WO</h6>
+                            <p class="mb-0 text-dark small">Terdapat <strong><?= $pending_wo_count ?></strong> permintaan barang dari teknisi yang menunggu <strong>Approval</strong> Anda.</p>
+                        </div>
+                    </div>
+                    <a href="<?= site_url('wo'); ?>" class="btn btn-warning fw-bold px-4 rounded-pill shadow-sm">Cek Sekarang</a>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if($pending_po_count > 0): ?>
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="alert alert-warning border-0 shadow-sm rounded-4 d-flex justify-content-between align-items-center p-3 mb-0" role="alert" style="background: linear-gradient(to right, #fff3cd, #ffecb5);">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-warning bg-opacity-25 p-2 rounded-circle me-3">
+                            <i class="fas fa-file-invoice text-warning fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="alert-heading mb-1 fw-bold text-dark">Perhatian! Ada Draf PO Baru</h6>
+                            <p class="mb-0 text-dark small">Terdapat <strong><?= $pending_po_count ?></strong> dokumen Purchase Order (PO) yang menunggu <strong>Persetujuan (Approval)</strong> Anda.</p>
+                        </div>
+                    </div>
+                    <a href="<?= site_url('po'); ?>" class="btn btn-warning fw-bold px-4 rounded-pill shadow-sm">Review PO</a>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
+
         <div class="row mb-4">
             <div class="col-12">
                 <div class="card border-0 shadow-sm rounded-pill overflow-hidden">

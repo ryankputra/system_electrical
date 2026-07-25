@@ -41,10 +41,10 @@
                                     <?php endforeach; ?>
                                 </select>
                             </div>
-                            <div class="col-md-8">
+                            <div class="col-md-5">
                                 <label for="electric_id" class="form-label fw-bold text-secondary small mb-1"><i class="fas fa-search me-2"></i>Pilih Komponen Kelistrikan:</label>
                                 <div class="input-group">
-                                    <select class="form-select form-select-lg select2" name="electric_id" id="electric_id" style="border-radius: 8px 0 0 8px;">
+                                    <select class="form-select form-select-lg select2" name="electric_id" id="electric_id" style="border-radius: 8px;">
                                         <option value="">-- Cari & Pilih Suku Cadang --</option>
                                         <?php foreach ($electrics as $el): ?>
                                             <?php 
@@ -69,10 +69,23 @@
                                             </option>
                                         <?php endforeach; ?>
                                     </select>
-                                    <button type="submit" class="btn btn-primary px-4" style="background:#004274;border:0;border-radius: 0 8px 8px 0;">
-                                        <i class="fas fa-filter me-2"></i>Tampilkan
-                                    </button>
                                 </div>
+                            </div>
+                            <div class="col-md-3">
+                                <label class="form-label fw-bold text-secondary small mb-1">Periode Tanggal:</label>
+                                <div class="input-group input-group-sm">
+                                    <input type="date" name="start_date" class="form-control" value="<?= htmlspecialchars($start_date ?? '') ?>">
+                                    <span class="input-group-text bg-light border-start-0 border-end-0">s.d</span>
+                                    <input type="date" name="end_date" class="form-control" value="<?= htmlspecialchars($end_date ?? '') ?>">
+                                </div>
+                            </div>
+                            <div class="col-md-12 d-flex justify-content-end mt-3">
+                                <button type="submit" class="btn btn-primary px-4" style="background:#004274;border:0;border-radius: 8px;">
+                                    <i class="fas fa-filter me-2"></i>Tampilkan Kartu Stok
+                                </button>
+                                <?php if($selected_id): ?>
+                                    <a href="<?= site_url('history/stock_card') ?>" class="btn btn-outline-secondary ms-2 rounded-3">Reset</a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </form>
@@ -133,16 +146,16 @@
                         <div class="table-responsive">
                             <table class="table table-hover align-middle table-sm" id="table-stock-card-history">
                                 <thead class="table-light">
-                                    <tr>
                                         <th style="width: 5%">No</th>
                                         <th style="width: 15%">Tanggal Transaksi</th>
-                                        <th style="width: 12%">Tipe</th>
-                                        <th style="width: 15%">No. Referensi (PO / WO)</th>
-                                        <th class="text-center" style="width: 10%">Masuk (+)</th>
-                                        <th class="text-center" style="width: 10%">Keluar (-)</th>
-                                        <th class="text-center" style="width: 12%; background: #e8f4f8;">Saldo Akhir</th>
-                                        <th style="width: 13%">Operator</th>
-                                        <th style="width: 18%">Keterangan</th>
+                                        <th style="width: 10%">Tipe</th>
+                                        <th style="width: 15%">No. Ref (PO / WO)</th>
+                                        <th class="text-end" style="width: 12%">Harga Satuan</th>
+                                        <th class="text-center" style="width: 8%">Masuk (+)</th>
+                                        <th class="text-center" style="width: 8%">Keluar (-)</th>
+                                        <th class="text-center" style="width: 10%; background: #e8f4f8;">Saldo Akhir</th>
+                                        <th style="width: 10%">Operator</th>
+                                        <th style="width: 15%">Keterangan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -180,12 +193,14 @@
                                                 } elseif ($isMasuk && !empty($row['po_number'])) {
                                                     $ref = htmlspecialchars($row['po_number']);
                                                 }
+                                                $harga = isset($row['harga_satuan']) ? (float)$row['harga_satuan'] : 0;
                                             ?>
                                             <tr>
                                                 <td><?= $i++ ?></td>
                                                 <td><?= $dateFmt ?></td>
                                                 <td><?= $badge ?></td>
                                                 <td><strong><?= htmlspecialchars($ref) ?></strong></td>
+                                                <td class="text-end text-muted"><?= $harga > 0 ? 'Rp ' . number_format($harga, 0, ',', '.') : '-' ?></td>
                                                 <td class="text-center text-success font-monospace fw-bold"><?= $isMasuk ? '+' . $inQty : '-' ?></td>
                                                 <td class="text-center text-danger font-monospace fw-bold"><?= $isKeluar ? '-' . $outQty : '-' ?></td>
                                                 <td class="text-center font-monospace fw-bold" style="background: #f4fafd; font-size: 1.05rem; color: #004274; border-left: 1px solid #dee2e6; border-right: 1px solid #dee2e6;">

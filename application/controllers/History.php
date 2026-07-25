@@ -23,6 +23,36 @@ class History extends CI_Controller
         render_view('history/index', $data);
     }
 
+    public function masuk()
+    {
+        $start_date = $this->input->get('start_date');
+        $end_date = $this->input->get('end_date');
+        $history = $this->History_model->get_all_history($start_date, $end_date, 'Masuk');
+
+        $data = [
+            'title' => 'Laporan Barang Masuk',
+            'history' => $history,
+            'start_date' => $start_date,
+            'end_date' => $end_date
+        ];
+        render_view('history/laporan_masuk', $data);
+    }
+
+    public function keluar()
+    {
+        $start_date = $this->input->get('start_date');
+        $end_date = $this->input->get('end_date');
+        $history = $this->History_model->get_all_history($start_date, $end_date, 'Keluar');
+
+        $data = [
+            'title' => 'Laporan Barang Keluar',
+            'history' => $history,
+            'start_date' => $start_date,
+            'end_date' => $end_date
+        ];
+        render_view('history/laporan_keluar', $data);
+    }
+
     /**
      * Form to record incoming stock (Masuk) and handle POST.
      */
@@ -75,26 +105,28 @@ class History extends CI_Controller
             $user_nik = $this->session->userdata('user_data')['nik'] ?? null;
             $wo_id = $this->input->post('wo_id', true) ?: null;
 
-            if ($qty <= 0) {
-                set_message(['danger', 'Data tidak valid']);
+            if ($qty <= 0 || !$wo_id || !$electric_id) {
+                set_message(['danger', 'Data pengajuan tidak valid. Pastikan memilih WO, Barang, dan Qty.']);
                 redirect('history/out');
                 return;
             }
 
-            $res = $this->History_model->addTransaction([
+            // Insert into as_wo_details instead of cutting stock directly
+            $data = [
+                'wo_id' => $wo_id,
                 'electric_id' => $electric_id,
-                'type' => 'Keluar',
                 'qty' => $qty,
                 'user_nik' => $user_nik,
+                'status' => 'Pending',
                 'keterangan' => $keterangan,
-                'wo_id' => $wo_id
-            ]);
+                'created_at' => date('Y-m-d H:i:s')
+            ];
 
-            if ($res['success']) {
-                set_message(['success', 'Barang Keluar berhasil dicatat.']);
+            if ($this->db->insert('as_wo_details', $data)) {
+                set_message(['success', 'Pengajuan (Request) barang berhasil dikirim. Menunggu Approval Staf Gudang.']);
                 redirect('history/mine');
             } else {
-                set_message(['danger', 'Gagal mencatat barang keluar: ' . $res['message']]);
+                set_message(['danger', 'Gagal mengirim pengajuan.']);
                 redirect('history/out');
             }
             return;
@@ -113,10 +145,12 @@ class History extends CI_Controller
             $all_electrics = $this->Electric_model->getAllElectrics();
             foreach ($all_electrics as $el) {
                 if ((string)($el['location'] ?? '') === (string)$lokasi_id) {
-                    // Get location name
-                    $locRow = $this->db->get_where('as_location', ['id' => $lokasi_id])->row_array();
-                    $el['location_name'] = $locRow ? $locRow['location_name'] : $lokasi_id;
-                    $barang_per_lokasi[] = $el;
+                    if ((int)($el['total_stock'] ?? 0) > 0) {
+                        // Get location name
+                        $locRow = $this->db->get_where('as_location', ['id' => $lokasi_id])->row_array();
+                        $el['location_name'] = $locRow ? $locRow['location_name'] : $lokasi_id;
+                        $barang_per_lokasi[] = $el;
+                    }
                 }
             }
         }
@@ -138,9 +172,12 @@ class History extends CI_Controller
     public function stock_card()
     {
         $electric_id = $this->input->get('electric_id', true);
+        $start_date = $this->input->get('start_date', true);
+        $end_date = $this->input->get('end_date', true);
+
         $this->load->model('Electric_model');
         
-        $all_history = $this->History_model->get_all_history();
+        $all_history = $this->History_model->get_all_history($start_date, $end_date);
         $card_history = [];
         $running_balance = 0;
         
@@ -199,7 +236,9 @@ class History extends CI_Controller
             'selected_id' => $electric_id,
             'selected_electric' => $selected_electric,
             'active_batches' => $active_batches,
-            'card_history' => $card_history
+            'card_history' => $card_history,
+            'start_date' => $start_date,
+            'end_date' => $end_date
         ];
         
         render_view('history/stock_card', $data);
@@ -222,9 +261,21 @@ class History extends CI_Controller
             }
         }
         
+        $pending_requests = [];
+        if ($user_nik && $this->db->table_exists('as_wo_details')) {
+            $this->db->select('wd.*, e.nama, e.brand, e.type as electric_type, wo.wo_number');
+            $this->db->from('as_wo_details wd');
+            $this->db->join('as_electric e', 'e.electric_id = wd.electric_id', 'left');
+            $this->db->join('as_work_orders wo', 'wo.id = wd.wo_id', 'left');
+            $this->db->where('wd.user_nik', $user_nik);
+            
+            $pending_requests = $this->db->order_by('wd.created_at', 'DESC')->get()->result_array();
+        }
+        
         $data = [
             'title' => 'Riwayat Pengambilan Saya',
-            'history' => $history
+            'history' => $history,
+            'pending_requests' => $pending_requests
         ];
         render_view('history/mine', $data);
     }

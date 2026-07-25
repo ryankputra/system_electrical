@@ -3,9 +3,13 @@
         <h4 class="m-0">Detail Purchase Order: <?= htmlspecialchars($po['po_number']) ?></h4>
         <div>
             <a href="<?= site_url('po') ?>" class="btn btn-outline-secondary rounded-pill btn-sm me-2">Kembali</a>
-            <?php if ($po['status'] == 'Pending'): ?>
-                <a href="<?= site_url('po/receive/'.$po['id']) ?>" class="btn btn-success rounded-pill btn-sm" onclick="return confirm('Proses terima semua barang ke gudang? Tindakan ini akan menambah antrian stok (Queue) di riwayat.');">
-                    <i class="fas fa-box-open"></i> Terima Semua Barang
+            <?php if ($po['status'] === 'Pending' && is_manajer_oe()): ?>
+                <a href="<?= site_url('po/approve/'.$po['id']) ?>" class="btn btn-success rounded-pill btn-sm me-1" onclick="return confirm('Approve Purchase Order ini?');"><i class="fas fa-check"></i> Setujui (Approve)</a>
+                <a href="<?= site_url('po/reject/'.$po['id']) ?>" class="btn btn-danger rounded-pill btn-sm" onclick="return confirm('Tolak Purchase Order ini?');"><i class="fas fa-times"></i> Tolak (Reject)</a>
+            <?php endif; ?>
+            <?php if ($po['status'] === 'Approved' && $this->session->userdata('role') === 'Staf Gudang'): ?>
+                <a href="<?= site_url('po/receive/'.$po['id']) ?>" class="btn btn-primary rounded-pill btn-sm" onclick="return confirm('Proses terima semua barang ke gudang? Tindakan ini akan masuk riwayat Inbound.');">
+                    <i class="fas fa-box-open"></i> Terima Barang (Masuk Gudang)
                 </a>
             <?php endif; ?>
         </div>
@@ -29,13 +33,13 @@
             </div>
             <div class="col-sm-4">
                 <h6 class="text-muted mb-1">Tanggal & Status</h6>
-                <p class="mb-0">
                     <?= date('d M Y', strtotime($po['order_date'])) ?> |
-                    <?php if ($po['status'] == 'Pending'): ?>
-                        <span class="badge bg-warning text-dark">Menunggu</span>
-                    <?php else: ?>
-                        <span class="badge bg-success">Selesai</span>
-                    <?php endif; ?>
+                    <?php 
+                        if ($po['status'] === 'Completed') echo '<span class="badge bg-success">Selesai (Completed)</span>';
+                        elseif ($po['status'] === 'Approved') echo '<span class="badge bg-primary">Diproses (Approved)</span>';
+                        elseif ($po['status'] === 'Rejected') echo '<span class="badge bg-danger">Ditolak (Rejected)</span>';
+                        else echo '<span class="badge bg-warning text-dark">Menunggu Approval</span>';
+                    ?>
                 </p>
             </div>
         </div>
