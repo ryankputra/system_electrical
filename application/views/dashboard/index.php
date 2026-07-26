@@ -271,6 +271,7 @@
                                             <th>Tipe</th>
                                             <th>Batch</th>
                                             <th>Tgl</th>
+                                            <th>Lokasi</th>
                                             <th class="text-end">Sisa</th>
                                             <th>Status</th>
                                         </tr>
@@ -281,6 +282,7 @@
                                                 <td><?= htmlspecialchars($b['type_name'] ?? '-'); ?></td>
                                                 <td><?= htmlspecialchars($b['batch_number'] ?? '-'); ?></td>
                                                 <td><?= isset($b['date_stored']) && $b['date_stored'] ? date('d M Y', strtotime($b['date_stored'])) : '-'; ?></td>
+                                                <td><?= htmlspecialchars($b['location_name'] ?? '-'); ?></td>
                                                 <td class="text-end"><?= number_format($b['quantity_remaining'] ?? 0); ?></td>
                                                 <td><?= $b['status_batch'] ?? ''; ?></td>
                                             </tr>
@@ -343,9 +345,10 @@
                             <table class="table table-hover mb-0" id="transactionTable">
                                 <thead>
                                     <tr class="table-light">
-                                        <th>ID Transaksi</th>
                                         <th>Waktu</th>
+                                        <th>Nama Barang</th>
                                         <th>Aksi</th>
+                                        <th class="text-center">Qty</th>
                                         <th>Lokasi</th>
                                     </tr>
                                 </thead>
@@ -353,38 +356,51 @@
                                     <?php if (!empty($recent_transactions)): ?>
                                         <?php foreach ($recent_transactions as $tx): ?>
                                             <tr>
-                                                <?php
-                                                    $rawId = $tx['storing_id'] ?? $tx['id'] ?? '';
-                                                    $displayId = is_numeric($rawId) ? 'TRX-' . str_pad($rawId, 4, '0', STR_PAD_LEFT) : $rawId;
-                                                ?>
-                                                <td class="text-truncate" style="max-width:160px;"><small class="font-monospace fw-bold text-primary"><?= htmlspecialchars($displayId); ?></small></td>
-                                                <td><small><?= htmlspecialchars($tx['datetime'] ?? $tx['created_at'] ?? $tx['date'] ?? $tx['tanggal_terima'] ?? ''); ?></small></td>
+                                                <td><small class="text-muted"><?= htmlspecialchars($tx['datetime'] ?? $tx['created_at'] ?? $tx['date'] ?? $tx['tanggal_terima'] ?? ''); ?></small></td>
+                                                <td>
+                                                    <?php
+                                                        $namaBarang = $tx['spec_type'] ?? $tx['nama_barang'] ?? '-';
+                                                        $kategori   = $tx['nama_barang'] ?? '';
+                                                        $brand      = $tx['brand'] ?? '';
+                                                        // Jika spec_type sama dengan nama_barang, cukup tampilkan satu
+                                                        $subInfo = [];
+                                                        if (!empty($kategori) && $kategori !== $namaBarang) $subInfo[] = $kategori;
+                                                        if (!empty($brand) && $brand !== '-') $subInfo[] = $brand;
+                                                    ?>
+                                                    <div class="fw-semibold" style="font-size:0.85rem;"><?= htmlspecialchars($namaBarang) ?></div>
+                                                    <?php if (!empty($subInfo)): ?>
+                                                        <small class="text-muted"><?= htmlspecialchars(implode(' — ', $subInfo)) ?></small>
+                                                    <?php endif; ?>
+                                                </td>
                                                 <?php
                                                     $typeRaw = strtolower(trim((string)($tx['action'] ?? $tx['type'] ?? $tx['keterangan'] ?? '')));
-                                                    $inValues = ['masuk','in','store','simpan','masuk barang','masuk_barang','simpan_barang','inbound'];
+                                                    $inValues  = ['masuk','in','store','simpan','inbound'];
                                                     $outValues = ['keluar','out','ambil','take','pengambilan','outgoing'];
-                                                    $isIn = false;
-                                                    $isOut = false;
-                                                    if ($typeRaw !== '') {
-                                                        foreach ($inValues as $v) { if (strpos($typeRaw, $v) !== false) { $isIn = true; break; } }
-                                                        foreach ($outValues as $v) { if (strpos($typeRaw, $v) !== false) { $isOut = true; break; } }
-                                                    }
+                                                    $isIn = false; $isOut = false;
                                                     if (isset($tx['type'])) {
                                                         $tLower = strtolower((string)$tx['type']);
-                                                        if (in_array($tLower, ['masuk','in','store','simpan'])) { $isIn = true; $isOut = false; }
-                                                        if (in_array($tLower, ['keluar','out','ambil'])) { $isOut = true; $isIn = false; }
+                                                        if (in_array($tLower, ['masuk','in','store','simpan'])) { $isIn = true; }
+                                                        elseif (in_array($tLower, ['keluar','out','ambil'])) { $isOut = true; }
+                                                    }
+                                                    if (!$isIn && !$isOut) {
+                                                        foreach ($inValues  as $v) { if (strpos($typeRaw, $v) !== false) { $isIn  = true; break; } }
+                                                        foreach ($outValues as $v) { if (strpos($typeRaw, $v) !== false) { $isOut = true; break; } }
                                                     }
                                                     $badgeClass = $isIn ? 'success' : ($isOut ? 'warning' : 'secondary');
-                                                    $icon = $isIn ? 'plus' : 'minus';
-                                                    $label = $isIn ? 'Simpan' : 'Ambil';
+                                                    $icon  = $isIn ? 'plus' : 'minus';
+                                                    $label = $isIn ? 'Masuk' : ($isOut ? 'Keluar' : 'Lainnya');
                                                 ?>
                                                 <td>
                                                     <span class="badge rounded-pill text-bg-<?= $badgeClass; ?>">
-                                                        <i class="fas fa-<?= $icon; ?> me-1"></i>
-                                                        <?= $label; ?>
+                                                        <i class="fas fa-<?= $icon; ?> me-1"></i><?= $label; ?>
                                                     </span>
                                                 </td>
-                                                <td><small><?= htmlspecialchars($tx['location_id'] ?? $tx['location'] ?? $tx['location_name'] ?? '-'); ?></small></td>
+                                                <td class="text-center">
+                                                    <small class="fw-bold <?= $isIn ? 'text-success' : 'text-danger' ?>">
+                                                        <?= ($isIn ? '+' : '-') . number_format((int)($tx['display_amount'] ?? $tx['qty'] ?? 0)) ?>
+                                                    </small>
+                                                </td>
+                                                <td><small class="text-muted"><?= htmlspecialchars($tx['location_name'] ?? $tx['location'] ?? '-'); ?></small></td>
                                             </tr>
                                         <?php endforeach; ?>
                                     <?php else: ?>

@@ -3,6 +3,9 @@
         <h4 class="m-0">Detail Purchase Order: <?= htmlspecialchars($po['po_number']) ?></h4>
         <div>
             <a href="<?= site_url('po') ?>" class="btn btn-outline-secondary rounded-pill btn-sm me-2">Kembali</a>
+            <a href="<?= site_url('po/print_po/'.$po['id']) ?>" target="_blank" class="btn btn-dark rounded-pill btn-sm me-2">
+                <i class="fas fa-print"></i> Cetak PO
+            </a>
             <?php if ($po['status'] === 'Pending' && is_manajer_oe()): ?>
                 <a href="<?= site_url('po/approve/'.$po['id']) ?>" class="btn btn-success rounded-pill btn-sm me-1" onclick="return confirm('Approve Purchase Order ini?');"><i class="fas fa-check"></i> Setujui (Approve)</a>
                 <a href="<?= site_url('po/reject/'.$po['id']) ?>" class="btn btn-danger rounded-pill btn-sm" onclick="return confirm('Tolak Purchase Order ini?');"><i class="fas fa-times"></i> Tolak (Reject)</a>

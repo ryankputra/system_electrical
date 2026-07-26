@@ -305,10 +305,25 @@ class Dashboard extends CI_Controller
 
             // Main query: pick the batch rows that match the earliest per type
             $pickedQtyExpr = ($pickedQtyCol ? 'COALESCE(h.' . $pickedQtyCol . ',0)' : 'COALESCE(h.qty_sisa,0)');
-            $sql = 'SELECT COALESCE(t.type, "-") as type_name, COALESCE(h.' . $batchField . ', "-") as batch_number, h.' . $pickedDateCol . ' as date_stored, ' . $pickedQtyExpr . ' as quantity_remaining'
+
+            // Determine location join
+            $locJoin  = '';
+            $locField = "'-' as location_name";
+            if ($this->db->table_exists('as_location')) {
+                if ($this->db->field_exists('location', 'as_electric')) {
+                    $locJoin  = ' LEFT JOIN as_location l ON l.id = e.location';
+                    $locField = "COALESCE(l.location_name, '-') as location_name";
+                } elseif ($this->db->field_exists('location_id', 'as_electric')) {
+                    $locJoin  = ' LEFT JOIN as_location l ON l.id = e.location_id';
+                    $locField = "COALESCE(l.location_name, '-') as location_name";
+                }
+            }
+
+            $sql = 'SELECT COALESCE(t.type, "-") as type_name, COALESCE(h.' . $batchField . ', "-") as batch_number, h.' . $pickedDateCol . ' as date_stored, ' . $pickedQtyExpr . ' as quantity_remaining, ' . $locField
                 . ' FROM ' . $historyTable . ' h'
                 . ' JOIN as_electric e ON e.electric_id = h.electric_id'
                 . ' LEFT JOIN as_electric_types t ON t.id = e.type_id'
+                . $locJoin
                 . ' JOIN (' . $minSelect . ') s ON s.type_id = e.type_id AND s.min_created_at = h.' . $pickedDateCol
                 . ' WHERE ' . $pickedQtyExpr . ' > 0'
                 . ' ORDER BY h.' . $pickedDateCol . ' ASC';
@@ -324,22 +339,23 @@ class Dashboard extends CI_Controller
                 else $status = "<span class='badge bg-success'>Aktif</span>";
 
                 $barang_terlama_list[] = [
-                    'type_name' => $r['type_name'] ?? '-',
-                    'batch_number' => $r['batch_number'] ?? '-',
-                    'date_stored' => $r['date_stored'] ?? null,
+                    'type_name'          => $r['type_name'] ?? '-',
+                    'batch_number'       => $r['batch_number'] ?? '-',
+                    'date_stored'        => $r['date_stored'] ?? null,
                     'quantity_remaining' => $qtyRem,
-                    'status_batch' => $status,
+                    'status_batch'       => $status,
+                    'location_name'      => $r['location_name'] ?? '-',
                 ];
             }
 
             // Keep backward-compatible single-item fields populated from first list element
             if (!empty($barang_terlama_list)) {
                 $first = $barang_terlama_list[0];
-                $barang_terlama = $first['date_stored'] ? date('d M Y', strtotime($first['date_stored'])) : '-';
-                $barang_terlama_name = $first['type_name'] ?? '-';
-                $barang_terlama_location = '-';
+                $barang_terlama          = $first['date_stored'] ? date('d M Y', strtotime($first['date_stored'])) : '-';
+                $barang_terlama_name     = $first['type_name'] ?? '-';
+                $barang_terlama_location = $first['location_name'] ?? '-';
                 $barang_terlama_quantity = $first['quantity_remaining'] ?? 0;
-                $barang_terlama_status = $first['status_batch'] ?? '';
+                $barang_terlama_status   = $first['status_batch'] ?? '';
             }
         }
 

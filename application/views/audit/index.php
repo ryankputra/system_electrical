@@ -26,6 +26,8 @@
                                 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#downloadHasilModal">
                                     <i class="fas fa-print me-2"></i>Cetak Laporan Hasil Audit
                                 </button>
+                            <?php endif; ?>
+                            <?php if (is_admin()): ?>
                                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#downloadModal">
                                     <i class="fas fa-file-excel me-2"></i>Download Blanko Stock Opname
                                 </button>
@@ -173,6 +175,8 @@
                                 <a href="<?= site_url('audit/export_hasil_audit?lokasi_id=' . $lokasiId); ?>" class="btn btn-primary" title="Cetak Laporan Hasil Audit (PDF)" target="_blank">
                                     <i class="fas fa-print me-2"></i>Cetak Hasil Audit
                                 </a>
+                            <?php endif; ?>
+                            <?php if (is_admin()): ?>
                                 <a href="<?= site_url('audit/export_audit?lokasi_id=' . $lokasiId); ?>" class="btn btn-success" title="Download Blanko Stock Opname (Excel)">
                                     <i class="fas fa-file-excel me-2"></i>Download Blanko
                                 </a>

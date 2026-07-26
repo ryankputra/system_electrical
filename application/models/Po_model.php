@@ -44,7 +44,7 @@ class Po_model extends CI_Model
 
     public function get_details(int $po_id): array
     {
-        $this->db->select('pod.*, e.nama, e.type as spesifikasi, e.brand');
+        $this->db->select('pod.*, e.nama, e.type as spesifikasi, e.brand, e.voltage, e.voltage_unit, e.ampere, e.daya, e.daya_unit');
         $this->db->from($this->details_table . ' pod');
         $this->db->join('as_electric e', 'pod.electric_id = e.electric_id', 'left');
         $this->db->where('pod.po_id', $po_id);

@@ -25,32 +25,111 @@ class History extends CI_Controller
 
     public function masuk()
     {
-        $start_date = $this->input->get('start_date');
-        $end_date = $this->input->get('end_date');
+        $start_date  = $this->input->get('start_date');
+        $end_date    = $this->input->get('end_date');
+        $electric_id = $this->input->get('electric_id', true);
+
         $history = $this->History_model->get_all_history($start_date, $end_date, 'Masuk');
 
+        // Filter per barang jika dipilih
+        if (!empty($electric_id)) {
+            $history = array_values(array_filter($history, fn($r) => ($r['electric_id'] ?? '') === $electric_id));
+        }
+
+        $this->load->model('Electric_model');
         $data = [
-            'title' => 'Laporan Barang Masuk',
-            'history' => $history,
-            'start_date' => $start_date,
-            'end_date' => $end_date
+            'title'       => 'Laporan Barang Masuk',
+            'history'     => $history,
+            'start_date'  => $start_date,
+            'end_date'    => $end_date,
+            'electric_id' => $electric_id,
+            'electrics'   => $this->Electric_model->getAllElectrics(),
         ];
         render_view('history/laporan_masuk', $data);
     }
 
     public function keluar()
     {
-        $start_date = $this->input->get('start_date');
-        $end_date = $this->input->get('end_date');
+        $start_date  = $this->input->get('start_date');
+        $end_date    = $this->input->get('end_date');
+        $electric_id = $this->input->get('electric_id', true);
+
         $history = $this->History_model->get_all_history($start_date, $end_date, 'Keluar');
 
+        // Filter per barang jika dipilih
+        if (!empty($electric_id)) {
+            $history = array_values(array_filter($history, fn($r) => ($r['electric_id'] ?? '') === $electric_id));
+        }
+
+        $this->load->model('Electric_model');
         $data = [
-            'title' => 'Laporan Barang Keluar',
-            'history' => $history,
-            'start_date' => $start_date,
-            'end_date' => $end_date
+            'title'       => 'Laporan Barang Keluar',
+            'history'     => $history,
+            'start_date'  => $start_date,
+            'end_date'    => $end_date,
+            'electric_id' => $electric_id,
+            'electrics'   => $this->Electric_model->getAllElectrics(),
         ];
         render_view('history/laporan_keluar', $data);
+    }
+
+    public function print_masuk()
+    {
+        $start_date  = $this->input->get('start_date');
+        $end_date    = $this->input->get('end_date');
+        $electric_id = $this->input->get('electric_id', true);
+
+        $history = $this->History_model->get_all_history($start_date, $end_date, 'Masuk');
+
+        if (!empty($electric_id)) {
+            $history = array_values(array_filter($history, fn($r) => ($r['electric_id'] ?? '') === $electric_id));
+        }
+
+        // Tentukan label barang untuk judul PDF
+        $electric_label = '';
+        if (!empty($electric_id) && !empty($history)) {
+            $first = $history[0];
+            $electric_label = trim(($first['nama_barang'] ?? '') . ' ' . ($first['spec_type'] ?? '') . ' ' . ($first['brand'] ?? ''));
+        }
+
+        $data = [
+            'title'          => 'Laporan Barang Masuk',
+            'history'        => $history,
+            'start_date'     => $start_date,
+            'end_date'       => $end_date,
+            'electric_id'    => $electric_id,
+            'electric_label' => $electric_label,
+        ];
+        $this->load->view('history/print_pdf_masuk', $data);
+    }
+
+    public function print_keluar()
+    {
+        $start_date  = $this->input->get('start_date');
+        $end_date    = $this->input->get('end_date');
+        $electric_id = $this->input->get('electric_id', true);
+
+        $history = $this->History_model->get_all_history($start_date, $end_date, 'Keluar');
+
+        if (!empty($electric_id)) {
+            $history = array_values(array_filter($history, fn($r) => ($r['electric_id'] ?? '') === $electric_id));
+        }
+
+        $electric_label = '';
+        if (!empty($electric_id) && !empty($history)) {
+            $first = $history[0];
+            $electric_label = trim(($first['nama_barang'] ?? '') . ' ' . ($first['spec_type'] ?? '') . ' ' . ($first['brand'] ?? ''));
+        }
+
+        $data = [
+            'title'          => 'Laporan Barang Keluar',
+            'history'        => $history,
+            'start_date'     => $start_date,
+            'end_date'       => $end_date,
+            'electric_id'    => $electric_id,
+            'electric_label' => $electric_label,
+        ];
+        $this->load->view('history/print_pdf_keluar', $data);
     }
 
     /**

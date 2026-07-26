@@ -174,6 +174,31 @@ class Po extends CI_Controller
         redirect('po');
     }
 
+    public function print_po($id)
+    {
+        $po = $this->Po_model->get_by_id($id);
+        if (!$po) show_404();
+
+        $details = $this->Po_model->get_details($id);
+
+        // Ambil detail lengkap supplier (alamat, kontak, telepon)
+        $supplier = $this->Supplier_model->get_by_id($po['supplier_id']);
+
+        $total = 0;
+        foreach ($details as $d) {
+            $total += $d['qty_ordered'] * $d['price'];
+        }
+
+        $data = [
+            'po'       => $po,
+            'details'  => $details,
+            'supplier' => $supplier,
+            'total'    => $total,
+        ];
+
+        $this->load->view('po/print', $data);
+    }
+
     public function approve($id)
     {
         if (!is_manajer_oe()) {
